@@ -1,0 +1,41 @@
+.btn {
+  display: flex;
+  align-items: center;
+  // background-color: transparent;
+  padding: 0 1rem;
+  // border-radius: 3px;
+  // border-width: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: 0.1rem solid #d1d1d1;
+  border-radius: .4rem;
+  box-shadow: none;
+  height: 3.8rem;
+  text-decoration: none;
+  color: inherit;
+  font-size: inherit;
+  // .shadow();
+  > *             { margin-right: 1rem; }
+  > :last-child   { margin-right: 0; }
+  span.btn-icon {
+    // margin-left: -0.4rem;
+    line-height: 0;
+    .feather {
+      width: 2.4rem;
+      height: 1.6rem;
+      transition: height .3s;
+    }
+  }
+  span.btn-text {
+    text-transform: capitalize;
+  }
+  &:hover {
+    span.btn-icon {
+      .feather {
+        // width: 2.4rem;
+        height: 2.4rem;
+      }
+    }
+  }
+}
