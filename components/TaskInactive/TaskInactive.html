@@ -1,0 +1,130 @@
+<span @click="${toggleComplete}" class="complete-checkbox">
+  ${task.complete ?
+    html`<tdw-icon icon="checkSquare"></tdw-icon>` :
+    html`<tdw-icon icon="square"></tdw-icon>`
+  }
+</span>
+<span @click="${activate}" class="parsed ${task.complete ? 'complete' : ''}">
+  ${task.parsed}
+</span>
+${task.createdDate ?
+  html`
+    <span class="created-date">
+      <div
+        @click="${filterApply}"
+        class="tag tag-created-date"
+        data-created-date="${task.createdDate}"
+      >
+        <span class="tag-icon">
+          <tdw-icon icon="calendar"></tdw-icon>
+        </span>
+        <span class="tag-text">
+          ${task.createdDate}
+        </span>
+      </div>
+    </span>
+  ` : ''
+}
+${task.priority ?
+  html`
+    <span class="priority">
+      <div
+        @click="${filterApply}"
+        class="tag tag-priority"
+        data-priority="${task.priority}"
+      >
+        <span class="tag-icon">
+          <tdw-icon icon="star"></tdw-icon>
+        </span>
+        <span class="tag-text">
+          ${task.priority}
+        </span>
+      </div>
+    </span>
+  ` : ''
+}
+${task.projects && task.projects.length ?
+  html`
+    <span class="projects">
+      ${task.projects.map((project) => {
+        return html`
+          <div
+            @click="${filterApply}"
+            class="tag tag-project"
+            data-project="${project}"
+          >
+            <span class="tag-icon">
+              <tdw-icon icon="plus"></tdw-icon>
+            </span>
+            <span class="tag-text">
+              ${project}
+            </span>
+          </div>
+        `
+      })}
+    </span>
+  ` : ''
+}
+${task.contexts && task.contexts.length ?
+  html`
+    <span class="contexts">
+      ${task.contexts.map((context) => {
+        return html`
+          <div
+            @click="${filterApply}"
+            class="tag tag-context"
+            data-context="${context}"
+          >
+            <span class="tag-icon">
+              <tdw-icon icon="atSign"></tdw-icon>
+            </span>
+            <span class="tag-text">
+              ${context}
+            </span>
+          </div>
+        `
+      })}
+    </span>
+  ` : ''
+}
+${task.urls && Object.keys(task.urls).length ?
+  html`
+    <span class="urls">
+      ${Object.entries(task.urls).map(([domain, url]) => {
+        return html`
+          <a class="tag tag-url" href=${url}>
+            <span class="tag-icon">
+              <tdw-icon icon="externalLink"></tdw-icon>
+            </span>
+            <span class="tag-text">
+              ${domain}
+            </span>
+          </a>
+        `
+      })}
+    </span>
+  ` : ''
+}
+${task.values && task.values.length ?
+  html`
+    <span class="values">
+      ${task.values.map((value, key) => {
+        return html`
+          <div
+            @click="${filterApply}"
+            class="tag tag-value"
+            data-key="${key}"
+            data-value="${value}"
+          >
+            <span class="tag-icon">
+              <tdw-icon icon="tag"></tdw-icon>
+            </span>
+            <span class="tag-text">
+              ${key}:${value}
+            </span>
+          </div>
+        `
+      })}
+    </span>
+  ` : ''
+}

@@ -1,0 +1,35 @@
+:host {
+  display: flex;
+  align-items: center;
+  >* {
+    // transparent border shows a 3d effect I can't get rid of?
+    border-color: #d1d1d1 #fff;
+    border-width: 0.1rem;
+    border-radius: 0;
+    border-style: solid;
+  }
+  > input {
+    border-top-left-radius: 0.4rem;
+    border-bottom-left-radius: 0.4rem;
+    border-left-color: #d1d1d1
+  }
+  > button:last-of-type {
+    border-top-right-radius: 0.4rem;
+    border-bottom-right-radius: 0.4rem;
+    border-right-color: #d1d1d1
+  }
+
+}
+input {
+  -webkit-appearance: none;
+  background-color: transparent;
+  box-shadow: none;
+  box-sizing: inherit;
+  height: 3.8rem;
+  padding: .6rem 1.0rem .7rem;
+  box-sizing: border-box;
+  width: 100%;
+  &:focus {
+    outline: 0;
+  }
+}

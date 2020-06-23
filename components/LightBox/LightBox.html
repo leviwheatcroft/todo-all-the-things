@@ -1,0 +1,13 @@
+<div @click=${maskClose} class="light-box-mask">
+  <div class="light-box">
+    <div class="top-bar">
+      <slot name="title"></slot>
+      <button @click=${close} class="btn btn-close">
+        <span class="btn-icon">
+          <tdw-icon icon="x"></tdw-icon>
+        </span>
+      </button>
+    </div>
+    <slot name="body"></slot>
+  </div>
+</div>

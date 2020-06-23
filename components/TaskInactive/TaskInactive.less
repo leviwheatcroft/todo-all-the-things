@@ -1,0 +1,36 @@
+
+:host {
+  display: flex;
+  align-items: center;
+
+  span.parsed.complete {
+    text-decoration: line-through;
+  }
+  > span {
+    height: 2.4rem;
+    margin: 0.3rem 1rem 0.3rem 0;
+  }
+  > span:last-of-type {
+    margin-right: 0;
+  }
+  .parsed {
+    // height: 3.8rem;
+    flex-grow: 2;
+  }
+  .complete-checkbox {
+    width: 4rem;
+    // https://stackoverflow.com/a/35962743/441930
+    position: relative;
+    > svg {
+      position: absolute;
+      top: 50%;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+      left: 0;
+      right: 0;
+      margin: auto;
+      text-align: center;
+    }
+  }
+}

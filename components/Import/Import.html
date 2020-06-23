@@ -1,0 +1,26 @@
+<tdw-light-box dialog="import">
+  <span slot="title" class="title">
+    Import
+  </span>
+  <div slot="body" class="body">
+    <div>
+      <span class="description">
+        Choose file.
+      </span>
+      <input
+        @change="${importTasks}"
+        class="input-import"
+        type="file"
+        accept=".txt"
+      />
+      <button @click="${showFilePicker}" class="btn btn-import">
+        <span class="btn-icon">
+          <tdw-icon icon="filePlus"></tdw-icon>
+        </span>
+        <span class="btn-text">
+          Import
+        </span>
+      </button>
+    </div>
+  </div>
+</tdw-light-box>

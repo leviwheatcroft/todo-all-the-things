@@ -1,0 +1,46 @@
+<tdw-light-box dialog="tools">
+  <span slot="title" class="title">
+    Tools
+  </span>
+  <div slot="body" class="body">
+    <div>
+      <span class="description">
+        Purge completed tasks.
+      </span>
+      <button @click="${purge}" class="btn btn-purge">
+        <span class="btn-icon">
+          <tdw-icon icon="trash2"></tdw-icon>
+        </span>
+        <span class="btn-text">
+          Purge
+        </span>
+      </button>
+    </div>
+    <div>
+      <span class="description">
+        Import list.
+      </span>
+      <button @click="${importTasks}" class="btn btn-import">
+        <span class="btn-icon">
+          <tdw-icon icon="filePlus"></tdw-icon>
+        </span>
+        <span class="btn-text">
+          Import
+        </span>
+      </button>
+    </div>
+    <div>
+      <span class="description">
+        Export list.
+      </span>
+      <button @click="${exportTasks}" class="btn btn-export">
+        <span class="btn-icon">
+          <tdw-icon icon="download"></tdw-icon>
+        </span>
+        <span class="btn-text">
+          Export
+        </span>
+      </button>
+    </div>
+  </div>
+</tdw-light-box>

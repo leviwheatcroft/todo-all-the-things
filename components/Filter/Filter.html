@@ -1,0 +1,17 @@
+<input @keyup="${keyUp}" .value="${filterText}" />
+${filterText ?
+  html`
+    <button @click=${clear} class="btn btn-clear">
+      <span class="btn-icon">
+        <tdw-icon icon="x"></tdw-icon>
+      </span>
+    </button>
+  ` :
+  html`
+    <button class="btn btn-search">
+      <span class="btn-icon">
+        <tdw-icon icon="search"></tdw-icon>
+      </span>
+    </button>
+  `
+}
