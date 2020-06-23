@@ -41,6 +41,7 @@ export function publish (action, payload) {
 
   let newState = states[0]
   for (let idx = 0; idx < actions.length; idx += 1) {
+    // eslint-disable-next-line no-console
     console.log(`publish: ${actions[idx].type}`, actions[idx])
     newState = reduce(newState, actions[idx], _publish)
   }

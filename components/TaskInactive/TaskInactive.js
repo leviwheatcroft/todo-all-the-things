@@ -67,8 +67,6 @@ export class TaskInactive extends LitElement {
     else if (key && value)
       text = `${key}:${value}`
 
-    console.log('t', text)
-
     publish({
       type: 'filterSet',
       payload: { filter: { text } }
