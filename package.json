@@ -13,6 +13,7 @@
     "browser-sync": "^2.26.7",
     "concurrently": "^5.2.0",
     "css-loader": "^3.5.3",
+    "dropbox": "^5.1.0",
     "es6-templates": "^0.2.3",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",

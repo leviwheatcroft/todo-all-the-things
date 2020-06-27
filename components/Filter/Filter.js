@@ -18,9 +18,7 @@ export class Filter extends LitElement {
   }
 
   firstUpdated () {
-    // super.connectedCallback()
     this.$input = this.shadowRoot.querySelector('input')
-    console.log('input', this.$input)
   }
 
   static get styles () { return [base, button, unsafeCSS(styles)] }

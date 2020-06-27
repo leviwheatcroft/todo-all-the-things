@@ -3,7 +3,7 @@ import {
   html as _html,
   unsafeCSS
 } from 'lit-element'
-import { states, subscribe } from '../../store'
+import { subscribe } from '../../store'
 import { grid } from '../../less'
 import template from './Root.html'
 import styles from './Root.less'
@@ -12,8 +12,10 @@ export class Root extends LitElement {
   constructor () {
     super()
     this.lists = {}
-    subscribe('localStorageLoaded', () => {
-      this.lists = states[0].lists
+    subscribe(({ state: { lists } }) => {
+      if (this.lists === lists)
+        return
+      this.lists = lists
     })
   }
 
@@ -23,6 +25,15 @@ export class Root extends LitElement {
     return {
       lists: {
         attribute: false
+        // hasChanged (current, previous) {
+        //   if (!previous)
+        //     return true
+        //   previous = Object.keys(previous)
+        //   current = Object.keys(current)
+        //   if (current.length !== previous.length)
+        //     return true
+        //   return current.some((v, idx) => v !== previous[idx])
+        // }
       }
     }
   }

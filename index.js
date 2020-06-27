@@ -1,5 +1,6 @@
+/* eslint-disable no-new */
 import { publish } from './store'
-import { LocalStorage } from './controllers'
+import { LocalStorage, RemoteStorage } from './controllers'
 // require('milligram/dist/milligram.css')
 require('./less/index.less')
 require('./components')
@@ -10,13 +11,12 @@ require('./components')
 //   instancesTrigger
 // } = require('./lib/StateObserver')
 
-console.log('loaded')
 // eslint-disable-next-line no-new
 // new Storage()
 //
 // instancesTrigger({ type: 'domLoaded' })
 
-// eslint-disable-next-line no-new
 new LocalStorage()
+new RemoteStorage()
 
 publish('domLoaded')

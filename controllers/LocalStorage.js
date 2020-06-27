@@ -1,5 +1,10 @@
 /* eslint-disable max-classes-per-file */
-import { subscribe, publish, states } from '../store'
+import {
+  subscribe,
+  publish,
+  states,
+  tasksDiff
+} from '../store'
 
 const _prefix = 'tdw'
 
@@ -9,70 +14,41 @@ function prefix (body) {
 
 export class LocalStorage {
   constructor () {
-    subscribe(/.*/, this.setTasks.bind(this))
+    subscribe(/tasksUpsert/, this.tasksUpsert.bind(this))
     subscribe(/domLoaded/, this.domLoaded.bind(this))
   }
 
   domLoaded () {
-    publish({
-      type: 'loadTasks',
-      payload: {
-        tasks: this.getAll()
-      }
-    })
+    const tasks = this.getAll()
+    publish('tasksUpsert', this, { tasks })
   }
 
-  setTasks () {
-    if (!states[1])
+  tasksUpsert ({ action: { origin } }) {
+    if (origin === this)
       return
-    const listIds = Object.keys(states[0].lists).filter((k) => {
-      return (
-        states[1].lists[k] &&
-        states[0].lists[k].tasks !== states[1].lists[k].tasks
+    tasksDiff(states).forEach((task) => {
+      const storedTask = {
+        id: task.id,
+        listId: task.listId,
+        raw: task.raw,
+        lineNumber: task.lineNumber
+      }
+      localStorage.setItem(
+        prefix(task.id),
+        JSON.stringify(storedTask)
       )
-    })
-    if (!listIds.length)
-      return
-    listIds.forEach((listId) => {
-      const currentTasks = states[0].lists[listId].tasks
-      const previousTasks = states[1].lists[listId].tasks
-
-      // remove deleted tasks
-      Object.keys(previousTasks)
-        .forEach((taskId) => {
-          if (currentTasks[taskId])
-            return
-          localStorage.removeItem(prefix(taskId))
-        })
-
-      // update changed tasks
-      Object.keys(currentTasks)
-        .forEach((taskId) => {
-          if (currentTasks[taskId] === previousTasks[taskId])
-            return
-          const task = currentTasks[taskId]
-          const storedTask = {
-            id: task.id,
-            listId: task.listId,
-            raw: task.raw,
-            lineNumber: task.lineNumber
-          }
-          localStorage.setItem(
-            prefix(task.id),
-            JSON.stringify(storedTask)
-          )
-        })
     })
   }
 
   getAll () {
-    const re = new RegExp(_prefix)
+    const rePrefix = new RegExp(_prefix)
+    const reUuid = /[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
     let idx = 0
     let key
     const tasks = []
     // eslint-disable-next-line no-cond-assign
     while ((key = localStorage.key(idx)) !== null) {
-      if (re.test(key))
+      if (rePrefix.test(key) && reUuid.test(key))
         tasks.push(JSON.parse(localStorage.getItem(key)))
       idx += 1
     }

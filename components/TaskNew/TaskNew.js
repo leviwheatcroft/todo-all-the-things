@@ -27,15 +27,11 @@ export class TaskNew extends LitElement {
 
   save () {
     const $input = this.shadowRoot.querySelector('input')
-    publish({
-      type: 'newTask',
-      payload: {
-        task: {
-          raw: $input.value,
-          listId: this.listId
-        }
-      }
-    })
+    const task = {
+      raw: $input.value,
+      listId: this.listId
+    }
+    publish('tasksUpsert', this, { tasks: [task] })
     $input.value = ''
   }
 

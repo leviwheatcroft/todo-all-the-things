@@ -5,8 +5,11 @@ export function purgeTasks (action, { state, update }) {
   Object.values(state.lists).forEach(({ id: listId, tasks }) => {
     tasks = Object.fromEntries(
       Object.values(tasks)
-        .filter((task) => !task.complete)
-        .map((task) => [task.id, task])
+        .map((task) => {
+          if (task.completed)
+            task = { ...task, purged: true }
+          return [task.id, task]
+        })
     )
     update(['lists', listId, 'tasks'], tasks)
   })

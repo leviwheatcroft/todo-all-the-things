@@ -1,4 +1,4 @@
-export function toggleComplete (action, { state, publish, update }) {
+export function toggleComplete (action, { publish }) {
   if (action.type !== 'toggleComplete')
     return
 
@@ -10,7 +10,5 @@ export function toggleComplete (action, { state, publish, update }) {
     task.raw = ` x ${task.raw}`
   else
     task.raw = task.raw.replace(re, '')
-  update(['lists', task.listId, 'tasks', task.id], task)
-  if (state.options.sort.completedLast)
-    publish('sortTasks')
+  publish('tasksUpsert', false, { tasks: [task] })
 }

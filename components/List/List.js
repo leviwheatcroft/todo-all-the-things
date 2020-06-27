@@ -45,7 +45,6 @@ export class List extends LitElement {
     const html = _html
     const repeat = _repeat
     const nothing = _nothing
-
     return eval('html`' + template + '`')
   }
   /* eslint-enable */

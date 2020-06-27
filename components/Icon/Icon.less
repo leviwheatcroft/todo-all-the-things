@@ -2,6 +2,7 @@
   display: block;
   height: 2rem;
   width: 2rem;
+
 }
 .feather {
   height: 2rem;
@@ -11,6 +12,20 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   fill: none;
+  &.spin {
+    animation-name: spin;
+    animation-duration: 4000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    @keyframes spin {
+      from {
+        transform:rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
 }
 .tag .feather {
   height: 1.8rem;

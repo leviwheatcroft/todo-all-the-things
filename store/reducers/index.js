@@ -1,9 +1,8 @@
 import { wrap } from '../../lib/dotProp'
-import { loadTasks } from './loadTasks'
-import { newTask } from './newTask'
+import { tasksUpsert } from './tasksUpsert'
+import { tasksRemove } from './tasksRemove'
 import { toggleComplete } from './toggleComplete'
 import { toggleDialog } from './toggleDialog'
-import { importTasks } from './importTasks'
 import { toggleTaskActive } from './toggleTaskActive'
 import { updateTask } from './updateTask'
 import { filterApply } from './filterApply'
@@ -12,11 +11,10 @@ import { sortTasks } from './sortTasks'
 import { purgeTasks } from './purgeTasks'
 
 const reducers = [
-  loadTasks,
-  newTask,
+  tasksUpsert,
+  tasksRemove,
   toggleComplete,
   toggleDialog,
-  importTasks,
   toggleTaskActive,
   updateTask,
   filterApply,
@@ -25,10 +23,11 @@ const reducers = [
   purgeTasks
 ]
 
-export function reduce (currentState, action, publish) {
-  return reducers.reduce((state, reducer) => {
+export function reduce (_state, action, publish) {
+  const result = reducers.reduce((state, reducer) => {
     const wrapped = wrap(state)
     reducer(action, { state, update: wrapped.set, publish })
     return wrapped.result
-  }, currentState)
+  }, _state)
+  return result
 }

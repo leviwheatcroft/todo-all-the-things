@@ -32,15 +32,24 @@ export class Import extends LitElement {
   }
 
   async importTasks () {
-    console.log('import tasks handler')
     const content = await this.shadowRoot.querySelector('input').files[0].text()
     publish('toggleDialog')
-    // easier to convert all line endings before splitting
-    const lines = content.replace(/\r\n?/g, '\n').split(/\n/).filter((l) => l)
     const listId = 'todo'
+    // easier to convert all line endings before splitting
+    const tasks = content
+      .replace(/\r\n?/g, '\n')
+      .split(/\n/)
+      .filter((raw) => raw)
+      .map((raw) => {
+        return {
+          raw,
+          listId
+        }
+      })
+
     publish({
-      type: 'importTasks',
-      payload: { lines, listId }
+      type: 'tasksUpsert',
+      payload: { tasks }
     })
   }
 }

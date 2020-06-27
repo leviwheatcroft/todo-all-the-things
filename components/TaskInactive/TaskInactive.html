@@ -7,6 +7,13 @@
 <span @click="${activate}" class="parsed ${task.complete ? 'complete' : ''}">
   ${task.parsed}
 </span>
+${task.pendingRemote ?
+  html`
+  <span class="pending-remote">
+    <tdw-icon icon="loader" spin>
+  </span>
+  ` : ''
+}
 ${task.createdDate ?
   html`
     <span class="created-date">

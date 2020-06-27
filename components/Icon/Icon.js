@@ -12,14 +12,18 @@ export class Icon extends LitElement {
 
   static get properties () {
     return {
-      icon: { attribute: true }
+      icon: { attribute: true },
+      spin: {
+        attribute: true,
+        type: Boolean
+      }
     }
   }
 
   /* eslint-disable no-eval, prefer-template, no-unused-vars */
   render () {
     const icon = svg[this.icon]
-      .replace(/<svg/, '<svg class="feather"')
+      .replace(/<svg/, `<svg class="feather${this.spin ? ' spin' : ''}"`)
       .replace(/height="24"/, '')
       .replace(/width="24"/, '')
       .replace(/<\/svg>/, '')
