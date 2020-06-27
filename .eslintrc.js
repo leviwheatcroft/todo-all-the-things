@@ -30,5 +30,10 @@ module.exports = {
     'arrow-body-style': 'off',
     'consistent-return': 'off',
     'no-param-reassign': 'off'
+  },
+  settings: {
+    'import/resolver': {
+      webpack: { config: 'webpack.config.js' }
+    }
   }
 };

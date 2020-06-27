@@ -75,6 +75,7 @@ module.exports = {
     alias: {
       // jquery: 'jquery/src/jquery'
     },
-    extensions: ['.js', '.less', '.html']
+    extensions: ['.js', '.less', '.html'],
+    mainFiles: ['index', '_index']
   }
 }
