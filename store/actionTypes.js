@@ -10,6 +10,13 @@ export const actionTypes = [
   'tasksCreateNew',
   // issued by TaskNew component
 
+  'tasksToggleActive',
+  // issued by TaskInactive component
+  // issued by TaskActive component
+
+  'tasksToggleComplete',
+  // issued by TaskInactive component
+
   'tasksUpsert',
   // issued by LocalStorage on domLoaded
   //

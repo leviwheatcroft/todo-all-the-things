@@ -1,9 +1,13 @@
 import { tasksCreateNew } from './createNew'
 import { tasksLoadLocalStorage } from './loadLocalStorage'
+import { tasksToggleComplete } from './toggleComplete'
+import { tasksToggleActive } from './toggleActive'
 
 const reducers = [
   tasksCreateNew,
-  tasksLoadLocalStorage
+  tasksLoadLocalStorage,
+  tasksToggleComplete,
+  tasksToggleActive
 ]
 
 export function tasks (action, context) {

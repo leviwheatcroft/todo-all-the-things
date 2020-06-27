@@ -3,9 +3,9 @@ import { tasks } from './tasks'
 
 // import { tasksUpsert } from './tasksUpsert'
 import { tasksRemove } from './tasksRemove'
-import { toggleComplete } from './toggleComplete'
+// import { toggleComplete } from './toggleComplete'
 import { toggleDialog } from './toggleDialog'
-import { toggleTaskActive } from './toggleTaskActive'
+// import { toggleTaskActive } from './toggleTaskActive'
 // import { updateTask } from './updateTask'
 import { filterApply } from './filterApply'
 import { filterSet } from './filterSet'
@@ -17,9 +17,9 @@ const reducers = [
 
   // tasksUpsert,
   tasksRemove,
-  toggleComplete,
+  // toggleComplete,
   toggleDialog,
-  toggleTaskActive,
+  // toggleTaskActive,
   // updateTask,
   filterApply,
   filterSet,

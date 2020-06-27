@@ -39,10 +39,7 @@ export class TaskInactive extends LitElement {
 
   activate () {
     const { task } = this
-    publish({
-      type: 'toggleTaskActive',
-      payload: { task }
-    })
+    publish('tasksToggleActive', { task })
   }
 
   filterApply (event) {
@@ -75,10 +72,7 @@ export class TaskInactive extends LitElement {
 
   toggleComplete () {
     const { task } = this
-    publish({
-      type: 'toggleComplete',
-      payload: { task }
-    })
+    publish('tasksToggleComplete', { task })
   }
 }
 

@@ -20,7 +20,7 @@ export class LocalStorage {
 
   domLoaded () {
     const tasks = this.getAll()
-    publish('tasksLoadLocalStorage', this, { tasks })
+    publish('tasksLoadLocalStorage', { tasks })
   }
 
   tasksUpsert ({ action: { origin } }) {

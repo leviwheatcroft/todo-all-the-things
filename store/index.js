@@ -43,7 +43,7 @@ export function subscribe (tests, handler) {
 }
 
 const actions = []
-export function publish (type, origin = false, payload = {}) {
+export function publish (type, payload = {}, origin = false) {
   const action = typeof type === 'string' ? { type, origin, payload } : type
   actions.push(action)
   if (actions.length > 1)
@@ -59,7 +59,7 @@ export function publish (type, origin = false, payload = {}) {
       states.unshift(state)
     else
       console.log('no update')
-    console.log([ ...states ])
+    console.log([...states])
     subscriptions.forEach((handlers, re) => {
       if (re.test(action.type))
         handlers.forEach((h) => h({ action, state }))
