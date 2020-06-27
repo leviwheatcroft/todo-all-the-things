@@ -31,7 +31,7 @@ export class TaskNew extends LitElement {
       raw: $input.value,
       listId: this.listId
     }
-    publish('tasksUpsert', this, { tasks: [task] })
+    publish('tasksCreateNew', this, { tasks: [task] })
     $input.value = ''
   }
 

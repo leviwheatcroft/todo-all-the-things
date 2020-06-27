@@ -3,6 +3,13 @@ export const actionTypes = [
   'domLoaded',
   // issued by index.js on load
   // listener: localStorage controller - needs to load tasks from local storage
+
+  'tasksLoadLocalStorage',
+  // issued by LocalStorage
+
+  'tasksCreateNew',
+  // issued by TaskNew component
+
   'tasksUpsert',
   // issued by LocalStorage on domLoaded
   //

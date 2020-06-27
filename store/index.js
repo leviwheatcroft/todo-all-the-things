@@ -57,6 +57,9 @@ export function publish (type, origin = false, payload = {}) {
     const state = reduce(states[0], action, publish)
     if (state !== states[0])
       states.unshift(state)
+    else
+      console.log('no update')
+    console.log([ ...states ])
     subscriptions.forEach((handlers, re) => {
       if (re.test(action.type))
         handlers.forEach((h) => h({ action, state }))

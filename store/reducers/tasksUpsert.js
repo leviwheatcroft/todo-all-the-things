@@ -34,10 +34,3 @@ export function tasksUpsert (action, { state, update, publish }) {
   publish('filterApply')
   publish('sortTasks')
 }
-
-function nextLineNumber (tasks) {
-  return Object.values(tasks)
-    .reduce((lineNumber, task) => {
-      return Math.max(lineNumber, task.lineNumber + 1)
-    }, 0)
-}
