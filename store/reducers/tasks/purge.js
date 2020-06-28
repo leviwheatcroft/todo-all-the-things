@@ -1,12 +1,12 @@
-export function purgeTasks (action, { state, update }) {
-  if (action.type !== 'purgeTasks')
+export function tasksPurge (action, { getState, update }) {
+  if (action.type !== 'tasksPurge')
     return
 
-  Object.values(state.lists).forEach(({ id: listId, tasks }) => {
+  Object.values(getState().lists).forEach(({ id: listId, tasks }) => {
     tasks = Object.fromEntries(
       Object.values(tasks)
         .map((task) => {
-          if (task.completed)
+          if (task.complete)
             task = { ...task, purged: true }
           return [task.id, task]
         })

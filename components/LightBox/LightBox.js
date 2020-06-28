@@ -16,9 +16,8 @@ export class LightBox extends LitElement {
   constructor () {
     super()
     this.show = states[0].dialogs.show
-    subscribe('toggleDialog', ({ state }) => {
-      const { dialogs: { show } } = state
-      this.show = show
+    subscribe('dialogsToggle', ({ state }) => {
+      this.show = state.dialogs.show
     })
   }
 

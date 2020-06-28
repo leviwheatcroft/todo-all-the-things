@@ -4,7 +4,6 @@ import { sortTasks } from '../lib/sortTasks'
 export function tasksEdit (action, context) {
   if (action.type !== 'tasksEdit')
     return
-  console.log('ran')
   let { payload: { task } } = action
   const { id, raw, listId } = task
   const {

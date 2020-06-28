@@ -1,6 +1,6 @@
 import { initialState } from './initialState'
 import { reduce } from './reducers'
-import { get } from '../lib/dotProp'
+import { get } from './reducers/lib/dotProp'
 import { actionTypes } from './actionTypes'
 
 export { tasksDiff } from './tasksDiff'
@@ -50,21 +50,26 @@ export function publish (type, payload = {}, origin = false) {
     return
 
   while (actions.length) {
+    /* eslint-disable no-console */
     const action = actions[0]
-    if (!actionTypes.includes(action.type))
-      throw new Error(`undefined action: ${action.type}`)
-    console.log(`publish: ${action.type}`, action)
+    console.assert(
+      actionTypes.includes(action.type),
+      `undefined action: ${action.type}`
+    )
+    console.groupCollapsed(action.type)
+    console.log(`publish: ${action.type}`)
+    console.log(action)
     const state = reduce(states[0], action, publish)
     if (state !== states[0])
       states.unshift(state)
-    else
-      console.log('no update')
     console.log([...states])
     subscriptions.forEach((handlers, re) => {
       if (re.test(action.type))
         handlers.forEach((h) => h({ action, state }))
     })
+    console.groupEnd(action.type)
     actions.shift()
+    /* eslint-enable */
   }
 
   // actions.push()

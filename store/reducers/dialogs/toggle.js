@@ -1,11 +1,11 @@
-export function toggleDialog (action, { state, update }) {
-  if (action.type !== 'toggleDialog')
+export function dialogsToggle (action, { getState, update }) {
+  if (action.type !== 'dialogsToggle')
     return
 
   let show
   if (!action.payload)
     show = false
-  else if (state.dialogs.show === action.payload.dialog)
+  else if (getState().dialogs.show === action.payload.dialog)
     show = false
   else
     show = action.payload.dialog

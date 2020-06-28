@@ -36,15 +36,12 @@ export class Tools extends LitElement {
   }
 
   purge () {
-    publish('purgeTasks')
-    publish('toggleDialog')
+    publish('tasksPurge')
+    publish('dialogsToggle')
   }
 
   importTasks () {
-    publish({
-      type: 'toggleDialog',
-      payload: { dialog: 'import' }
-    })
+    publish('dialogsToggle', { dialog: 'import' })
   }
 
   exportTasks () {

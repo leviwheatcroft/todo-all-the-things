@@ -1,4 +1,4 @@
-export function filterSet (action, { update, publish }) {
+export function filterSet (action, { getState, update }) {
   if (action.type !== 'filterSet')
     return
   const {
@@ -14,5 +14,15 @@ export function filterSet (action, { update, publish }) {
     regExp = new RegExp(text.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&'), 'i')
 
   update(['filter'], { text, regExp })
-  publish('filterApply')
+
+  Object.values(getState().lists).forEach((list) => {
+    let { tasks } = list
+    Object.values(tasks).forEach((task) => {
+      const filterMatched = regExp.test(task.raw)
+      if (filterMatched !== task.filterMatched)
+        tasks = { ...tasks, [task.id]: { ...task, filterMatched } }
+    })
+    if (tasks !== list.tasks)
+      update(['lists', list.id, 'tasks'], tasks)
+  })
 }

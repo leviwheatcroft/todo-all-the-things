@@ -1,30 +1,14 @@
-import { wrap } from '../../lib/dotProp'
+import { wrap } from './lib/dotProp'
 import { tasks } from './tasks'
+import { dialogs } from './dialogs'
 
-// import { tasksUpsert } from './tasksUpsert'
-import { tasksRemove } from './tasksRemove'
-// import { toggleComplete } from './toggleComplete'
-import { toggleDialog } from './toggleDialog'
-// import { toggleTaskActive } from './toggleTaskActive'
-// import { updateTask } from './updateTask'
-import { filterApply } from './filterApply'
 import { filterSet } from './filterSet'
-import { sortTasks } from './sortTasks'
-import { purgeTasks } from './purgeTasks'
 
 const reducers = [
   tasks,
+  dialogs,
 
-  // tasksUpsert,
-  tasksRemove,
-  // toggleComplete,
-  toggleDialog,
-  // toggleTaskActive,
-  // updateTask,
-  filterApply,
-  filterSet,
-  sortTasks,
-  purgeTasks
+  filterSet
 ]
 
 export function reduce (_state, action, publish) {

@@ -12,12 +12,7 @@ export class NavBar extends LitElement {
   static get styles () { return [base, button, unsafeCSS(styles)] }
 
   tools () {
-    publish({
-      type: 'toggleDialog',
-      payload: {
-        dialog: 'tools'
-      }
-    })
+    publish('dialogsToggle', { dialog: 'tools' })
   }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */

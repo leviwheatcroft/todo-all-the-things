@@ -20,4 +20,20 @@ export const actionTypes = [
   'tasksEdit',
   // issued by TaskActive component
 
+  'filterSet',
+  // issued by Filter component
+
+  'dialogsToggle',
+  // issued by NavBar component
+  // issued by Tools component
+  // issued by ToolsImport component
+
+  'tasksPurge',
+  // sets completed tasks { purged: true }
+  // issued by Tools component
+
+  'tasksRemove',
+  // removes task which matches 'raw' value
+  // used when a task has been removed from the remote
+  // issued by RemoteStorage controller
 ]

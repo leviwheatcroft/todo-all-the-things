@@ -14,7 +14,7 @@ function prefix (body) {
 
 export class LocalStorage {
   constructor () {
-    subscribe(/tasksUpsert/, this.tasksUpsert.bind(this))
+    subscribe(this.setChanged.bind(this))
     subscribe(/domLoaded/, this.domLoaded.bind(this))
   }
 
@@ -23,16 +23,19 @@ export class LocalStorage {
     publish('tasksLoadLocalStorage', { tasks })
   }
 
-  tasksUpsert ({ action: { origin } }) {
-    if (origin === this)
+  setChanged ({ action: { type } }) {
+    console.log('sc')
+    if (type === 'tasksLoadLocalStorage')
       return
     tasksDiff(states).forEach((task) => {
       const storedTask = {
         id: task.id,
         listId: task.listId,
         raw: task.raw,
+        purged: task.purged,
         lineNumber: task.lineNumber
       }
+      console.log(storedTask)
       localStorage.setItem(
         prefix(task.id),
         JSON.stringify(storedTask)

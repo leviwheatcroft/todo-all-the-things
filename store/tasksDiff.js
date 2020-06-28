@@ -16,7 +16,8 @@ export function tasksDiff (states) {
       const previousTask = previousList.tasks[currentTask.id]
       if (
         !previousTask ||
-        currentTask.raw !== previousTask.raw
+        currentTask.raw !== previousTask.raw ||
+        currentTask.purged !== previousTask.purged
       )
         updatedTasks.push(currentTask)
     })

@@ -3,6 +3,8 @@
   ${repeat(Object.values(tasks), (t) => t.id, (t) => {
     if (!t.filterMatched)
       return nothing
+    if (t.purged)
+      return nothing
     return t.active ?
       html`
         <tdw-task-active .task="${t}"></tdw-task-active>
