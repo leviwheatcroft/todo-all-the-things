@@ -12,7 +12,7 @@ export function tasksLoadLocalStorage (action, context) {
     update,
     getState
   } = context
-  const lists = {}
+  const { lists } = getState()
   tasks.forEach((task) => {
     const parsed = parseTask(task.raw)
     const filterMatched = getState().filter.regExp.test(task.raw)
@@ -25,7 +25,10 @@ export function tasksLoadLocalStorage (action, context) {
       id,
       listId
     } = task
-    lists[listId] = lists[listId] || { id: listId, tasks: {} }
+    if (lists[listId])
+      lists[listId] = { ...lists[listId] }
+    else
+      lists[listId] = { id: listId, tasks: {} }
     lists[listId].tasks[id] = task
   })
   Object.entries(lists).forEach(([id, list]) => {

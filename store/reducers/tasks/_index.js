@@ -5,6 +5,7 @@ import { tasksToggleActive } from './toggleActive'
 import { tasksEdit } from './edit'
 import { tasksPurge } from './purge'
 import { tasksRemove } from './remove'
+import { tasksImport } from './import'
 
 const reducers = [
   tasksCreateNew,
@@ -13,7 +14,8 @@ const reducers = [
   tasksToggleActive,
   tasksEdit,
   tasksPurge,
-  tasksRemove
+  tasksRemove,
+  tasksImport
 ]
 
 export function tasks (action, context) {

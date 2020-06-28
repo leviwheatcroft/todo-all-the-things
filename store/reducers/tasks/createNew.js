@@ -16,16 +16,17 @@ export function tasksCreateNew (action, context) {
     }
   } = action
   const {
-    state,
+    getState,
     update
   } = context
   const id = uuid()
-  const lineNumber = nextLineNumber(state.lists[listId].tasks)
+  const lineNumber = nextLineNumber(getState().lists[listId].tasks)
   const parsed = parseTask(raw)
-  const filterMatched = state.filter.regExp.test(raw)
+  const filterMatched = getState().filter.regExp.test(raw)
   const task = {
     id,
     raw,
+    listId,
     lineNumber,
     filterMatched,
     ...parsed
@@ -33,7 +34,7 @@ export function tasksCreateNew (action, context) {
   update(['lists', listId, 'tasks', id], task)
   update(
     ['lists', listId, 'tasks'],
-    sortTasks(state.lists[listId].tasks, state.options.sort)
+    sortTasks(getState().lists[listId].tasks, getState().options.sort)
   )
 }
 

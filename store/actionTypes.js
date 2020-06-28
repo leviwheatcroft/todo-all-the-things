@@ -36,4 +36,8 @@ export const actionTypes = [
   // removes task which matches 'raw' value
   // used when a task has been removed from the remote
   // issued by RemoteStorage controller
+
+  'tasksImport',
+  // imports tasks from txt file, stores in state
+  // issued by Import component
 ]
