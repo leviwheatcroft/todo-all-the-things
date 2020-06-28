@@ -49,7 +49,7 @@ export class TaskActive extends LitElement {
     const { task } = this
     const raw = this.shadowRoot.querySelector('input').value
     const payload = { task: { ...task, raw } }
-    publish({ type: 'updateTask', payload })
+    publish('tasksEdit', payload)
     publish('tasksToggleActive', payload)
   }
 }

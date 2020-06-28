@@ -17,15 +17,7 @@ export const actionTypes = [
   'tasksToggleComplete',
   // issued by TaskInactive component
 
-  'tasksUpsert',
-  // issued by LocalStorage on domLoaded
-  //
-  'filterApply',
-  // issued by tasksUpsert reducer
-  // issued by filterSet reducer
-  'toggleComplete',
-  // issued by TaskInactive component
-  'sortTasks',
-  // issued by toggleComplete reducer
-  // issued by tasksUpsert reducer
+  'tasksEdit',
+  // issued by TaskActive component
+
 ]

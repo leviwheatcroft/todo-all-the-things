@@ -1,15 +1,20 @@
 import { sortTasks } from '../lib/sortTasks'
 
-export function tasksToggleActive (action, { state, update }) {
+export function tasksToggleActive (action, context) {
   if (action.type !== 'tasksToggleActive')
     return
   if (process.env.NODE_ENV !== 'production')
     checkPayloadShape(action.payload)
 
+  const {
+    getState,
+    update
+  } = context
+
   const { payload: { task } } = action
   const { id, listId, active } = task
 
-  const tasks = { ...state.lists[listId].tasks }
+  const tasks = { ...getState().lists[listId].tasks }
 
   // if activating a task, deactivate all others
   if (!task.active) {
@@ -22,7 +27,7 @@ export function tasksToggleActive (action, { state, update }) {
 
   tasks[id] = { ...tasks[id], active: !active }
 
-  update(['lists', listId, 'tasks'], sortTasks(tasks, state.options.sort))
+  update(['lists', listId, 'tasks'], sortTasks(tasks, getState().options.sort))
 }
 
 function checkPayloadShape (payload) {

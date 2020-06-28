@@ -31,7 +31,7 @@ export function reduce (_state, action, publish) {
   const result = reducers.reduce((state, reducer) => {
     const wrapped = wrap(state)
     const context = {
-      state,
+      getState: wrapped.get,
       wrapped,
       update: wrapped.set,
       publish
