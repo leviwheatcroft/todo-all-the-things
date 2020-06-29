@@ -16,6 +16,7 @@ function diff (previous, current, listId) {
   const newLine = /\r?\n/
   previous = previous.split(newLine)
   current = current.split(newLine)
+  // console.log(current, previous)
   const added = []
   current.forEach((raw) => {
     const idx = previous.indexOf(raw)
@@ -36,11 +37,10 @@ async function importTasks (listId) {
   const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
   const current = await retrieve(listId)
   const { added, removed } = diff(previous, current, listId)
-  console.log('diff', added, removed)
   if (added)
-    tasksAdd(added)
+    tasksAdd(added, listId)
   if (removed)
-    tasksRemove(removed)
+    tasksRemove(removed, listId)
   localStorage.setItem(prefix(`previous-${listId}`), current)
 }
 
@@ -69,13 +69,14 @@ async function store (list) {
   const dbx = getClient()
   const bits = Object.values(tasks)
     .sort((a, b) => a.lineNumber - b.lineNumber)
-    .map(({ raw }) => raw)
+    .map(({ raw }) => `${raw}\n`)
   const contents = new File(bits, `${listId}.txt`)
   await dbx.filesUpload({
     contents,
     path: `/${listId}.txt`,
     mode: 'overwrite'
   })
+  localStorage.setItem(prefix(`previous-${listId}`), await contents.text())
 }
 
 async function create (listId) {
@@ -90,7 +91,7 @@ async function create (listId) {
     })
   } catch ({ error: raw }) {
     const error = JSON.parse(raw)
-    console.log('err', error)
+    console.error('err', error)
   }
   return result
 }

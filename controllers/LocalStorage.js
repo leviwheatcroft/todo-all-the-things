@@ -24,7 +24,6 @@ export class LocalStorage {
   }
 
   setChanged ({ action: { type } }) {
-    console.log('sc')
     if (type === 'tasksLoadLocalStorage')
       return
     tasksDiff(states).forEach((task) => {
@@ -35,7 +34,6 @@ export class LocalStorage {
         purged: task.purged,
         lineNumber: task.lineNumber
       }
-      console.log(storedTask)
       localStorage.setItem(
         prefix(task.id),
         JSON.stringify(storedTask)

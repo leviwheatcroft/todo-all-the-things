@@ -6,6 +6,8 @@ import { tasksEdit } from './edit'
 import { tasksPurge } from './purge'
 import { tasksRemove } from './remove'
 import { tasksImport } from './import'
+import { tasksSetPending } from './setPending'
+import { tasksUnsetPending } from './unsetPending'
 
 const reducers = [
   tasksCreateNew,
@@ -15,7 +17,9 @@ const reducers = [
   tasksEdit,
   tasksPurge,
   tasksRemove,
-  tasksImport
+  tasksImport,
+  tasksSetPending,
+  tasksUnsetPending
 ]
 
 export function tasks (action, context) {

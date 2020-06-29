@@ -10,6 +10,12 @@ export const actionTypes = [
   'tasksCreateNew',
   // issued by TaskNew component
 
+  'tasksCreateNew.fromRemote',
+  // this is processed by the tasksCreateNew reducer
+  // a different action.type is required so that RemoteStorage can listen to
+  // tasksCreateNew, while ignoring tasksCreateNew.fromRemote
+  // issued by RemoteStorage
+
   'tasksToggleActive',
   // issued by TaskInactive component
   // issued by TaskActive component
@@ -40,4 +46,9 @@ export const actionTypes = [
   'tasksImport',
   // imports tasks from txt file, stores in state
   // issued by Import component
+
+  'tasksSetPending',
+  'tasksUnsetPending',
+  // set pending: true | false
+  // issued by RemoteStorage controller
 ]

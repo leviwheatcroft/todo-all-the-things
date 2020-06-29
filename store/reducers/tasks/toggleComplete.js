@@ -6,7 +6,7 @@ export function tasksToggleComplete (action, context) {
   if (process.env.NODE_ENV !== 'production')
     checkPayloadShape(action.payload)
 
-  const { state, update } = context
+  const { getState, update } = context
   let { payload: { task } } = action
   const { listId } = task
   task = { ...task }
@@ -15,8 +15,8 @@ export function tasksToggleComplete (action, context) {
     task.raw = ` x ${task.raw}`
   else
     task.raw = task.raw.replace(/^\s?x\s/i, '')
-  const tasks = { ...state.lists[listId].tasks, [task.id]: task }
-  update(['lists', listId, 'tasks'], sortTasks(tasks, state.options.sort))
+  const tasks = { ...getState().lists[listId].tasks, [task.id]: task }
+  update(['lists', listId, 'tasks'], sortTasks(tasks, getState().options.sort))
 }
 
 function checkPayloadShape (payload) {

@@ -7,7 +7,7 @@
 <span @click="${activate}" class="parsed ${task.complete ? 'complete' : ''}">
   ${task.parsed}
 </span>
-${task.pendingRemote ?
+${task.pending ?
   html`
   <span class="pending-remote">
     <tdw-icon icon="loader" spin>

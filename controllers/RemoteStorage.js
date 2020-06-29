@@ -5,14 +5,13 @@ import {
   tasksDiff
 } from '../store'
 import { dropbox } from '../drivers'
-import { LocalStorage } from './LocalStorage'
 
 const _prefix = 'tdw'
 
 export class RemoteStorage {
   constructor () {
-    subscribe(/localStorageLoaded/, this.importTasks.bind(this))
-    subscribe(/tasksUpsert/, this.tasksUpsert.bind(this))
+    subscribe(/tasksLoadLocalStorage/, this.tasksLoadRemoteStorage.bind(this))
+    subscribe(this.setChanged.bind(this))
     this.driver = dropbox
     this.driver.initialise({
       tasksAdd: this.tasksAdd.bind(this),
@@ -22,12 +21,12 @@ export class RemoteStorage {
     })
   }
 
-  tasksAdd (tasks) {
-    publish('tasksAdd', { tasks })
+  tasksAdd (tasks, listId) {
+    publish('tasksCreateNew.fromRemote', { tasks, listId })
   }
 
-  tasksRemove (tasks) {
-    publish('tasksRemove', { tasks })
+  tasksRemove (tasks, listId) {
+    publish('tasksRemove', { tasks, listId })
   }
 
   getOptions () {
@@ -38,38 +37,35 @@ export class RemoteStorage {
     return `${_prefix}-${key}`
   }
 
-  tasksUpsert ({ action: { origin }, state }) {
+  async setChanged ({ action, state }) {
     if (
-      origin === this ||
-      origin instanceof LocalStorage
+      action.type === 'tasksLoadLocalStorage' ||
+      action.type === 'tasksSetPending' ||
+      action.type === 'tasksUnsetPending' ||
+      action.type === 'tasksCreateNew.fromRemote' ||
+      action.type === 'domLoaded'
     )
       return
+
     const tasks = tasksDiff(states)
+    publish('tasksSetPending', { tasks })
     let listIds = tasks
       .map(({ listId }) => listId)
     listIds = listIds.filter((id, idx) => listIds.indexOf(id) === idx)
     // console.log('Remote Storage will store:', listIds)
     listIds.forEach((listId) => {
-      let upsert
-      upsert = [
-        ...tasks
-          .filter((task) => task.listId === listId)
-          .map((task) => ({ ...task, pendingRemote: true }))
-      ]
-      publish('tasksUpsert', this, { tasks: upsert })
       this.driver.store(state.lists[listId])
         .then(() => {
-          upsert = upsert.map((task) => ({ ...task, pendingRemote: false }))
-          publish('tasksUpsert', this, { tasks: upsert })
+          publish('tasksUnsetPending', { tasks: state.lists[listId].tasks })
         })
     })
   }
 
-  importTasks ({ action, state }) {
-    let listIds
-    if (action.type === 'localStorageLoaded')
-      listIds = Object.keys(state.lists)
-    listIds.forEach((listId) => {
+  tasksLoadRemoteStorage ({ state }) {
+    // let listIds
+    // if (action.type === 'localStorageLoaded')
+    //   listIds = Object.keys(state.lists)
+    Object.keys(state.lists).forEach((listId) => {
       try {
         this.driver.importTasks(listId)
       } catch (err) {
