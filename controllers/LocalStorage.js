@@ -39,7 +39,6 @@ export class LocalStorage {
     if (type === 'tasksLoadLocalStorage')
       return
     const { added, updated, removed } = tasksDiff(states)
-    console.log('diff', tasksDiff(states))
     const tasks = [...added, ...updated]
     tasks.forEach((task) => {
       const storedTask = {
@@ -49,14 +48,12 @@ export class LocalStorage {
         purged: task.purged,
         lineNumber: task.lineNumber
       }
-      console.log('add', prefix(task.id), storedTask)
       localStorage.setItem(
         prefix(task.id),
         JSON.stringify(storedTask)
       )
     })
     removed.forEach((task) => {
-      console.log('rem', task)
       localStorage.removeItem(prefix(task.id))
     })
   }
