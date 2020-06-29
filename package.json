@@ -7,6 +7,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
+    "build": "NODE_ENV=production webpack --config webpack.config.js",
     "dev": "concurrently --raw \"webpack --watch --config webpack.config.js\" \"node browsersync\" "
   },
   "dependencies": {
