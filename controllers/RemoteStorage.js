@@ -11,11 +11,21 @@ const _prefix = 'tdw'
 export class RemoteStorage {
   constructor () {
     subscribe(/tasksLoadLocalStorage/, this.tasksLoadRemoteStorage.bind(this))
-    subscribe(this.setChanged.bind(this))
+    subscribe(
+      [
+        /^tasksCreateNew$/,
+        /tasksToggleComplete/,
+        /tasksEdit/,
+        /tasksPurge/,
+        /tasksImport/
+      ],
+      this.setChanged.bind(this)
+    )
     this.driver = dropbox
     this.driver.initialise({
       tasksAdd: this.tasksAdd.bind(this),
       tasksRemove: this.tasksRemove.bind(this),
+      tasksRemovePurged: this.tasksRemovePurged.bind(this),
       getOptions: this.getOptions.bind(this),
       prefix: this.prefix.bind(this)
     })
@@ -29,6 +39,10 @@ export class RemoteStorage {
     publish('tasksRemove', { tasks, listId })
   }
 
+  tasksRemovePurged (listId) {
+    publish('tasksRemovePurged', { listId })
+  }
+
   getOptions () {
     return states[0].options
   }
@@ -37,26 +51,18 @@ export class RemoteStorage {
     return `${_prefix}-${key}`
   }
 
-  async setChanged ({ action, state }) {
-    if (
-      action.type === 'tasksLoadLocalStorage' ||
-      action.type === 'tasksSetPending' ||
-      action.type === 'tasksUnsetPending' ||
-      action.type === 'tasksCreateNew.fromRemote' ||
-      action.type === 'domLoaded'
-    )
-      return
-
-    const tasks = tasksDiff(states)
+  async setChanged ({ getState }) {
+    const { tasks } = tasksDiff(states)
     publish('tasksSetPending', { tasks })
     let listIds = tasks
       .map(({ listId }) => listId)
     listIds = listIds.filter((id, idx) => listIds.indexOf(id) === idx)
     // console.log('Remote Storage will store:', listIds)
     listIds.forEach((listId) => {
-      this.driver.store(state.lists[listId])
+      this.driver.store(getState().lists[listId])
         .then(() => {
-          publish('tasksUnsetPending', { tasks: state.lists[listId].tasks })
+          // const { lists: { [listId]: { tasks } } } = getState()
+          publish('tasksUnsetPending', { tasks })
         })
     })
   }

@@ -5,6 +5,7 @@ import { tasksToggleActive } from './toggleActive'
 import { tasksEdit } from './edit'
 import { tasksPurge } from './purge'
 import { tasksRemove } from './remove'
+import { tasksRemovePurged } from './removePurged'
 import { tasksImport } from './import'
 import { tasksSetPending } from './setPending'
 import { tasksUnsetPending } from './unsetPending'
@@ -17,6 +18,7 @@ const reducers = [
   tasksEdit,
   tasksPurge,
   tasksRemove,
+  tasksRemovePurged,
   tasksImport,
   tasksSetPending,
   tasksUnsetPending

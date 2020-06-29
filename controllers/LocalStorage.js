@@ -14,7 +14,19 @@ function prefix (body) {
 
 export class LocalStorage {
   constructor () {
-    subscribe(this.setChanged.bind(this))
+    subscribe(
+      [
+        /^tasksCreateNew$/,
+        /^tasksCreateNew\.fromRemote$/,
+        /tasksToggleComplete/,
+        /tasksEdit/,
+        /tasksPurge/,
+        /tasksRemove/,
+        /tasksRemovePurged/,
+        /tasksImport/
+      ],
+      this.setChanged.bind(this)
+    )
     subscribe(/domLoaded/, this.domLoaded.bind(this))
   }
 
@@ -26,7 +38,10 @@ export class LocalStorage {
   setChanged ({ action: { type } }) {
     if (type === 'tasksLoadLocalStorage')
       return
-    tasksDiff(states).forEach((task) => {
+    const { added, updated, removed } = tasksDiff(states)
+    console.log('diff', tasksDiff(states))
+    const tasks = [...added, ...updated]
+    tasks.forEach((task) => {
       const storedTask = {
         id: task.id,
         listId: task.listId,
@@ -34,10 +49,15 @@ export class LocalStorage {
         purged: task.purged,
         lineNumber: task.lineNumber
       }
+      console.log('add', prefix(task.id), storedTask)
       localStorage.setItem(
         prefix(task.id),
         JSON.stringify(storedTask)
       )
+    })
+    removed.forEach((task) => {
+      console.log('rem', task)
+      localStorage.removeItem(prefix(task.id))
     })
   }
 

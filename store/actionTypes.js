@@ -39,9 +39,18 @@ export const actionTypes = [
   // issued by Tools component
 
   'tasksRemove',
-  // removes task which matches 'raw' value
+  // removes task which matches 'raw' value from payload
   // used when a task has been removed from the remote
   // issued by RemoteStorage controller
+
+  'tasksRemovePurged',
+  // removes tasks with task.purged set
+  // the flow for purging completed tasks is:
+  // set task.purged
+  // RemoteStorage reacts to changed tasks, invokes driver.store
+  // driver.store saves list without purged tasks
+  // driver.store invokes tasksRemovePurged to delete tasks from state
+  // localStorage reacts to changed tasks, deletes tasks from localStorage
 
   'tasksImport',
   // imports tasks from txt file, stores in state

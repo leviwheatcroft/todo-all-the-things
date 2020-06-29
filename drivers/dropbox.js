@@ -2,12 +2,14 @@ import { Dropbox } from 'dropbox'
 
 let tasksAdd
 let tasksRemove
+let tasksRemovePurged
 let getOptions
 let prefix
 
 function initialise (ctx) {
   tasksAdd = ctx.tasksAdd
   tasksRemove = ctx.tasksRemove
+  tasksRemovePurged = ctx.tasksRemovePurged
   getOptions = ctx.getOptions
   prefix = ctx.prefix
 }
@@ -68,6 +70,7 @@ async function store (list) {
   } = list
   const dbx = getClient()
   const bits = Object.values(tasks)
+    .filter(({ purged }) => !purged)
     .sort((a, b) => a.lineNumber - b.lineNumber)
     .map(({ raw }) => `${raw}\n`)
   const contents = new File(bits, `${listId}.txt`)
@@ -77,6 +80,7 @@ async function store (list) {
     mode: 'overwrite'
   })
   localStorage.setItem(prefix(`previous-${listId}`), await contents.text())
+  tasksRemovePurged(listId)
 }
 
 async function create (listId) {

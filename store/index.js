@@ -56,16 +56,25 @@ export function publish (type, payload = {}, origin = false) {
       actionTypes.includes(action.type),
       `undefined action: ${action.type}`
     )
-    console.groupCollapsed(action.type)
+    console.group(action.type)
+    // console.groupCollapsed(action.type)
     console.log(`publish: ${action.type}`)
     console.log(action)
     const state = reduce(states[0], action, publish)
     if (state !== states[0])
       states.unshift(state)
+    states.splice(10)
     console.log([...states])
+
+    const context = {
+      action,
+      state, // todo: remove this
+      states,
+      getState (path) { return get(states[0], path) }
+    }
     subscriptions.forEach((handlers, re) => {
       if (re.test(action.type))
-        handlers.forEach((h) => h({ action, state }))
+        handlers.forEach((h) => h(context))
     })
     console.groupEnd(action.type)
     actions.shift()
