@@ -99,7 +99,7 @@ ${task.urls && Object.keys(task.urls).length ?
     <span class="urls">
       ${Object.entries(task.urls).map(([domain, url]) => {
         return html`
-          <a class="tag tag-url" href=${url}>
+          <a class="tag tag-url" target="_blank" href=${url}>
             <span class="tag-icon">
               <tdw-icon icon="externalLink"></tdw-icon>
             </span>
