@@ -1,0 +1,31 @@
+<tdw-light-box dialog="tools">
+  <span slot="title" class="title">
+    Tools
+  </span>
+  <div slot="body" class="body menu">
+    <div @click="${purge}">
+      <span class="description">
+        Purge completed tasks
+      </span>
+      <tdw-icon icon="trash2"></tdw-icon>
+    </div>
+    <div @click="${dialogImportTasks}">
+      <span class="description">
+        Import list
+      </span>
+      <tdw-icon icon="filePlus"></tdw-icon>
+    </div>
+    <div @click="${exportTasks}">
+      <span class="description">
+        Export list
+      </span>
+      <tdw-icon icon="download"></tdw-icon>
+    </div>
+    <div @click="${dialogRemoteStorageOptions}">
+      <span class="description">
+        Remote storage options
+      </span>
+      <tdw-icon icon="cloudLightning"></tdw-icon>
+    </div>
+  </div>
+</tdw-light-box>

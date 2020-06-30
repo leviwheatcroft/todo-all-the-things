@@ -3,9 +3,9 @@ import {
   html as _html,
   unsafeCSS
 } from 'lit-element'
-// import { render } from './Tools.template'
-import template from './Tools.html'
-import styles from './Tools.less'
+// import { render } from './DialogTools.template'
+import template from './DialogTools.html'
+import styles from './DialogTools.less'
 import { base, button } from '../../less'
 
 import {
@@ -13,15 +13,16 @@ import {
   states
 } from '../../store'
 
-export class Tools extends LitElement {
+export class DialogTools extends LitElement {
   static get styles () { return [base, button, unsafeCSS(styles)] }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const {
       purge,
-      importTasks,
-      exportTasks
+      dialogImportTasks,
+      exportTasks,
+      dialogRemoteStorageOptions
     } = this
     const html = _html
 
@@ -40,8 +41,12 @@ export class Tools extends LitElement {
     publish('dialogsToggle')
   }
 
-  importTasks () {
-    publish('dialogsToggle', { dialog: 'import' })
+  dialogRemoteStorageOptions () {
+    publish('dialogsToggle', { dialog: 'remoteStorageOptions' })
+  }
+
+  dialogImportTasks () {
+    publish('dialogsToggle', { dialog: 'importTasks' })
   }
 
   exportTasks () {
@@ -60,4 +65,4 @@ export class Tools extends LitElement {
   }
 }
 
-customElements.define('tdw-tools', Tools)
+customElements.define('tdw-dialog-tools', DialogTools)

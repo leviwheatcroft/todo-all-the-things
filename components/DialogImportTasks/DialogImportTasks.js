@@ -3,16 +3,15 @@ import {
   html as _html,
   unsafeCSS
 } from 'lit-element'
-// import { render } from './Import.template'
-import template from './Import.html'
-import styles from './Import.less'
+import template from './DialogImportTasks.html'
+import styles from './DialogImportTasks.less'
 import { base, button } from '../../less'
 
 import {
   publish
 } from '../../store'
 
-export class Import extends LitElement {
+export class DialogImportTasks extends LitElement {
   static get styles () { return [base, button, unsafeCSS(styles)] }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
@@ -41,4 +40,4 @@ export class Import extends LitElement {
   }
 }
 
-customElements.define('tdw-import', Import)
+customElements.define('tdw-dialog-import-tasks', DialogImportTasks)
