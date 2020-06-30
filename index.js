@@ -1,6 +1,6 @@
 /* eslint-disable no-new */
 import { publish } from './store'
-import { LocalStorage, RemoteStorage } from './controllers'
+import { initialiseControllers } from './controllers'
 // require('milligram/dist/milligram.css')
 require('./less/index.less')
 require('./components')
@@ -16,7 +16,6 @@ require('./components')
 //
 // instancesTrigger({ type: 'domLoaded' })
 
-new LocalStorage()
-new RemoteStorage()
+initialiseControllers()
 
 publish('domLoaded')

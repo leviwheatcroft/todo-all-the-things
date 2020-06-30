@@ -31,8 +31,10 @@ export const actionTypes = [
 
   'dialogsToggle',
   // issued by NavBar component
-  // issued by Tools component
-  // issued by ToolsImport component
+  // issued by LightBox component
+  //  - Tools
+  //  - ToolsImport
+  //  - Help
 
   'tasksPurge',
   // sets completed tasks { purged: true }
@@ -60,4 +62,8 @@ export const actionTypes = [
   'tasksUnsetPending',
   // set pending: true | false
   // issued by RemoteStorage controller
+
+  'optionsLoadLocalStorage'
+  // loads options to state from local storage
+  // issued by options controller
 ]

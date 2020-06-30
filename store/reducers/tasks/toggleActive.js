@@ -27,7 +27,7 @@ export function tasksToggleActive (action, context) {
 
   tasks[id] = { ...tasks[id], active: !active }
 
-  update(['lists', listId, 'tasks'], sortTasks(tasks, getState().options.sort))
+  update(['lists', listId, 'tasks'], sortTasks(tasks, getState().sort))
 }
 
 function checkPayloadShape (payload) {

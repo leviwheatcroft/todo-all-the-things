@@ -101,7 +101,7 @@ async function create (listId) {
 }
 
 function getClient () {
-  const { driver: { dropbox: { accessToken } } } = getOptions()
+  const { dropbox: { accessToken } } = getOptions()
   return new Dropbox({ accessToken, fetch })
 }
 

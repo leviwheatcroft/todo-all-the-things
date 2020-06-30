@@ -37,6 +37,6 @@ export function tasksCreateNew (action, context) {
   update(['lists', listId, 'tasks'], tasks)
   update(
     ['lists', listId, 'tasks'],
-    sortTasks(getState().lists[listId].tasks, getState().options.sort)
+    sortTasks(getState().lists[listId].tasks, getState().sort)
   )
 }

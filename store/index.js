@@ -6,6 +6,7 @@ import { actionTypes } from './actionTypes'
 export { tasksDiff } from './tasksDiff'
 
 export const states = [{ ...initialState }]
+console.log('initial', states)
 
 states.isUpdated = function isUpdated (path) {
   return get(states[0], path) !== get(states[1], path)

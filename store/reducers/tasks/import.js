@@ -34,5 +34,5 @@ export function tasksImport (action, context) {
     })
     .forEach((task) => { tasks[task.id] = task })
 
-  update(['lists', listId, 'tasks'], sortTasks(tasks, getState().options.sort))
+  update(['lists', listId, 'tasks'], sortTasks(tasks, getState().sort))
 }

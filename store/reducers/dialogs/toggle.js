@@ -3,7 +3,10 @@ export function dialogsToggle (action, { getState, update }) {
     return
 
   let show
-  if (!action.payload)
+  if (
+    !action.payload ||
+    !action.payload.dialog
+  )
     show = false
   else if (getState().dialogs.show === action.payload.dialog)
     show = false

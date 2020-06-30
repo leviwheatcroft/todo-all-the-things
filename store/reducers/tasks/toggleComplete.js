@@ -16,7 +16,7 @@ export function tasksToggleComplete (action, context) {
   else
     task.raw = task.raw.replace(/^\s?x\s/i, '')
   const tasks = { ...getState().lists[listId].tasks, [task.id]: task }
-  update(['lists', listId, 'tasks'], sortTasks(tasks, getState().options.sort))
+  update(['lists', listId, 'tasks'], sortTasks(tasks, getState().sort))
 }
 
 function checkPayloadShape (payload) {

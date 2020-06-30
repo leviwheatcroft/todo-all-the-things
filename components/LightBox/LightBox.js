@@ -16,9 +16,15 @@ export class LightBox extends LitElement {
   constructor () {
     super()
     this.show = states[0].dialogs.show
-    subscribe('dialogsToggle', ({ state }) => {
-      this.show = state.dialogs.show
-    })
+    subscribe(
+      [
+        /dialogsToggle/,
+        /optionsLoadLocalStorage/
+      ],
+      ({ getState }) => {
+        this.show = getState().dialogs.show
+      }
+    )
   }
 
   static get styles () { return [base, button, unsafeCSS(styles)] }
@@ -37,7 +43,7 @@ export class LightBox extends LitElement {
   }
 
   close () {
-    publish('toggleDialog')
+    publish('dialogsToggle')
   }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */

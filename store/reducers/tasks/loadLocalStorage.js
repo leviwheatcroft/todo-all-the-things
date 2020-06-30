@@ -32,7 +32,7 @@ export function tasksLoadLocalStorage (action, context) {
     lists[listId].tasks[id] = task
   })
   Object.entries(lists).forEach(([id, list]) => {
-    lists[id].tasks = sortTasks(list.tasks, getState().options.sort)
+    lists[id].tasks = sortTasks(list.tasks, getState().sort)
   })
   update(['lists'], lists)
 }

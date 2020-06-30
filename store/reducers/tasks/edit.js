@@ -21,6 +21,6 @@ export function tasksEdit (action, context) {
   update(['lists', listId, 'tasks', id], task)
   update(
     ['lists', listId, 'tasks'],
-    sortTasks(getState().lists[listId].tasks, getState().options.sort)
+    sortTasks(getState().lists[listId].tasks, getState().sort)
   )
 }

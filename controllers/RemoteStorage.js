@@ -44,7 +44,7 @@ export class RemoteStorage {
   }
 
   getOptions () {
-    return states[0].options
+    return states[0].driver
   }
 
   prefix (key) {
