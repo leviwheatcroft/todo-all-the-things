@@ -1,7 +1,7 @@
 {
-  "name": "todo-dot-web",
+  "name": "todo-all-the-things",
   "version": "1.0.0",
-  "description": "web ui for todo.txt",
+  "description": "simple, elegant, self hostable task management",
   "main": "index.js",
   "author": "Levi Wheatcroft",
   "license": "MIT",
