@@ -21,6 +21,8 @@ export class RemoteStorage {
       ],
       this.setChanged.bind(this)
     )
+    this.driver = states[0].remoteStorage.driver
+    subscribe(/optionsDriverSelect/, this.driverSelect.bind(this))
     this.driver = dropbox
     this.driver.initialise({
       tasksAdd: this.tasksAdd.bind(this),
@@ -29,6 +31,10 @@ export class RemoteStorage {
       getOptions: this.getOptions.bind(this),
       prefix: this.prefix.bind(this)
     })
+  }
+
+  driverSelect ({ getState }) {
+    this.driver = getState().remoteStorage.driver
   }
 
   tasksAdd (tasks, listId) {
@@ -44,7 +50,7 @@ export class RemoteStorage {
   }
 
   getOptions () {
-    return states[0].driver
+    return states[0].remoteStorage
   }
 
   prefix (key) {
@@ -52,6 +58,8 @@ export class RemoteStorage {
   }
 
   async setChanged ({ getState }) {
+    if (!this.driver)
+      return
     const { tasks } = tasksDiff(states)
     publish('tasksSetPending', { tasks })
     let listIds = tasks

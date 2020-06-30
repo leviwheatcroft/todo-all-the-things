@@ -1,0 +1,1 @@
+export { DialogRemoteStorageOptions } from './DialogRemoteStorageOptions'

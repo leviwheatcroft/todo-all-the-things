@@ -1,0 +1,29 @@
+<tdw-light-box dialog="remoteStorageOptions">
+  <span slot="title" class="title">
+    Remote Storage Options
+  </span>
+  <div slot="body" class="body menu">
+    <div class="overview">
+      Configuring a remote storage driver allows you to sync your tasks between devices. Presently only dropbox is supported. You'll need to get your own access token.
+    </div>
+    <div>
+      <span class="description">
+        Driver
+      </span>
+      <select @change="${selectDriver}">
+        <option value="none" ?selected="${driver === false}">No Remote Storage</option>
+        <option value="dropbox" ?selected="${driver === 'dropbox'}">Dropbox</option>
+      </select>
+    </div>
+    <div>
+      <span class="description">
+        Access Token
+      </span>
+      <input
+        @change="${setAccessToken}"
+        value="${accessToken}"
+        type="password"
+      />
+    </div>
+  </div>
+</tdw-light-box>

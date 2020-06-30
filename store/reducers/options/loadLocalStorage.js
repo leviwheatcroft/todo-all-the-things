@@ -7,11 +7,11 @@ export function optionsLoadLocalStorage (action, context) {
   const {
     dialogs,
     sort,
-    driver,
+    remoteStorage,
     filter
   } = options
   update(['dialogs'], dialogs)
   update(['sort'], sort)
-  update(['driver'], driver)
+  update(['remoteStorage'], remoteStorage)
   update(['filter'], filter)
 }

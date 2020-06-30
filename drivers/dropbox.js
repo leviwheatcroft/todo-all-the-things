@@ -101,7 +101,7 @@ async function create (listId) {
 }
 
 function getClient () {
-  const { dropbox: { accessToken } } = getOptions()
+  const { accessToken } = getOptions()
   return new Dropbox({ accessToken, fetch })
 }
 

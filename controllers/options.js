@@ -32,13 +32,13 @@ function store ({ getState }) {
   const {
     dialogs,
     sort,
-    driver,
+    remoteStorage,
     filter
   } = getState()
   localStorage.setItem(prefix('options'), JSON.stringify({
     dialogs,
     sort,
-    driver,
+    remoteStorage,
     filter
   }))
 }
