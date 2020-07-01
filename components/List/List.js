@@ -9,7 +9,7 @@ import template from './List.html'
 import {
   subscribe
 } from '../../store'
-import { grid, button } from '../../less'
+import { button } from '../../less'
 
 import styles from './List.less'
 
@@ -28,7 +28,7 @@ export class List extends LitElement {
     this.unsubscribe()
   }
 
-  static get styles () { return [grid, button, unsafeCSS(styles)] }
+  static get styles () { return [button, unsafeCSS(styles)] }
 
   static get properties () {
     return {

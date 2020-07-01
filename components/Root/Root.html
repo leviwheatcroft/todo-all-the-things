@@ -1,14 +1,10 @@
 <tdw-nav-bar></tdw-nav-bar>
 <div class="container">
-  <div class="row">
-    ${Object.values(this.lists).map((list) => {
-      return html`
-        <div class="column">
-          <tdw-list .list="${list}" />
-        </div>
-      `
-    })}
-  </div>
+  ${Object.values(this.lists).map((list) => {
+    return html`
+      <tdw-list .list="${list}" />
+    `
+  })}
 </div>
 <tdw-dialog-tools></tdw-dialog-tools>
 <tdw-dialog-import-tasks></tdw-dialog-import-tasks>

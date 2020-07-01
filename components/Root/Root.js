@@ -4,7 +4,6 @@ import {
   unsafeCSS
 } from 'lit-element'
 import { subscribe } from '../../store'
-import { grid } from '../../less'
 import template from './Root.html'
 import styles from './Root.less'
 
@@ -19,7 +18,7 @@ export class Root extends LitElement {
     })
   }
 
-  static get styles () { return [grid, unsafeCSS(styles)] }
+  static get styles () { return [unsafeCSS(styles)] }
 
   static get properties () {
     return {
