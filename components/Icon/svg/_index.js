@@ -12,6 +12,7 @@ import externalLink from './external-link.svg'
 import checkSquare from './check-square.svg'
 import save from './save.svg'
 import helpCircle from './help-circle.svg'
+import plus from './plus.svg'
 
 export default {
   atSign,
@@ -27,5 +28,6 @@ export default {
   externalLink,
   checkSquare,
   save,
-  helpCircle
+  helpCircle,
+  plus
 }
