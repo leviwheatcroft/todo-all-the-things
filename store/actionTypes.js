@@ -63,7 +63,11 @@ export const actionTypes = [
   // set pending: true | false
   // issued by RemoteStorage controller
 
-  'optionsLoadLocalStorage'
+  'optionsLoadLocalStorage',
   // loads options to state from local storage
   // issued by options controller
+
+  'optionsDriverSave',
+  // stores state.remoteStorage params
+  // issued by DialogRemoteStorageOptions
 ]

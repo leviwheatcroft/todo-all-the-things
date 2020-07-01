@@ -16,8 +16,12 @@ import {
 export class DialogRemoteStorageOptions extends LitElement {
   constructor () {
     super()
-    this.accessToken = states[0].remoteStorage.accessToken
-    this.driver = states[0].remoteStorage.driver
+    const {
+      driver,
+      refreshInterval,
+      accessToken
+    } = states[0].remoteStorage
+    Object.assign(this, { driver, refreshInterval, accessToken })
   }
 
   static get styles () { return [base, button, unsafeCSS(styles)] }
@@ -27,9 +31,12 @@ export class DialogRemoteStorageOptions extends LitElement {
     const {
       driver,
       accessToken,
-      setAccessToken,
-      selectDriver
+      save
     } = this
+    let {
+      refreshInterval
+    } = this
+    refreshInterval = refreshInterval / 60 / 1000
     const html = _html
 
     return eval('html`' + template + '`')
@@ -38,18 +45,22 @@ export class DialogRemoteStorageOptions extends LitElement {
 
   static get properties () {
     return {
+      driver: { attribute: false },
+      refreshInterval: { attribute: false },
       accessToken: { attribute: false }
     }
   }
 
-  setAccessToken (event) {
-    const accessToken = event.target.value
-    publish('optionsDriverAccessToken', { accessToken })
-  }
-
-  selectDriver (event) {
-    const driver = event.target.value === 'none' ? false : event.target.value
-    publish('optionsDriverSelect', { driver })
+  save () {
+    const $root = this.shadowRoot
+    const driver = $root.querySelector('select.driver').value
+    let refreshInterval = $root.querySelector('input.refresh-interval').value
+    refreshInterval = Math.min(refreshInterval, 10)
+    refreshInterval = Math.max(refreshInterval, 1)
+    refreshInterval = refreshInterval * 60 * 1000
+    const accessToken = $root.querySelector('input.access-token').value
+    publish('optionsDriverSave', { driver, refreshInterval, accessToken })
+    publish('dialogsToggle')
   }
 }
 

@@ -4,26 +4,51 @@
   </span>
   <div slot="body" class="body menu">
     <div class="overview">
-      Configuring a remote storage driver allows you to sync your tasks between devices. Presently only dropbox is supported. You'll need to get your own access token.
+      <p>
+        Configuring a remote storage driver allows you to sync your tasks between devices. Presently only dropbox is supported. You'll need to get your own access token.
+      </p>
+      <p>
+        When you select a driver, any remote lists will be merged with those present in your browser.
+      <p>
     </div>
-    <div>
+    <div class="row">
       <span class="description">
         Driver
       </span>
-      <select @change="${selectDriver}">
-        <option value="none" ?selected="${driver === false}">No Remote Storage</option>
-        <option value="dropbox" ?selected="${driver === 'dropbox'}">Dropbox</option>
+      <select class="driver">
+        <option value="none" ?selected="${driver === false}">
+          No Remote Storage
+        </option>
+        <option value="dropbox" ?selected="${driver === 'dropbox'}">
+          Dropbox
+        </option>
       </select>
     </div>
-    <div>
+    <div class="row">
+      <span class="description">
+        Refresh interval (minutes)
+      </span>
+      <input class="refresh-interval" value="${refreshInterval}" />
+    </div>
+    <div class="row">
       <span class="description">
         Access Token
       </span>
       <input
-        @change="${setAccessToken}"
-        value="${accessToken}"
+        class="access-token"
+        value="${accessToken ? accessToken : ''}"
         type="password"
       />
+    </div>
+    <div class="row">
+      <span class="spacer"></span>
+      <button class="btn" @click="${save}">
+        <span class="btn-icon">
+          <tdw-icon icon="save"></tdw-icon>
+        </span>
+        <span class="btn-text">
+          Save
+        </span>
     </div>
   </div>
 </tdw-light-box>

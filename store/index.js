@@ -6,10 +6,13 @@ import { actionTypes } from './actionTypes'
 export { tasksDiff } from './tasksDiff'
 
 export const states = [{ ...initialState }]
-console.log('initial', states)
 
 states.isUpdated = function isUpdated (path) {
   return get(states[0], path) !== get(states[1], path)
+}
+
+export function getState (path) {
+  return get(states[0], path)
 }
 
 const subscriptions = new Map()
@@ -71,7 +74,7 @@ export function publish (type, payload = {}, origin = false) {
       action,
       state, // todo: remove this
       states,
-      getState (path) { return get(states[0], path) }
+      getState
     }
     subscriptions.forEach((handlers, re) => {
       if (re.test(action.type))

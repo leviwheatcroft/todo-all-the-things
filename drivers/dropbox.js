@@ -54,7 +54,9 @@ async function retrieve (listId) {
     result = await dbx.filesDownload({
       path: `/${listId}.txt`
     })
-  } catch ({ error: raw }) {
+  } catch (err) {
+    console.error(err)
+    const { error: raw } = err
     const error = JSON.parse(raw)
     if (/path\/not_found/.test(error.error_summary))
       result = await create(listId)

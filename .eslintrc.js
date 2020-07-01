@@ -30,7 +30,7 @@ module.exports = {
     'arrow-body-style': 'off',
     'consistent-return': 'off',
     'no-param-reassign': 'off',
-    'no-console': ["error", { allow: ["warn", "error"] }]
+    'no-console': ["error", { allow: ["warn", "error", "assert"] }]
   },
   settings: {
     'import/resolver': {

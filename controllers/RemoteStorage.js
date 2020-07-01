@@ -1,29 +1,42 @@
 import {
   publish,
   subscribe,
-  states,
+  getState,
   tasksDiff
 } from '../store'
-import { dropbox } from '../drivers'
+import drivers from '../drivers'
 
 const _prefix = 'tdw'
 
+let reload
+
 export class RemoteStorage {
   constructor () {
-    subscribe(/tasksLoadLocalStorage/, this.tasksLoadRemoteStorage.bind(this))
-    subscribe(
-      [
-        /^tasksCreateNew$/,
-        /tasksToggleComplete/,
-        /tasksEdit/,
-        /tasksPurge/,
-        /tasksImport/
-      ],
-      this.setChanged.bind(this)
-    )
-    this.driver = states[0].remoteStorage.driver
-    subscribe(/optionsDriverSelect/, this.driverSelect.bind(this))
-    this.driver = dropbox
+    // the ordre in which listeners are subscribed is the list in which they
+    // will be executed, so here the new driver will be selected & initialised
+    // before this.tasksLoadRemoteStorage is called
+    subscribe(/optionsDriverSave/, this.driverSelect.bind(this))
+    subscribe([
+      /tasksLoadLocalStorage/,
+      /optionsDriverSave/
+    ], this.tasksLoadRemoteStorage.bind(this))
+    subscribe([
+      /^tasksCreateNew$/,
+      /tasksToggleComplete/,
+      /tasksEdit/,
+      /tasksPurge/,
+      /tasksImport/
+    ], this.setChanged.bind(this))
+
+    this.driverSelect({ getState })
+  }
+
+  driverSelect ({ getState }) {
+    const selected = getState().remoteStorage.driver
+    this.driver = selected ? drivers[selected] : false
+    if (!this.driver)
+      return
+
     this.driver.initialise({
       tasksAdd: this.tasksAdd.bind(this),
       tasksRemove: this.tasksRemove.bind(this),
@@ -31,10 +44,6 @@ export class RemoteStorage {
       getOptions: this.getOptions.bind(this),
       prefix: this.prefix.bind(this)
     })
-  }
-
-  driverSelect ({ getState }) {
-    this.driver = getState().remoteStorage.driver
   }
 
   tasksAdd (tasks, listId) {
@@ -50,41 +59,61 @@ export class RemoteStorage {
   }
 
   getOptions () {
-    return states[0].remoteStorage
+    return getState().remoteStorage
   }
 
   prefix (key) {
     return `${_prefix}-${key}`
   }
 
-  async setChanged ({ getState }) {
+  async setChanged ({ states, getState }) {
     if (!this.driver)
       return
+    const {
+      lists,
+      remoteStorage: { refreshInterval }
+    } = getState()
     const { tasks } = tasksDiff(states)
     publish('tasksSetPending', { tasks })
     let listIds = tasks
       .map(({ listId }) => listId)
     listIds = listIds.filter((id, idx) => listIds.indexOf(id) === idx)
-    // console.log('Remote Storage will store:', listIds)
     listIds.forEach((listId) => {
-      this.driver.store(getState().lists[listId])
+      this.driver.store(lists[listId])
         .then(() => {
-          // const { lists: { [listId]: { tasks } } } = getState()
           publish('tasksUnsetPending', { tasks })
         })
     })
+    if (reload)
+      clearTimeout(reload)
+    reload = setTimeout(
+      this.tasksLoadRemoteStorage.bind(this),
+      refreshInterval,
+      { getState }
+    )
   }
 
-  tasksLoadRemoteStorage ({ state }) {
-    // let listIds
-    // if (action.type === 'localStorageLoaded')
-    //   listIds = Object.keys(state.lists)
-    Object.keys(state.lists).forEach((listId) => {
+  tasksLoadRemoteStorage ({ getState }) {
+    if (!this.driver)
+      return
+    const {
+      lists,
+      remoteStorage: { refreshInterval }
+    } = getState()
+
+    Object.keys(lists).forEach((listId) => {
       try {
         this.driver.importTasks(listId)
       } catch (err) {
         console.error(err)
       }
     })
+    if (reload)
+      clearTimeout(reload)
+    reload = setTimeout(
+      this.tasksLoadRemoteStorage.bind(this),
+      refreshInterval,
+      { getState }
+    )
   }
 }

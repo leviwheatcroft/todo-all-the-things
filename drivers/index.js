@@ -1,1 +1,5 @@
-export { dropbox } from './dropbox'
+import { dropbox } from './dropbox'
+
+export default {
+  dropbox
+}

@@ -22,6 +22,7 @@ export class Icon extends LitElement {
 
   /* eslint-disable no-eval, prefer-template, no-unused-vars */
   render () {
+    console.assert(svg[this.icon], `required icon: ${this.icon}`)
     const icon = svg[this.icon]
       .replace(/<svg/, `<svg class="feather${this.spin ? ' spin' : ''}"`)
       .replace(/height="24"/, '')
