@@ -6,6 +6,7 @@ import {
 // import { render } from './DialogHelp.template'
 import template from './DialogHelp.html'
 import styles from './DialogHelp.less'
+import lightBox from '../LightBox/LightBoxConsumers.less'
 import { base, button } from '../../less'
 
 // import {
@@ -14,7 +15,14 @@ import { base, button } from '../../less'
 // } from '../../store'
 
 export class DialogHelp extends LitElement {
-  static get styles () { return [base, button, unsafeCSS(styles)] }
+  static get styles () {
+    return [
+      base,
+      button,
+      unsafeCSS(lightBox),
+      unsafeCSS(styles)
+    ]
+  }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {

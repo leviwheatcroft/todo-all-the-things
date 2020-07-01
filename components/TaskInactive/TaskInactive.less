@@ -15,7 +15,15 @@
   }
   .parsed {
     // height: 3.8rem;
+    // push tags to the right
     flex-grow: 2;
+
+    // ellipsis
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+
   }
   a {
     text-decoration: none;
@@ -23,6 +31,8 @@
   }
   .complete-checkbox {
     width: 4rem;
+    // prevent description from shrinking this element
+    flex-shrink: 0;
     // https://stackoverflow.com/a/35962743/441930
     position: relative;
     > svg {

@@ -6,6 +6,7 @@ import {
 // import { render } from './DialogTools.template'
 import template from './DialogTools.html'
 import styles from './DialogTools.less'
+import lightBox from '../LightBox/LightBoxConsumers.less'
 import { base, button } from '../../less'
 
 import {
@@ -14,7 +15,14 @@ import {
 } from '../../store'
 
 export class DialogTools extends LitElement {
-  static get styles () { return [base, button, unsafeCSS(styles)] }
+  static get styles () {
+    return [
+      base,
+      button,
+      unsafeCSS(lightBox),
+      unsafeCSS(styles)
+    ]
+  }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
@@ -22,7 +30,8 @@ export class DialogTools extends LitElement {
       purge,
       dialogImportTasks,
       exportTasks,
-      dialogRemoteStorageOptions
+      dialogRemoteStorageOptions,
+      dialogHelp
     } = this
     const html = _html
 
@@ -43,6 +52,10 @@ export class DialogTools extends LitElement {
 
   dialogRemoteStorageOptions () {
     publish('dialogsToggle', { dialog: 'remoteStorageOptions' })
+  }
+
+  dialogHelp () {
+    publish('dialogsToggle', { dialog: 'help' })
   }
 
   dialogImportTasks () {

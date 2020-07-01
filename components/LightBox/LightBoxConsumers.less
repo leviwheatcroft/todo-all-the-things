@@ -1,0 +1,27 @@
+.body {
+  h2 {
+    margin: 0;
+  }
+  &.information {
+    margin: 2rem;
+  }
+  &.menu {
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      // margin-bottom: 1rem;
+      cursor: pointer;
+      border: 0 solid whitesmoke;
+      border-bottom-width: 1px;
+      &:last-child {
+        border-color: white;
+      }
+      height: 4rem;
+      &:hover {
+        background-color: whitesmoke;
+      }
+    }
+  }
+}

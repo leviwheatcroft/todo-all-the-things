@@ -13,6 +13,7 @@ function prefix (body) {
 export function initialiseOptions () {
   subscribe(
     [
+      /dialogsToggle/,
       /optionsDriverSave/,
       /filterSet/
     ],
@@ -25,7 +26,6 @@ function retrieve () {
   const options = JSON.parse(localStorage.getItem(prefix('options')))
   if (!options)
     return
-  console.log(options)
   options.filter.regExp = new RegExp(options.filter.regExp)
   publish('optionsLoadLocalStorage', { options })
 }
@@ -40,7 +40,6 @@ function store ({ getState }) {
   filter = { ...filter }
   let { regExp } = filter
   regExp = regExp.toString()
-  console.log('re as string', regExp)
   regExp = regExp.slice(1, regExp.length - 1)
   filter.regExp = regExp
   localStorage.setItem(prefix('options'), JSON.stringify({

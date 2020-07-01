@@ -11,6 +11,7 @@ import calendar from './calendar.svg'
 import externalLink from './external-link.svg'
 import checkSquare from './check-square.svg'
 import save from './save.svg'
+import helpCircle from './help-circle.svg'
 
 export default {
   atSign,
@@ -25,5 +26,6 @@ export default {
   calendar,
   externalLink,
   checkSquare,
-  save
+  save,
+  helpCircle
 }
