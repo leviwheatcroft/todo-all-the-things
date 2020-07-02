@@ -1,0 +1,75 @@
+@import "../../less/colors";
+
+.tag {
+  cursor: pointer;
+  height: 24px;
+  margin: 0;
+  padding: 0 6px;
+  &:last-child { margin-right: 0; }
+  font-family: 'courier new', 'courier', fixed;
+  white-space: nowrap;
+  // line-height: 24px;
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  tdw-icon {
+    vertical-align: middle;
+    width: 12px;
+    height: 24px;
+  }
+  &.tag-url .tag-text { display: none; }
+
+  @media (min-width: 800px) {
+    margin-right: 36px;
+    padding: 0 12px;
+    tdw-icon {
+      width: 18px;
+    }
+    &.tag-url .tag-text { display: inline; }
+  }
+}
+
+
+// ========================================================= colors & borders ==
+.tag {
+  &:hover { border-color: @color-dark-5; }
+  border-width: 1px 1px 1px 0;
+  border-style: none;
+  &:first-of-type {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+  &:last-of-type {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+  &.tag-priority { background-color: @color-alpha; }
+  &.tag-context { background-color: @color-beta; }
+  &.tag-project { background-color: @color-gamma; }
+  &.tag-url { background-color: @color-delta; }
+  &.tag-value { background-color: @color-epsilon; }
+  &.tag-created-date { background-color: @color-epsilon; }
+  @media (min-width: 800px) {
+    border-color: @color-dark-d;
+    border-style: solid;
+    border-radius: 0;
+    background-color: transparent !important;
+    position: relative;
+    &::before {
+      content: ' ';
+      display: block;
+      height: 24px;
+      width: 24px;
+      position: absolute;
+      top: -1px;
+      left:-24px; /* border width plus div padding */
+    }
+    &.tag-priority::before { background-color: @color-alpha; }
+    &.tag-context::before { background-color: @color-beta; }
+    &.tag-project::before { background-color: @color-gamma; }
+    &.tag-url::before { background-color: @color-delta; }
+    &.tag-value::before { background-color: @color-epsilon; }
+    &.tag-created-date::before { background-color: @color-epsilon; }
+  }
+}

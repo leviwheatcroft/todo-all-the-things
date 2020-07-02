@@ -1,8 +1,9 @@
+@import "./TaskInactiveTag.less";
 
 :host {
   display: flex;
   align-items: center;
-
+  line-height: 24px;
   span.parsed.complete {
     text-decoration: line-through;
   }
@@ -30,9 +31,20 @@
     color: inherit;
   }
   .complete-checkbox {
-    width: 4rem;
     // prevent description from shrinking this element
     flex-shrink: 0;
+    width: 2rem;
+    width: 20px;
+    height: 20px;
+    tdw-icon {
+      width: 20px;
+      height: 20px;
+    }
+    @media (min-width: 80rem) {
+      width: 4rem;
+    }
+
+
     // https://stackoverflow.com/a/35962743/441930
     position: relative;
     > svg {
@@ -46,5 +58,7 @@
       margin: auto;
       text-align: center;
     }
+
   }
+
 }

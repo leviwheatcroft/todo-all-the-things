@@ -6,14 +6,14 @@ import {
 // import { render } from './TaskInactive.template'
 import template from './TaskInactive.html'
 import styles from './TaskInactive.less'
-import { base, tag } from '../../less'
+import { base } from '../../less'
 
 import {
   publish
 } from '../../store'
 
 export class TaskInactive extends LitElement {
-  static get styles () { return [base, tag, unsafeCSS(styles)] }
+  static get styles () { return [base, unsafeCSS(styles)] }
 
   static get properties () {
     return {
