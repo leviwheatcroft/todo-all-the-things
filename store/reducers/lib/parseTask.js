@@ -10,6 +10,8 @@ export function parseTask (raw) {
   context(task)
   url(task)
   values(task)
+  detail(task)
+  description(task)
   return task
 }
 
@@ -82,4 +84,17 @@ function values (task) {
   while ((result = re.exec(task.parsed)) !== null)
     task.values[result[1]] = result[2]
   task.parsed = task.parsed.replace(re, '')
+}
+
+function detail (task) {
+  const re = /\s-\s(.*)/
+  const result = re.exec(task.parsed)
+  console.log(result)
+  task.detail = result ? result[1] : false
+  task.parsed = task.parsed.replace(re, '')
+}
+
+function description (task) {
+  task.description = task.parsed
+  delete task.parsed
 }

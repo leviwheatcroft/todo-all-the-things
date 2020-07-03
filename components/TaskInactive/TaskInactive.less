@@ -1,10 +1,11 @@
 @import "./TaskInactiveTag.less";
+@import "../../less/colors.less";
 
 :host {
   display: flex;
   align-items: center;
   line-height: 22px; // 24px height less 2x 1px borders
-  span.parsed.complete {
+  span.description.complete {
     text-decoration: line-through;
   }
   > span {
@@ -14,7 +15,7 @@
   > span:last-of-type {
     margin-right: 0;
   }
-  .parsed {
+  > span.description {
     // height: 3.8rem;
     // push tags to the right
     flex-grow: 2;
@@ -23,8 +24,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
-
+    .detail {
+      color: lighten(@color-font, 20%);
+      font-style: italic;
+    }
   }
   a {
     text-decoration: none;

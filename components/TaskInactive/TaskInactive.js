@@ -3,6 +3,7 @@ import {
   html as _html,
   unsafeCSS
 } from 'lit-element'
+import { nothing as _nothing } from 'lit-html'
 // import { render } from './TaskInactive.template'
 import template from './TaskInactive.html'
 import styles from './TaskInactive.less'
@@ -32,6 +33,7 @@ export class TaskInactive extends LitElement {
       filterApply
     } = this
     const html = _html
+    const nothing = _nothing
 
     return eval('html`' + template + '`')
   }

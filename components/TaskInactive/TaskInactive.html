@@ -4,8 +4,18 @@
     html`<tdw-icon icon="square"></tdw-icon>`
   }
 </span>
-<span @click="${activate}" class="parsed ${task.complete ? 'complete' : ''}">
-  ${task.parsed}
+<span
+  @click="${activate}"
+  class="description ${task.complete ? 'complete' : ''}"
+>
+  ${task.description}
+  ${task.detail ?
+    html`
+      <span class="detail">
+        ${task.detail}
+      </span>
+    ` : nothing
+  }
 </span>
 ${task.pending ?
   html`
