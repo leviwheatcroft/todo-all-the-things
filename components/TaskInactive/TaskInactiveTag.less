@@ -16,7 +16,7 @@
   tdw-icon {
     vertical-align: middle;
     width: 12px;
-    height: 24px;
+    height: 22px; // 24px less 2x 1px borders
   }
   &.tag-url .tag-text { display: none; }
 
@@ -25,6 +25,7 @@
     padding: 0 12px;
     tdw-icon {
       width: 18px;
+      margin-right: 6px;
     }
     &.tag-url .tag-text { display: inline; }
   }
@@ -33,7 +34,7 @@
 
 // ========================================================= colors & borders ==
 .tag {
-  &:hover { border-color: @color-dark-5; }
+  // &:hover { border-color: @color-dark-5; }
   border-width: 1px 1px 1px 0;
   border-style: none;
   &:first-of-type {
@@ -53,7 +54,7 @@
   @media (min-width: 800px) {
     border-color: @color-dark-d;
     border-style: solid;
-    border-radius: 0;
+    border-radius: 0 !important;
     background-color: transparent !important;
     position: relative;
     &::before {
