@@ -89,7 +89,6 @@ function values (task) {
 function detail (task) {
   const re = /\s-\s(.*)/
   const result = re.exec(task.parsed)
-  console.log(result)
   task.detail = result ? result[1] : false
   task.parsed = task.parsed.replace(re, '')
 }

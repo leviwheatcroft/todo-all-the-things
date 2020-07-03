@@ -13,6 +13,8 @@ import checkSquare from './check-square.svg'
 import save from './save.svg'
 import helpCircle from './help-circle.svg'
 import plus from './plus.svg'
+import menu from './menu.svg'
+import settings from './settings.svg'
 
 export default {
   atSign,
@@ -29,5 +31,7 @@ export default {
   checkSquare,
   save,
   helpCircle,
-  plus
+  plus,
+  menu,
+  settings
 }

@@ -25,10 +25,14 @@ input {
   background-color: transparent;
   box-shadow: none;
   box-sizing: inherit;
+  width: 66%;
   height: 3.8rem;
   padding: .6rem 1.0rem .7rem;
   box-sizing: border-box;
   &:focus {
     outline: 0;
+  }
+  @media (min-width: 800px) {
+    width: auto;
   }
 }
