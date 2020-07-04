@@ -29,13 +29,20 @@ export class NavBar extends LitElement {
 
   toCollapsed () { this.state = 'collapsed' }
 
-  toFilter () { this.state = 'filter' }
+  showTools () {
+    this.state = 'collapsed'
+    publish('dialogsToggle', { dialog: 'tools' })
+  }
 
-  showTools () {}
+  showOptions () {
+    this.state = 'collapsed'
+    publish('dialogsToggle', { dialog: 'options' })
+  }
 
-  showOptions () {}
-
-  showHelp () {}
+  showHelp () {
+    this.state = 'collapsed'
+    publish('dialogsToggle', { dialog: 'help' })
+  }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {

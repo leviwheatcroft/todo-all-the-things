@@ -31,11 +31,20 @@ export class NavBarSmall extends LitElement {
 
   toFilter () { this.state = 'filter' }
 
-  showTools () {}
+  showTools () {
+    this.state = 'collapsed'
+    publish('dialogsToggle', { dialog: 'tools' })
+  }
 
-  showOptions () {}
+  showOptions () {
+    this.state = 'collapsed'
+    publish('dialogsToggle', { dialog: 'options' })
+  }
 
-  showHelp () {}
+  showHelp () {
+    this.state = 'collapsed'
+    publish('dialogsToggle', { dialog: 'help' })
+  }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {

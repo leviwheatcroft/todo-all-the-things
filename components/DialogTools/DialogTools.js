@@ -30,7 +30,6 @@ export class DialogTools extends LitElement {
       purge,
       dialogImportTasks,
       exportTasks,
-      dialogRemoteStorageOptions,
       dialogHelp
     } = this
     const html = _html
@@ -48,10 +47,6 @@ export class DialogTools extends LitElement {
   purge () {
     publish('tasksPurge')
     publish('dialogsToggle')
-  }
-
-  dialogRemoteStorageOptions () {
-    publish('dialogsToggle', { dialog: 'remoteStorageOptions' })
   }
 
   dialogHelp () {
