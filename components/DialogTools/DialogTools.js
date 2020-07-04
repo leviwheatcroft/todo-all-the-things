@@ -49,10 +49,6 @@ export class DialogTools extends LitElement {
     publish('dialogsToggle')
   }
 
-  dialogHelp () {
-    publish('dialogsToggle', { dialog: 'help' })
-  }
-
   dialogImportTasks () {
     publish('dialogsToggle', { dialog: 'importTasks' })
   }
