@@ -3,24 +3,52 @@ import {
   html as _html,
   unsafeCSS
 } from 'lit-element'
+import { nothing as _nothing } from 'lit-html'
 import template from './NavBar.html'
 import { base, button } from '../../less'
 import styles from './NavBar.less'
 import { publish } from '../../store'
 
 export class NavBar extends LitElement {
+  constructor () {
+    super()
+    this.state = 'collapsed'
+  }
+
   static get styles () { return [base, button, unsafeCSS(styles)] }
 
-  tools () {
-    publish('dialogsToggle', { dialog: 'tools' })
+  static get properties () {
+    return {
+      state: {
+        attribute: false
+      }
+    }
   }
+
+  toMenu () { this.state = 'menu' }
+
+  toCollapsed () { this.state = 'collapsed' }
+
+  toFilter () { this.state = 'filter' }
+
+  showTools () {}
+
+  showOptions () {}
+
+  showHelp () {}
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const {
-      tools
+      toMenu,
+      toCollapsed,
+      showTools,
+      showOptions,
+      showHelp,
+      state
     } = this
     const html = _html
+    const nothing = _nothing
 
     return eval('html`' + template + '`')
   }

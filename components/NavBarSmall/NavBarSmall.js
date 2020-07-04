@@ -25,10 +25,6 @@ export class NavBarSmall extends LitElement {
     }
   }
 
-  tools () {
-    publish('dialogsToggle', { dialog: 'tools' })
-  }
-
   toMenu () { this.state = 'menu' }
 
   toCollapsed () { this.state = 'collapsed' }

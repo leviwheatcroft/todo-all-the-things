@@ -3,7 +3,30 @@
     todo all the things
   </span>
   <tdw-filter></tdw-filter>
-  <button @click="${tools}" class="btn btn-tools">
-    <tdw-icon icon="sliders"></tdw-icon>
-  </button>
+  ${state === 'collapsed' ?
+    html`
+      <tdw-icon @click="${toMenu}" icon="menu"></tdw-icon>
+    ` : nothing
+  }
+  ${state === 'menu' ?
+    html`
+      <div class="menu">
+        <div class="btn-bar">
+        <button @click="${showTools}" class="btn">
+          <tdw-icon icon="sliders"></tdw-icon>
+          <span class="btn-text">Tools</span>
+        </button>
+        <button @click="${showOptions}" class="btn">
+          <tdw-icon icon="settings"></tdw-icon>
+          <span class="btn-text">Options</span>
+        </button>
+        <button @click="${showHelp}" class="btn">
+          <tdw-icon icon="helpCircle"></tdw-icon>
+          <span class="btn-text">Help</span>
+        </button>
+        </div>
+        <tdw-icon @click="${toCollapsed}" icon="x"></tdw-icon>
+      </div>
+    ` : nothing
+  }
 </nav>
