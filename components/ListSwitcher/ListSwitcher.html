@@ -1,0 +1,19 @@
+<div>
+<div @click="${toPrev}" class="prev">
+  <tdw-icon icon="" class="${prev ? '' : 'disabled'}"></tdw-icon>
+  ${prev ?
+    html`
+      <span>${prev}</span>
+    ` : nothing
+  }
+</div>
+<div class="list-name">${selected}</div>
+<div @click="${toNext}" class="next">
+  ${next ?
+    html`
+      <span>${next}</span>
+    ` : <span>Add List</span>
+  }
+  <tdw-icon icon=""></tdw-icon>
+</div>
+</div>

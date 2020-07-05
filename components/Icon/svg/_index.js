@@ -15,6 +15,8 @@ import helpCircle from './help-circle.svg'
 import plus from './plus.svg'
 import menu from './menu.svg'
 import settings from './settings.svg'
+import chevronsLeft from './chevrons-left.svg'
+import chevronsRight from './chevrons-right.svg'
 
 export default {
   atSign,
@@ -33,5 +35,7 @@ export default {
   helpCircle,
   plus,
   menu,
-  settings
+  settings,
+  chevronsLeft,
+  chevronsright
 }
