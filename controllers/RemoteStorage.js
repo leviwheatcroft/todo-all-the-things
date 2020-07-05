@@ -12,12 +12,16 @@ let reload
 
 export class RemoteStorage {
   constructor () {
-    // the ordre in which listeners are subscribed is the list in which they
-    // will be executed, so here the new driver will be selected & initialised
-    // before this.tasksLoadRemoteStorage is called
-    subscribe(/optionsDriverSave/, this.driverSelect.bind(this))
+    // the order in which listeners are subscribed is the list in which they
+    // will be executed
+    // both this.driverSelect and this.tasksLoadRemoteStorage are handlers
+    // for the 'optionsDriverSave' action.
+    // because this.driverSelect is subscribed first, it will be called first
     subscribe([
-      /tasksLoadLocalStorage/,
+      /optionsDriverSave/
+    ], this.driverSelect.bind(this))
+    subscribe([
+      /optionsLoadLocalStorage/,
       /optionsDriverSave/
     ], this.tasksLoadRemoteStorage.bind(this))
     subscribe([
@@ -27,6 +31,9 @@ export class RemoteStorage {
       /tasksPurge/,
       /tasksImport/
     ], this.setChanged.bind(this))
+    subscribe([
+      /listsAdd/
+    ], this.listsAdd.bind(this))
 
     this.driverSelect({ getState })
   }
@@ -93,21 +100,22 @@ export class RemoteStorage {
     )
   }
 
-  tasksLoadRemoteStorage ({ getState }) {
-    if (!this.driver)
+  tasksLoadRemoteStorage (context) {
+    const { getState } = context
+    if (
+      !this.driver &&
+      !getState().remoteStorage.driver
+    )
       return
+    if (!this.driver)
+      this.driverSelect(context)
     const {
-      lists,
+      // lists,
       remoteStorage: { refreshInterval }
     } = getState()
 
-    Object.keys(lists).forEach((listId) => {
-      try {
-        this.driver.importTasks(listId)
-      } catch (err) {
-        console.error(err)
-      }
-    })
+    this.driver.importTasks()
+
     if (reload)
       clearTimeout(reload)
     reload = setTimeout(
@@ -115,5 +123,11 @@ export class RemoteStorage {
       refreshInterval,
       { getState }
     )
+  }
+
+  listsAdd ({ action, getState }) {
+    const { lists } = getState()
+    const { payload: { listId } } = action
+    this.driver.store(lists[listId])
   }
 }

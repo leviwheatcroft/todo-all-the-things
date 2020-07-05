@@ -29,6 +29,11 @@ export class NavBar extends LitElement {
 
   toCollapsed () { this.state = 'collapsed' }
 
+  showLists () {
+    this.state = 'collapsed'
+    publish('dialogsToggle', { dialog: 'lists' })
+  }
+
   showTools () {
     this.state = 'collapsed'
     publish('dialogsToggle', { dialog: 'tools' })
@@ -49,6 +54,7 @@ export class NavBar extends LitElement {
     const {
       toMenu,
       toCollapsed,
+      showLists,
       showTools,
       showOptions,
       showHelp,

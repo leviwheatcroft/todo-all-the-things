@@ -1,13 +1,10 @@
 <tdw-nav-bar></tdw-nav-bar>
 <tdw-nav-bar-small></tdw-nav-bar-small>
 <div class="container">
-  ${Object.values(this.lists).map((list) => {
-    return html`
-      <tdw-list .list="${list}" />
-    `
-  })}
+  <tdw-list .list="${lists[selectedListId]}"></tdw-list>
 </div>
 
+<tdw-dialog-lists></tdw-dialog-lists>
 <tdw-dialog-tools></tdw-dialog-tools>
 <tdw-dialog-options></tdw-dialog-options>
 <tdw-dialog-import-tasks></tdw-dialog-import-tasks>

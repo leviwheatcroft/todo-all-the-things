@@ -2,6 +2,7 @@ import { wrap } from './lib/dotProp'
 import { tasks } from './tasks'
 import { dialogs } from './dialogs'
 import { options } from './options'
+import { lists } from './lists'
 
 import { filterSet } from './filterSet'
 
@@ -9,6 +10,7 @@ const reducers = [
   tasks,
   dialogs,
   options,
+  lists,
 
   filterSet
 ]

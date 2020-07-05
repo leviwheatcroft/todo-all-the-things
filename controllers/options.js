@@ -15,7 +15,8 @@ export function initialiseOptions () {
     [
       /dialogsToggle/,
       /optionsDriverSave/,
-      /filterSet/
+      /filterSet/,
+      /listsSelect/
     ],
     store.bind(this)
   )
@@ -34,7 +35,8 @@ function store ({ getState }) {
   const {
     dialogs,
     sort,
-    remoteStorage
+    remoteStorage,
+    selectedList
   } = getState()
   let { filter } = getState()
   filter = { ...filter }
@@ -46,6 +48,7 @@ function store ({ getState }) {
     dialogs,
     sort,
     remoteStorage,
+    selectedList,
     filter
   }))
 }

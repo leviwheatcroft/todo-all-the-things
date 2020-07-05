@@ -70,4 +70,12 @@ export const actionTypes = [
   'optionsDriverSave',
   // stores state.remoteStorage params
   // issued by DialogRemoteStorageOptions
+
+  'listsAdd',
+  // adds new list to store
+  // published by DialogLists
+
+  'listsSelect',
+  // sets selectedList in the store
+  // published by DialogLists
 ]

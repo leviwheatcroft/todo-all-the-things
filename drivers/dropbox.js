@@ -35,15 +35,37 @@ function diff (previous, current, listId) {
   }
 }
 
+async function fetchLists () {
+  const dbx = getClient()
+  let result
+  try {
+    result = await dbx.filesListFolder({
+      path: ''
+    })
+  } catch (err) {
+    console.error(err)
+    // const { error: raw } = err
+    // const error = JSON.parse(raw)
+  }
+  const listIds = result.entries.map((entry) => {
+    return entry.name.replace(/\.\w*?$/, '')
+  })
+  return listIds
+}
+
 async function importTasks (listId) {
-  const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
-  const current = await retrieve(listId)
-  const { added, removed } = diff(previous, current, listId)
-  if (added)
-    tasksAdd(added, listId)
-  if (removed)
-    tasksRemove(removed, listId)
-  localStorage.setItem(prefix(`previous-${listId}`), current)
+  const listIds = listId ? [listId] : await fetchLists()
+  listIds.forEach((listId) => {
+    const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+    retrieve(listId).then((current) => {
+      const { added, removed } = diff(previous, current, listId)
+      if (added)
+        tasksAdd(added, listId)
+      if (removed)
+        tasksRemove(removed, listId)
+      localStorage.setItem(prefix(`previous-${listId}`), current)
+    })
+  })
 }
 
 async function retrieve (listId) {

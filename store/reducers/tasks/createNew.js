@@ -17,8 +17,12 @@ export function tasksCreateNew (action, context) {
     getState,
     update
   } = context
-  const firstLineNumber = nextLineNumber(getState().lists[listId].tasks)
+
+  // ensure list exists in state
+  if (!getState().lists[listId])
+    update(['lists', listId], { id: listId, tasks: {} })
   const tasks = { ...getState().lists[listId].tasks }
+  const firstLineNumber = nextLineNumber(tasks)
   newTasks.forEach(({ raw }, idx) => {
     const id = uuid()
     const lineNumber = firstLineNumber + idx

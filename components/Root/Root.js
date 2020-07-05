@@ -3,18 +3,21 @@ import {
   html as _html,
   unsafeCSS
 } from 'lit-element'
-import { subscribe } from '../../store'
+import { subscribe, getState } from '../../store'
 import template from './Root.html'
 import styles from './Root.less'
 
 export class Root extends LitElement {
   constructor () {
     super()
-    this.lists = {}
-    subscribe(({ state: { lists } }) => {
-      if (this.lists === lists)
-        return
-      this.lists = lists
+    const { lists, selectedListId } = getState()
+    this.lists = lists
+    this.selectedListId = lists[selectedListId]
+    subscribe(({ state: { lists, selectedListId } }) => {
+      if (this.lists !== lists)
+        this.lists = lists
+      if (this.selectedListId !== selectedListId)
+        this.selectedListId = selectedListId
     })
   }
 
@@ -33,6 +36,9 @@ export class Root extends LitElement {
         //     return true
         //   return current.some((v, idx) => v !== previous[idx])
         // }
+      },
+      selectedListId: {
+        attribute: false
       }
     }
   }
@@ -40,6 +46,10 @@ export class Root extends LitElement {
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const html = _html
+    const {
+      lists,
+      selectedListId
+    } = this
 
     return eval('html`' + template + '`')
   }

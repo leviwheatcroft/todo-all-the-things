@@ -19,6 +19,7 @@ export const initialState = {
     text: '',
     regExp: /.*/
   },
+  selectedListId: 'todo',
   lists: {
     todo: {
       id: 'todo',

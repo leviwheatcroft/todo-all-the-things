@@ -1,0 +1,22 @@
+<tdw-light-box dialog="lists">
+  <span slot="title" class="title">
+    Lists
+  </span>
+  <div slot="body" class="body menu">
+    <div class="has-input">
+      <span>Add:</span>
+      <input class="lists-add"></input>
+      <button class="btn" @click="${listsAdd}">
+        <tdw-icon icon="chevronRight">
+      </button>
+    </div>
+    ${listIds.map((listId) => {
+      return html`
+        <div @click="${listsSelect}" data-list-id="${listId}">
+          <span class="description">${listId}</span>
+          <tdw-icon icon="clipboard"></<tdw-icon>
+        </div>
+      `
+    })}
+  </div>
+</tdw-light-box>
