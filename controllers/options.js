@@ -36,7 +36,7 @@ function store ({ getState }) {
     dialogs,
     sort,
     remoteStorage,
-    selectedList
+    selectedListId
   } = getState()
   let { filter } = getState()
   filter = { ...filter }
@@ -48,7 +48,7 @@ function store ({ getState }) {
     dialogs,
     sort,
     remoteStorage,
-    selectedList,
+    selectedListId,
     filter
   }))
 }

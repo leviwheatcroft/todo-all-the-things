@@ -37,7 +37,7 @@ export class LightBox extends LitElement {
   }
 
   maskClose (event) {
-    if (!event.originalTarget.classList.contains('light-box-mask'))
+    if (event.target !== event.currentTarget) // event has bubbled from desc
       return
     this.close()
   }

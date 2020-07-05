@@ -8,10 +8,12 @@ export function optionsLoadLocalStorage (action, context) {
     dialogs,
     sort,
     remoteStorage,
-    filter
+    filter,
+    selectedListId
   } = options
   update(['dialogs'], dialogs)
   update(['sort'], sort)
   update(['remoteStorage'], remoteStorage)
   update(['filter'], filter)
+  update(['selectedListId'], selectedListId)
 }

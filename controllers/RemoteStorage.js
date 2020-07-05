@@ -91,6 +91,14 @@ export class RemoteStorage {
           publish('tasksUnsetPending', { tasks })
         })
     })
+    this.setReload(refreshInterval)
+  }
+
+  setReload (refreshInterval) {
+    if (!refreshInterval) {
+      console.error('no refreshInterval!')
+      return
+    }
     if (reload)
       clearTimeout(reload)
     reload = setTimeout(
@@ -101,6 +109,7 @@ export class RemoteStorage {
   }
 
   tasksLoadRemoteStorage (context) {
+    console.log('tasksLoadRemoteStorage')
     const { getState } = context
     if (
       !this.driver &&
@@ -109,12 +118,12 @@ export class RemoteStorage {
       return
     if (!this.driver)
       this.driverSelect(context)
+    this.driver.importTasks()
+
     const {
       // lists,
       remoteStorage: { refreshInterval }
     } = getState()
-
-    this.driver.importTasks()
 
     if (reload)
       clearTimeout(reload)

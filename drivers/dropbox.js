@@ -21,6 +21,8 @@ function diff (previous, current, listId) {
   // console.log(current, previous)
   const added = []
   current.forEach((raw) => {
+    if (raw.length === 0)
+      return
     const idx = previous.indexOf(raw)
     if (idx === -1)
       return added.push({ raw, listId })

@@ -22,6 +22,7 @@ export class DialogLists extends LitElement {
     subscribe(
       [
         /tasksLoadLocalStorage/,
+        /tasksCreateNew.fromRemote/,
         /listsAdd/
       ],
       ({ state: { lists } }) => {
