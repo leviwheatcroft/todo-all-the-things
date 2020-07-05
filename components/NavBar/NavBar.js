@@ -19,6 +19,9 @@ export class NavBar extends LitElement {
 
   static get properties () {
     return {
+      selectedListId: {
+        attribute: true
+      },
       state: {
         attribute: false
       }
@@ -58,7 +61,8 @@ export class NavBar extends LitElement {
       showTools,
       showOptions,
       showHelp,
-      state
+      state,
+      selectedListId
     } = this
     const html = _html
     const nothing = _nothing
