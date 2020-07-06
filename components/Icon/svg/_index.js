@@ -18,6 +18,7 @@ import settings from './settings.svg'
 import chevronRight from './chevrons-right.svg'
 import clipboard from './clipboard.svg'
 import loader from './loader.svg'
+import coffee from './coffee.svg'
 
 export default {
   atSign,
@@ -39,5 +40,6 @@ export default {
   settings,
   chevronRight,
   clipboard,
-  loader
+  loader,
+  coffee
 }
