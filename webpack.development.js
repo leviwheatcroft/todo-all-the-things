@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const path = require('path')
 const {
@@ -10,6 +11,10 @@ module.exports = merge(common, {
   mode: 'development',
   devtool: 'source-map',
   plugins: [
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      base: '/'
+    }),
     new WebpackBundleSizeAnalyzerPlugin('./sizeAnalyzer.txt')
   ],
   watchOptions: {

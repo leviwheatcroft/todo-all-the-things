@@ -1,5 +1,3 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-
 module.exports = {
   entry: './index.js',
   target: 'web',
@@ -29,11 +27,7 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './index.html'
-    })
-  ],
+  plugins: [],
   resolve: {
     alias: {
       // jquery: 'jquery/src/jquery'
