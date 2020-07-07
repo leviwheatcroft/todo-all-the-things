@@ -7,12 +7,13 @@ import {
 // import { render } from './TaskNew.template'
 import template from './TaskNew.html'
 import styles from './TaskNew.less'
+import { base } from '../../less'
 import {
   publish
 } from '../../store'
 
 export class TaskNew extends LitElement {
-  static get styles () { return unsafeCSS(styles) }
+  static get styles () { return [base, unsafeCSS(styles)] }
 
   static get properties () {
     return {
@@ -36,6 +37,10 @@ export class TaskNew extends LitElement {
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
+    const {
+      keyUp,
+      save
+    } = this
     const html = _html
 
     return eval('html`' + template + '`')

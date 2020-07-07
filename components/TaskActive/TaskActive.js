@@ -8,7 +8,7 @@ import styles from './TaskActive.less'
 import {
   publish
 } from '../../store'
-import { base, button } from '../../less'
+import { base } from '../../less'
 
 export class TaskActive extends LitElement {
   constructor () {
@@ -16,7 +16,7 @@ export class TaskActive extends LitElement {
     this.raw = ''
   }
 
-  static get styles () { return [base, button, unsafeCSS(styles)] }
+  static get styles () { return [base, unsafeCSS(styles)] }
 
   static get properties () {
     return {
