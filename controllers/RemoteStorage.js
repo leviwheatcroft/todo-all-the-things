@@ -49,8 +49,13 @@ export class RemoteStorage {
       tasksRemove: this.tasksRemove.bind(this),
       tasksRemovePurged: this.tasksRemovePurged.bind(this),
       getOptions: this.getOptions.bind(this),
-      prefix: this.prefix.bind(this)
+      prefix: this.prefix.bind(this),
+      listsEnsure: this.listsEnsure.bind(this)
     })
+  }
+
+  listsEnsure (listId) {
+    publish('listsEnsure', { listId })
   }
 
   tasksAdd (tasks, listId) {

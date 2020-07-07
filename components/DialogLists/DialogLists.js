@@ -23,7 +23,8 @@ export class DialogLists extends LitElement {
       [
         /tasksLoadLocalStorage/,
         /tasksCreateNew.fromRemote/,
-        /listsAdd/
+        /listsAdd/,
+        /listsEnsure/
       ],
       ({ state: { lists } }) => {
         this.listIds = Object.keys(lists)

@@ -5,6 +5,7 @@ let tasksRemove
 let tasksRemovePurged
 let getOptions
 let prefix
+let listsEnsure
 
 function initialise (ctx) {
   tasksAdd = ctx.tasksAdd
@@ -12,6 +13,7 @@ function initialise (ctx) {
   tasksRemovePurged = ctx.tasksRemovePurged
   getOptions = ctx.getOptions
   prefix = ctx.prefix
+  listsEnsure = ctx.listsEnsure
 }
 
 function diff (previous, current, listId) {
@@ -59,6 +61,7 @@ async function importTasks (listId) {
   const listIds = listId ? [listId] : await fetchLists()
   listIds.forEach((listId) => {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+    listsEnsure(listId)
     retrieve(listId).then((current) => {
       const { added, removed } = diff(previous, current, listId)
       if (added)
