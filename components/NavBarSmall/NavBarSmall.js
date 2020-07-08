@@ -31,6 +31,11 @@ export class NavBarSmall extends LitElement {
 
   toFilter () { this.state = 'filter' }
 
+  showLists () {
+    this.state = 'collapsed'
+    publish('dialogsToggle', { dialog: 'lists' })
+  }
+
   showTools () {
     this.state = 'collapsed'
     publish('dialogsToggle', { dialog: 'tools' })
@@ -52,6 +57,7 @@ export class NavBarSmall extends LitElement {
       toMenu,
       toCollapsed,
       toFilter,
+      showLists,
       showTools,
       showOptions,
       showHelp,
