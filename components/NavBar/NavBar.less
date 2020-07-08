@@ -1,5 +1,15 @@
 nav {
-  display: none;
+  display: flex;
+  .title {
+    .list-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .all-the-things {
+      display: none;
+      @media (min-width: 600px) { display: inline; }
+    }
+  }
   align-items: center;
   justify-content: space-between;
   position: fixed;
@@ -22,8 +32,5 @@ nav {
     height: 24px;
     width: 24px;
     line-height: 24px;
-  }
-  @media (min-width: 800px) {
-    display: flex;
   }
 }

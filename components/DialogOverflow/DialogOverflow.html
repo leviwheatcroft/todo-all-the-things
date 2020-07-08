@@ -1,0 +1,31 @@
+<tdw-light-box dialog="overflow">
+  <span slot="title" class="title">
+    Tools
+  </span>
+  <div slot="body" class="body menu">
+    <div @click="${dialogsToggle}" data-dialog="lists">
+      <span class="description">
+        Lists
+      </span>
+      <tdw-icon icon="clipboard"></tdw-icon>
+    </div>
+    <div @click="${dialogsToggle}" data-dialog="tools">
+      <span class="description">
+        Tools
+      </span>
+      <tdw-icon icon="sliders"></tdw-icon>
+    </div>
+    <div @click="${dialogsToggle}" data-dialog="options">
+      <span class="description">
+        Options
+      </span>
+      <tdw-icon icon="settings"></tdw-icon>
+    </div>
+    <div @click="${dialogsToggle}" data-dialog="help">
+      <span class="description">
+        Help
+      </span>
+      <tdw-icon icon="helpCircle"></tdw-icon>
+    </div>
+  </div>
+</tdw-light-box>

@@ -1,6 +1,28 @@
 :host {
   display: flex;
   align-items: center;
+  input {
+    width: 180px;
+    @media (min-width: 500px) { width: 66%; }
+    -webkit-appearance: none;
+    background-color: transparent;
+    box-shadow: none;
+    box-sizing: inherit;
+    height: 3.8rem;
+    padding: .6rem 1.0rem .7rem;
+    box-sizing: border-box;
+    &:focus {
+      outline: 0;
+    }
+    @media (min-width: 800px) {
+      width: auto;
+    }
+  }
+}
+// ================================================================== borders ==
+:host {
+  display: flex;
+  align-items: center;
   >* {
     // transparent border shows a 3d effect I can't get rid of?
     border-color: #d1d1d1 #fff;
@@ -19,20 +41,4 @@
     border-right-color: #d1d1d1
   }
 
-}
-input {
-  -webkit-appearance: none;
-  background-color: transparent;
-  box-shadow: none;
-  box-sizing: inherit;
-  width: 66%;
-  height: 3.8rem;
-  padding: .6rem 1.0rem .7rem;
-  box-sizing: border-box;
-  &:focus {
-    outline: 0;
-  }
-  @media (min-width: 800px) {
-    width: auto;
-  }
 }
