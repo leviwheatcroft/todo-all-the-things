@@ -67,7 +67,7 @@ export class DialogLists extends LitElement {
   }
 
   listsSelect (event) {
-    const { dataset: { listId } } = event.target
+    const { dataset: { listId } } = event.currentTarget
     publish('listsSelect', { listId })
     publish('dialogsToggle')
   }
