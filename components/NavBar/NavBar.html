@@ -1,36 +1,12 @@
 <nav>
-  <span class="project-name">
-    [${selectedListId}] all the things
+  <span class="title">
+    <span class="list-name">
+      [${selectedListId}]
+    </span>
+    <span class="all-the-things">
+      all the things
+    </span>
   </span>
   <tdw-filter></tdw-filter>
-  ${state === 'collapsed' ?
-    html`
-      <tdw-icon @click="${toMenu}" icon="menu"></tdw-icon>
-    ` : nothing
-  }
-  ${state === 'menu' ?
-    html`
-      <div class="menu">
-        <div class="btn-bar">
-        <button @click="${showLists}" class="btn">
-          <tdw-icon icon="clipboard"></tdw-icon>
-          <span class="btn-text">Lists</span>
-        </button>
-        <button @click="${showTools}" class="btn">
-          <tdw-icon icon="sliders"></tdw-icon>
-          <span class="btn-text">Tools</span>
-        </button>
-        <button @click="${showOptions}" class="btn">
-          <tdw-icon icon="settings"></tdw-icon>
-          <span class="btn-text">Options</span>
-        </button>
-        <button @click="${showHelp}" class="btn">
-          <tdw-icon icon="helpCircle"></tdw-icon>
-          <span class="btn-text">Help</span>
-        </button>
-        </div>
-        <tdw-icon @click="${toCollapsed}" icon="x"></tdw-icon>
-      </div>
-    ` : nothing
-  }
+  <tdw-icon @click="${showOverflow}" icon="menu"></tdw-icon>
 </nav>

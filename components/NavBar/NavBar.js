@@ -21,47 +21,18 @@ export class NavBar extends LitElement {
     return {
       selectedListId: {
         attribute: true
-      },
-      state: {
-        attribute: false
       }
     }
   }
 
-  toMenu () { this.state = 'menu' }
-
-  toCollapsed () { this.state = 'collapsed' }
-
-  showLists () {
-    this.state = 'collapsed'
-    publish('dialogsToggle', { dialog: 'lists' })
-  }
-
-  showTools () {
-    this.state = 'collapsed'
-    publish('dialogsToggle', { dialog: 'tools' })
-  }
-
-  showOptions () {
-    this.state = 'collapsed'
-    publish('dialogsToggle', { dialog: 'options' })
-  }
-
-  showHelp () {
-    this.state = 'collapsed'
-    publish('dialogsToggle', { dialog: 'help' })
+  showOverflow () {
+    publish('dialogsToggle', { dialog: 'overflow' })
   }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const {
-      toMenu,
-      toCollapsed,
-      showLists,
-      showTools,
-      showOptions,
-      showHelp,
-      state,
+      showOverflow,
       selectedListId
     } = this
     const html = _html

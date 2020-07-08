@@ -6,6 +6,7 @@ import {
 // import { render } from './DialogRemoteStorageOptions.template'
 import template from './DialogRemoteStorageOptions.html'
 import styles from './DialogRemoteStorageOptions.less'
+import lightBoxStyles from '../LightBox/LightBoxConsumers.less'
 import { base, button } from '../../less'
 
 import {
@@ -24,7 +25,14 @@ export class DialogRemoteStorageOptions extends LitElement {
     Object.assign(this, { driver, refreshInterval, accessToken })
   }
 
-  static get styles () { return [base, button, unsafeCSS(styles)] }
+  static get styles () {
+    return [
+      base,
+      button,
+      unsafeCSS(lightBoxStyles),
+      unsafeCSS(styles)
+    ]
+  }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {

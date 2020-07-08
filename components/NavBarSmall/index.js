@@ -1,1 +1,0 @@
-export { NavBarSmall } from './NavBarSmall'
