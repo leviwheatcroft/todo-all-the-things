@@ -23,7 +23,11 @@
       &:last-child {
         border-color: white;
       }
-      height: 40px;
+      // height: 40px;
+      &.info {
+        display: block;
+        height: auto;
+      }
       &:hover {
         background-color: whitesmoke;
       }
@@ -37,6 +41,11 @@
     }
   }
   input {
+    width: 180px;
+    @media (min-width: 600px) {
+      width: auto;
+      max-width: 66%;
+    }
     -webkit-appearance: none;
     background-color: transparent;
     border: 0.1rem solid #d1d1d1;
@@ -47,8 +56,7 @@
     padding: .6rem 1.0rem .7rem;
     box-sizing: border-box;
     // width: 100%;
-    &:focus {
-      outline: 0;
-    }
+    outline: 0;
+
   }
 }
