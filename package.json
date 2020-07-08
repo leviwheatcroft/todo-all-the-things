@@ -1,6 +1,6 @@
 {
   "name": "todo-all-the-things",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "simple, elegant, self hostable task management",
   "main": "index.js",
   "author": "Levi Wheatcroft",
