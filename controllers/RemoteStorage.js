@@ -81,21 +81,72 @@ export class RemoteStorage {
   async setChanged ({ states, getState }) {
     if (!this.driver)
       return
-    const {
-      lists,
-      remoteStorage: { refreshInterval }
-    } = getState()
-    const { tasks } = tasksDiff(states)
+    const { remoteStorage: { refreshInterval } } = getState()
+    const diff = tasksDiff(states)
+    const { added, removed, tasks } = diff
+    let { updated: updatedLocals } = diff
+
+    const { listId } = tasks[0]
+    if (tasks.some(({ listId: _listId }) => listId !== _listId))
+      throw new Error('only one list should be updated at a time?!')
+
+    // show spinners
     publish('tasksSetPending', { tasks })
-    let listIds = tasks
-      .map(({ listId }) => listId)
-    listIds = listIds.filter((id, idx) => listIds.indexOf(id) === idx)
-    listIds.forEach((listId) => {
-      this.driver.store(lists[listId])
-        .then(() => {
-          publish('tasksUnsetPending', { tasks })
-        })
+
+    // pull list before sending any updates
+    await this.driver.importTasks(listId)
+
+    // check for conflicts
+    const { updated: updatedRemotes } = tasksDiff(states)
+    updatedLocals.forEach((updatedLocalTask, idx) => {
+      const { previousTask } = updatedLocalTask
+      const remoteMatch = updatedRemotes.find(({ raw }) => {
+        return raw === previousTask.raw
+      })
+      if (remoteMatch)
+        return // ok - no conflict
+
+      // remove conflicted tasks from the set to be posted
+      delete updatedLocals[idx]
+      // kill spinner
+      publish('tasksUnsetPending', { tasks: [updatedLocalTask] })
+
+      // identify remote
+      // identifying the remote in this way will not work if the remote list
+      // was purged, or line numbers were changed by a manual edit or
+      // something
+
+      console.log('updatedRemotes', updatedRemotes)
+      console.log('updatedLocalTask', updatedLocalTask)
+      const remote = updatedRemotes.find(({ lineNumber }) => {
+        return lineNumber === updatedLocalTask.lineNumber
+      })
+      // set the conflict flags
+      publish('tasksConflict', {
+        local: updatedLocalTask,
+        localOriginal: updatedLocalTask.previousTask,
+        remote
+      })
     })
+    updatedLocals = updatedLocals.filter((i) => i)
+
+    if (
+      !added.length &&
+      !removed.length &&
+      !updatedLocals.length
+    )
+      return
+
+    // store updates (won't store conflicted)
+    await this.driver.store(listId, getState().lists[listId])
+
+    // remove spinners
+    publish(
+      'tasksUnsetPending',
+      { tasks: [...added, ...removed, ...updatedLocals] }
+    )
+
+    // set next refresh
     this.setReload(refreshInterval)
   }
 

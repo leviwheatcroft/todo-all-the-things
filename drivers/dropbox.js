@@ -57,8 +57,18 @@ async function fetchLists () {
   return listIds
 }
 
+// this structure allows multiple callers to await the same import request
+const importTasksInFlight = {}
 async function importTasks (listId) {
-  const listIds = listId ? [listId] : await fetchLists()
+  if (importTasksInFlight[listId])
+    return importTasksInFlight[listId]
+  importTasksInFlight[listId] = _importTasks(listId)
+    .then(() => delete importTasksInFlight[listId])
+  return importTasksInFlight[listId]
+}
+
+async function _importTasks (listId) {
+  const listIds = listId ? [].concat(listId) : await fetchLists()
   listIds.forEach((listId) => {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
     listsEnsure(listId)
@@ -92,14 +102,14 @@ async function retrieve (listId) {
   return content
 }
 
-async function store (list) {
+async function store (listId, list) {
   const {
-    id: listId,
     tasks
   } = list
   const dbx = getClient()
   const bits = Object.values(tasks)
     .filter(({ purged }) => !purged)
+    .filter(({ conflicted }) => !conflicted)
     .sort((a, b) => a.lineNumber - b.lineNumber)
     .map(({ raw }) => `${raw}\n`)
   const contents = new File(bits, `${listId}.txt`)

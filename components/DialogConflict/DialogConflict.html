@@ -1,0 +1,71 @@
+<tdw-light-box dialog="conflict">
+  <div slot="title">
+    A Wild Conflict Has Appeared!
+  </div>
+  <div slot="body" class="body information">
+    <div>
+      Oh noes! You just edited a task which were also changed in your remote storage.
+    </div>
+    <div class="locals">
+      ${locals.map((local) => {
+        return html`
+          <div>${local.raw}</div>
+        `
+      })}
+    </div>
+    <div class="localOriginals">
+      ${localOriginals.map((localOriginal) => {
+        return html`
+          <div>${localOriginal.raw}</div>
+        `
+      })}
+    </div>
+    <div class="remotes">
+      ${remotes.map((remote) => {
+        return html`
+          <div>${remote.raw}</div>
+        `
+      })}
+    </div>
+    <div>
+      Doing nothing would tear a rift in the space time continuum, so you can:
+      <div>
+        <input
+          name="conflict-choice"
+          type="radio"
+          id="keepLocals"
+          value="keepLocals"
+        >
+        <label for="keepLocals">
+          Keep your local changes
+        </label>
+      </div>
+      <div>
+        <input
+          name="conflict-choice"
+          type="radio"
+          id="keepRemotes"
+          value="keepRemotes"
+        >
+        <label for="keepRemotes">
+          Keep the remote changes
+        </label>
+      </div>
+      <div>
+        <input
+          name="conflict-choice"
+          type="radio"
+          id="keepBoth"
+          value="keepBoth"
+        >
+        <label for="keepBoth">
+          Keep both
+        </label>
+      </div>
+
+      <button class="btn">
+        <tdw-icon icon="save"></tdw-icon>
+        <span class="btn-text">Make It So!</span>
+      </button>
+    </div>
+</tdw-light-box>
