@@ -1,3 +1,5 @@
+const CopyPlugin = require('copy-webpack-plugin')
+
 module.exports = {
   entry: './index.js',
   target: 'web',
@@ -27,7 +29,11 @@ module.exports = {
       }
     ]
   },
-  plugins: [],
+  plugins: [
+    new CopyPlugin({
+      patterns: [{ from: 'assets' }]
+    })
+  ],
   resolve: {
     alias: {
       // jquery: 'jquery/src/jquery'
