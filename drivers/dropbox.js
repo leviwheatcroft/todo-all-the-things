@@ -33,6 +33,7 @@ function diff (previous, current, listId) {
   const removed = previous
     .filter((i) => i)
     .map((raw) => { return { raw, listId } })
+  console.log('dbx diff', added, removed)
   return {
     added: added.length ? added : undefined,
     removed: removed.length ? removed : undefined
@@ -69,10 +70,10 @@ async function importTasks (listId) {
 
 async function _importTasks (listId) {
   const listIds = listId ? [].concat(listId) : await fetchLists()
-  listIds.forEach((listId) => {
+  await Promise.all(listIds.map((listId) => {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
     listsEnsure(listId)
-    retrieve(listId).then((current) => {
+    return retrieve(listId).then((current) => {
       const { added, removed } = diff(previous, current, listId)
       if (added)
         tasksAdd(added, listId)
@@ -80,7 +81,7 @@ async function _importTasks (listId) {
         tasksRemove(removed, listId)
       localStorage.setItem(prefix(`previous-${listId}`), current)
     })
-  })
+  }))
 }
 
 async function retrieve (listId) {
