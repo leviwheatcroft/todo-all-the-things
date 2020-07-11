@@ -83,4 +83,13 @@ export const actionTypes = [
   // ensures list exists in store
   // lists from remote storage with no tasks still need to be created in store
   // published by driver via RemoteStorage
+
+  'remoteStoragePending',
+  'remoteStorageUnpending',
+  // sets remoteStorage.state as 'pending' or 'connected'
+  // called by RemoteStorage controller
+
+  'requestSync',
+  // no effect on state
+  // issued by RemoteStorageState NavBar Button
 ]

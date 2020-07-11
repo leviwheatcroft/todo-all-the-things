@@ -22,7 +22,8 @@ export class RemoteStorage {
     ], this.driverSelect.bind(this))
     subscribe([
       /optionsLoadLocalStorage/,
-      /optionsDriverSave/
+      /optionsDriverSave/,
+      /requestSync/
     ], this.tasksLoadRemoteStorage.bind(this))
     subscribe([
       /^tasksCreateNew$/,
@@ -50,8 +51,18 @@ export class RemoteStorage {
       tasksRemovePurged: this.tasksRemovePurged.bind(this),
       getOptions: this.getOptions.bind(this),
       prefix: this.prefix.bind(this),
-      listsEnsure: this.listsEnsure.bind(this)
+      listsEnsure: this.listsEnsure.bind(this),
+      remoteStoragePending: this.remoteStoragePending.bind(this),
+      remoteStorageUnpending: this.remoteStorageUnpending.bind(this)
     })
+  }
+
+  remoteStoragePending () {
+    publish('remoteStoragePending')
+  }
+
+  remoteStorageUnpending () {
+    publish('remoteStorageUnpending')
   }
 
   listsEnsure (listId) {

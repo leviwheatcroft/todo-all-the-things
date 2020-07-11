@@ -3,6 +3,7 @@ import { tasks } from './tasks'
 import { dialogs } from './dialogs'
 import { options } from './options'
 import { lists } from './lists'
+import { remoteStorage } from './remoteStorage'
 
 import { filterSet } from './filterSet'
 
@@ -11,6 +12,7 @@ const reducers = [
   dialogs,
   options,
   lists,
+  remoteStorage,
 
   filterSet
 ]

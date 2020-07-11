@@ -6,6 +6,8 @@ let tasksRemovePurged
 let getOptions
 let prefix
 let listsEnsure
+let remoteStoragePending
+let remoteStorageUnpending
 
 function initialise (ctx) {
   tasksAdd = ctx.tasksAdd
@@ -14,6 +16,19 @@ function initialise (ctx) {
   getOptions = ctx.getOptions
   prefix = ctx.prefix
   listsEnsure = ctx.listsEnsure
+  remoteStoragePending = ctx.remoteStoragePending
+  remoteStorageUnpending = ctx.remoteStorageUnpending
+}
+
+let inFlightOps = 0
+function inFlight () {
+  inFlightOps += 1
+  remoteStoragePending()
+  return function done () {
+    inFlightOps -= 1
+    if (inFlightOps === 0)
+      remoteStorageUnpending()
+  }
 }
 
 function diff (previous, current, listId) {
@@ -40,6 +55,7 @@ function diff (previous, current, listId) {
 }
 
 async function fetchLists () {
+  const done = inFlight()
   const dbx = getClient()
   let result
   try {
@@ -54,10 +70,12 @@ async function fetchLists () {
   const listIds = result.entries.map((entry) => {
     return entry.name.replace(/\.\w*?$/, '')
   })
+  done()
   return listIds
 }
 
 async function importTasks (listId) {
+  const done = inFlight()
   const listIds = listId ? [listId] : await fetchLists()
   listIds.forEach((listId) => {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
@@ -71,10 +89,11 @@ async function importTasks (listId) {
       localStorage.setItem(prefix(`previous-${listId}`), current)
     })
   })
+  done()
 }
 
 async function retrieve (listId) {
-  // debugger
+  const done = inFlight()
   const dbx = getClient()
   let result
   try {
@@ -89,10 +108,12 @@ async function retrieve (listId) {
       result = await create(listId)
   }
   const content = await result.fileBlob.text()
+  done()
   return content
 }
 
 async function store (list) {
+  const done = inFlight()
   const {
     id: listId,
     tasks
@@ -110,9 +131,11 @@ async function store (list) {
   })
   localStorage.setItem(prefix(`previous-${listId}`), await contents.text())
   tasksRemovePurged(listId)
+  done()
 }
 
 async function create (listId) {
+  const done = inFlight()
   const dbx = getClient()
   let result
   try {
@@ -126,6 +149,7 @@ async function create (listId) {
     const error = JSON.parse(raw)
     console.error('err', error)
   }
+  done()
   return result
 }
 
