@@ -6,12 +6,11 @@ export function tasksConflict (action, context) {
 
   const {
     payload: {
-      local,
-      localOriginal,
-      remote
+      localUpdated,
+      remoteAdded
     }
   } = action
-  console.log(action.payload)
+
   const {
     update
   } = context
@@ -21,24 +20,18 @@ export function tasksConflict (action, context) {
   }
 
   const conflicted = {
-    local: local.id,
-    localOriginal: localOriginal.id,
-    remote: remote.id
+    localUpdatedId: localUpdated.id,
+    remoteAddedId: remoteAdded.id
   }
 
   updateTask({
-    ...local,
-    ...parseTask(`${local.raw} !conflicted-local`),
-    conflicted: { ...conflicted, type: 'local' }
+    ...localUpdated,
+    ...parseTask(`${localUpdated.raw} !conflicted-local`),
+    conflicted: { ...conflicted, type: 'localUpdated' }
   })
   updateTask({
-    ...localOriginal,
-    ...parseTask(`${localOriginal.raw} !conflicted-local-original`),
-    conflicted: { ...conflicted, type: 'localOriginal' }
-  })
-  updateTask({
-    ...remote,
-    ...parseTask(`${remote.raw} !conflicted-remote`),
-    conflicted: { ...conflicted, type: 'remote' }
+    ...remoteAdded,
+    ...parseTask(`${remoteAdded.raw} !conflicted-remote`),
+    conflicted: { ...conflicted, type: 'remoteAdded' }
   })
 }
