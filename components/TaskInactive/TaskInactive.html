@@ -22,7 +22,20 @@ ${task.pending ?
   <span class="pending-remote">
     <tdw-icon icon="loader" spin>
   </span>
-  ` : ''
+  ` : nothing
+}
+${task.conflicted ?
+  html`
+    <div
+      @click="${filterApply}"
+      class="tag tag-alert"
+      data-conflict="${task.conflicted}"
+    >
+      <!-- whitespace issues -->
+      <tdw-icon icon="alertTriangle"></tdw-icon
+      ><span class="tag-text">conflicted-${task.conflicted}</span>
+    </div>
+  ` : nothing
 }
 <!-- ${task.createdDate ?
   html`

@@ -50,6 +50,7 @@ export class TaskInactive extends LitElement {
       project,
       context,
       createdDate,
+      conflicted,
       key,
       value
     } = event.currentTarget.dataset
@@ -63,6 +64,8 @@ export class TaskInactive extends LitElement {
       text = `@${context}`
     else if (createdDate)
       text = createdDate
+    else if (conflicted)
+      text = '!conflicted'
     else if (key && value)
       text = `${key}:${value}`
 
