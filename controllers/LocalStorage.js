@@ -23,7 +23,8 @@ export class LocalStorage {
         /tasksPurge/,
         /tasksRemove/,
         /tasksRemovePurged/,
-        /tasksImport/
+        /tasksImport/,
+        /tasksConflicted/
       ],
       this.setChanged.bind(this)
     )
@@ -46,7 +47,8 @@ export class LocalStorage {
         listId: task.listId,
         raw: task.raw,
         purged: task.purged,
-        lineNumber: task.lineNumber
+        lineNumber: task.lineNumber,
+        conflicted: task.conflicted
       }
       localStorage.setItem(
         prefix(task.id),

@@ -8,7 +8,19 @@
     margin: 0;
   }
   &.information {
-    margin: 2rem;
+    margin: 20px;
+    > div {
+      margin: 16px 0;
+    }
+    .flex-column-center {
+      display: flex;
+      flex-direction: column;
+    }
+    .flex-column-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
   }
   &.menu {
     > div {
@@ -40,7 +52,7 @@
       }
     }
   }
-  input {
+  input[type="text"] {
     width: 180px;
     @media (min-width: 600px) {
       width: auto;

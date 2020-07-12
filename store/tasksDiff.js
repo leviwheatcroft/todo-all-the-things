@@ -1,5 +1,8 @@
-export function tasksDiff (states) {
-  const [current, previous] = states
+export function tasksDiff (states, previous) {
+  const current = states[0]
+  if (!previous)
+    [, previous] = states
+    console.log('tasksDiff', current.lists, previous.lists)
   const { lists: currentLists } = current
   const added = []
   const updated = []
@@ -22,7 +25,7 @@ export function tasksDiff (states) {
         currentTask.raw !== previousTask.raw ||
         currentTask.purged !== previousTask.purged
       )
-        updated.push(currentTask)
+        updated.push({ ...currentTask, previousTask })
     })
     Object.values(previousList.tasks).forEach((previousTask) => {
       if (!currentList.tasks[previousTask.id])

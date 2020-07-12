@@ -22,6 +22,7 @@ import clipboard from './clipboard.svg'
 import loader from './loader.svg'
 import coffee from './coffee.svg'
 import star from './star.svg'
+import alertTriangle from './alert-triangle.svg'
 
 export default {
   atSign,
@@ -46,6 +47,7 @@ export default {
   loader,
   coffee,
   star,
+  alertTriangle,
   cloudOff,
   cloud
 }
