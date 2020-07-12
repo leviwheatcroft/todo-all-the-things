@@ -1,22 +1,34 @@
 import { Dropbox } from 'dropbox'
 
-let tasksAdd
-let tasksRemove
+let tasksPatch
 let tasksRemovePurged
 let getOptions
 let prefix
 let listsEnsure
 
 function initialise (ctx) {
-  tasksAdd = ctx.tasksAdd
-  tasksRemove = ctx.tasksRemove
+  tasksPatch = ctx.tasksPatch
   tasksRemovePurged = ctx.tasksRemovePurged
   getOptions = ctx.getOptions
   prefix = ctx.prefix
   listsEnsure = ctx.listsEnsure
 }
 
-function diff (previous, current, listId) {
+/**
+ * diff - compares previous and current text files
+ *
+ * because textfiles are being compared, it's only possible to reliably
+ * determine additions and removals, not updates. If you rely on line numbers
+ * you could detect updates, however lineNumbers will change when completed
+ * tasks are purged.
+ *
+ * by contrast tasksDiff, which diffs state, can detect which tasks have been
+ * added, removed, or updated. However, after a dropbox import, tasksDiff
+ * will report an updated task as an addition & removal, because the remote
+ * storage  driver creates a new task and removes the old task rather than
+ * updating a task in place.
+ */
+function diff (previous, current) {
   const newLine = /\r?\n/
   previous = previous.split(newLine)
   current = current.split(newLine)
@@ -27,13 +39,12 @@ function diff (previous, current, listId) {
       return
     const idx = previous.indexOf(raw)
     if (idx === -1)
-      return added.push({ raw, listId })
+      return added.push(raw)
     delete previous[idx] // unchanged
   })
   const removed = previous
     .filter((i) => i)
-    .map((raw) => { return { raw, listId } })
-  console.log('dbx diff', added, removed)
+
   return {
     added: added.length ? added : undefined,
     removed: removed.length ? removed : undefined
@@ -74,11 +85,7 @@ async function _importTasks (listId) {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
     listsEnsure(listId)
     return retrieve(listId).then((current) => {
-      const { added, removed } = diff(previous, current, listId)
-      if (added)
-        tasksAdd(added, listId)
-      if (removed)
-        tasksRemove(removed, listId)
+      tasksPatch({ ...diff(previous, current), listId })
       localStorage.setItem(prefix(`previous-${listId}`), current)
     })
   }))
@@ -110,7 +117,9 @@ async function store (listId, list) {
   const dbx = getClient()
   const bits = Object.values(tasks)
     .filter(({ purged }) => !purged)
-    .filter(({ conflicted }) => !conflicted)
+    // remote conflicts need to be stored otherwise they would be deleted from
+    // other clients, however local conflicts should be held back.
+    .filter(({ conflicted }) => !conflicted !== 'local')
     .sort((a, b) => a.lineNumber - b.lineNumber)
     .map(({ raw }) => `${raw}\n`)
   const contents = new File(bits, `${listId}.txt`)

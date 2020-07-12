@@ -2,7 +2,8 @@ import {
   publish,
   subscribe,
   getState,
-  tasksDiff
+  tasksDiff,
+  states
 } from '../store'
 import drivers from '../drivers'
 
@@ -29,7 +30,8 @@ export class RemoteStorage {
       /tasksToggleComplete/,
       /tasksEdit/,
       /tasksPurge/,
-      /tasksImport/
+      /tasksImport/,
+      /tasksConflictResolve/
     ], this.setChanged.bind(this))
     subscribe([
       /listsAdd/
@@ -45,8 +47,7 @@ export class RemoteStorage {
       return
 
     this.driver.initialise({
-      tasksAdd: this.tasksAdd.bind(this),
-      tasksRemove: this.tasksRemove.bind(this),
+      tasksPatch: this.tasksPatch.bind(this),
       tasksRemovePurged: this.tasksRemovePurged.bind(this),
       getOptions: this.getOptions.bind(this),
       prefix: this.prefix.bind(this),
@@ -58,12 +59,59 @@ export class RemoteStorage {
     publish('listsEnsure', { listId })
   }
 
-  tasksAdd (tasks, listId) {
-    publish('tasksCreateNew.fromRemote', { tasks, listId })
-  }
+  /**
+   * tasksPatch - update local tasks by raw comparison
+   *
+   * this is the best time to detect a conflict, because the raw value of the
+   * task to remove won't exist in the current state.
+   *
+   * during this operation, you reliably detect all the different tasks and
+   * versions of those tasks in order to thoroughly identify the conflict.
+   */
+  tasksPatch (patch) {
+    const {
+      added,
+      removed,
+      // updated, // won't be provided by dropbox
+      listId
+    } = patch
 
-  tasksRemove (tasks, listId) {
-    publish('tasksRemove', { tasks, listId })
+    // add new remote tasks - this is always done even if theres a conflict
+    if (added)
+      publish('tasksCreateNew.fromRemote', { raws: added, listId })
+
+    if (!removed)
+      return
+
+    // find conflicts
+    const tasks = Object.values(getState().lists[listId].tasks)
+    const conflictedLocals = removed
+      .filter((removedRaw) => {
+        return !tasks.find(({ raw }) => raw === removedRaw)
+      })
+      .map((removedRaw) => {
+        let localPrev
+        states.some((state) => {
+          const tasks = Object.values(state.lists[listId].tasks)
+          localPrev = tasks.find(({ raw }) => raw === removedRaw)
+          return localPrev
+        })
+        if (!localPrev)
+          throw new Error('unable to determine localPrev')
+
+        const localCurrent = getState().lists[listId].tasks[localPrev.id]
+        if (!localCurrent)
+          throw new Error('unable to determine localNext')
+        return localCurrent
+      })
+
+    if (conflictedLocals.length) {
+      const { added: conflictedRemotes } = tasksDiff(states)
+      publish('tasksConflict', { conflictedLocals, conflictedRemotes })
+    }
+
+    // remove tasks removed remotely - won't remove conflicted
+    publish('tasksRemove', { raws: removed, listId })
   }
 
   tasksRemovePurged (listId) {
@@ -82,10 +130,9 @@ export class RemoteStorage {
     if (!this.driver)
       return
     const { remoteStorage: { refreshInterval } } = getState()
-    const diff = tasksDiff(states)
-    const { added, removed, tasks } = diff
-    let { updated: updatedLocals } = diff
+    const { tasks } = tasksDiff(states)
 
+    // TODO: remove this check
     const { listId } = tasks[0]
     if (tasks.some(({ listId: _listId }) => listId !== _listId))
       throw new Error('only one list should be updated at a time?!')
@@ -96,55 +143,10 @@ export class RemoteStorage {
     // pull list before sending any updates
     await this.driver.importTasks(listId)
 
-    // check for conflicts
-    const { updated: updatedRemotes } = tasksDiff(states)
-    updatedLocals.forEach((updatedLocalTask, idx) => {
-      const { previousTask } = updatedLocalTask
-      const remoteMatch = updatedRemotes.find(({ raw }) => {
-        return raw === previousTask.raw
-      })
-      if (remoteMatch)
-        return // ok - no conflict
-
-      // remove conflicted tasks from the set to be posted
-      delete updatedLocals[idx]
-      // kill spinner
-      publish('tasksUnsetPending', { tasks: [updatedLocalTask] })
-
-      // identify remote
-      // identifying the remote in this way will not work if the remote list
-      // was purged, or line numbers were changed by a manual edit or
-      // something
-
-      console.log('updatedRemotes', updatedRemotes)
-      console.log('updatedLocalTask', updatedLocalTask)
-      const remote = updatedRemotes.find(({ lineNumber }) => {
-        return lineNumber === updatedLocalTask.lineNumber
-      })
-      // set the conflict flags
-      publish('tasksConflict', {
-        local: updatedLocalTask,
-        localOriginal: updatedLocalTask.previousTask,
-        remote
-      })
-    })
-    updatedLocals = updatedLocals.filter((i) => i)
-
-    if (
-      !added.length &&
-      !removed.length &&
-      !updatedLocals.length
-    )
-      return
-
-    // store updates (won't store conflicted)
     await this.driver.store(listId, getState().lists[listId])
 
     // remove spinners
-    publish(
-      'tasksUnsetPending',
-      { tasks: [...added, ...removed, ...updatedLocals] }
-    )
+    publish('tasksUnsetPending', { tasks })
 
     // set next refresh
     this.setReload(refreshInterval)
@@ -165,7 +167,6 @@ export class RemoteStorage {
   }
 
   tasksLoadRemoteStorage (context) {
-    console.log('tasksLoadRemoteStorage')
     const { getState } = context
     if (
       !this.driver &&
