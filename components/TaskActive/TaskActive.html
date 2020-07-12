@@ -1,2 +1,2 @@
-<input .value="${task.raw}" placeholder="some task" autofocus />
+<input .value="${task.raw}" @keyup="${keyUp}" placeholder="some task" />
 <tdw-icon @click="${save}" icon="save"></tdw-icon>

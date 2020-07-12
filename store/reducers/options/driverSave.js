@@ -4,8 +4,10 @@ export function optionsDriverSave (action, context) {
 
   const { payload: { driver, refreshInterval, accessToken } } = action
   const { update } = context
+  const state = driver === 'none' ? 'noDriver' : 'connected'
   update(['remoteStorage'], {
     driver,
+    state,
     refreshInterval,
     accessToken
   })

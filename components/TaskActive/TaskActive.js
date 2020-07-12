@@ -37,6 +37,7 @@ export class TaskActive extends LitElement {
   render () {
     const {
       task,
+      keyUp,
       save
     } = this
     const html = _html
@@ -44,6 +45,11 @@ export class TaskActive extends LitElement {
     return eval('html`' + template + '`')
   }
   /* eslint-enable */
+
+  keyUp (event) {
+    if (event.keyCode === 13)
+      this.save()
+  }
 
   save () {
     const { task } = this

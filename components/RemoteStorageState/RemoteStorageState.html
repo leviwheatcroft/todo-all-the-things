@@ -1,0 +1,15 @@
+${remoteStorageState === 'noDriver' ?
+  html`
+    <tdw-icon icon="cloudOff"></tdw-icon>
+  ` : nothing
+}
+${remoteStorageState === 'connected' ?
+  html`
+    <tdw-icon @click="${requestSync}" icon="cloud"></tdw-icon>
+  ` : nothing
+}
+${remoteStorageState === 'pending' ?
+  html`
+    <tdw-icon class="shake" icon="cloudLightning"></tdw-icon>
+  ` : nothing
+}

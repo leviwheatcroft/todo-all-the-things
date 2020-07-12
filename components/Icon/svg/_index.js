@@ -5,6 +5,8 @@ import sliders from './sliders.svg'
 import trash2 from './trash-2.svg'
 import filePlus from './file-plus.svg'
 import cloudLightning from './cloud-lightning.svg'
+import cloudOff from './cloud-off.svg'
+import cloud from './cloud.svg'
 import download from './download.svg'
 import search from './search.svg'
 import calendar from './calendar.svg'
@@ -45,5 +47,7 @@ export default {
   loader,
   coffee,
   star,
-  alertTriangle
+  alertTriangle,
+  cloudOff,
+  cloud
 }

@@ -13,6 +13,7 @@
   "dependencies": {
     "browser-sync": "^2.26.7",
     "concurrently": "^5.2.0",
+    "copy-webpack-plugin": "^6.0.3",
     "css-loader": "^3.5.3",
     "dropbox": "^5.1.0",
     "es6-templates": "^0.2.3",

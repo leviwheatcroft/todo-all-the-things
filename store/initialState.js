@@ -10,6 +10,7 @@ export const initialState = {
   },
   remoteStorage: {
     driver: false,
+    state: 'noDriver',
     refreshInterval: 10 * 60 * 1000,
     accessToken: false
   },
