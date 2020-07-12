@@ -4,6 +4,7 @@ import { dialogs } from './dialogs'
 import { options } from './options'
 import { lists } from './lists'
 import { remoteStorage } from './remoteStorage'
+import { upgrade } from './upgrade'
 
 import { filterSet } from './filterSet'
 
@@ -13,6 +14,7 @@ const reducers = [
   options,
   lists,
   remoteStorage,
+  upgrade,
 
   filterSet
 ]

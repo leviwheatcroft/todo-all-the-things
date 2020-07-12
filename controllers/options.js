@@ -16,7 +16,8 @@ export function initialiseOptions () {
       /dialogsToggle/,
       /optionsDriverSave/,
       /filterSet/,
-      /listsSelect/
+      /listsSelect/,
+      /upgrade/
     ],
     store.bind(this)
   )
@@ -36,7 +37,8 @@ function store ({ getState }) {
     dialogs,
     sort,
     remoteStorage,
-    selectedListId
+    selectedListId,
+    version
   } = getState()
   let { filter } = getState()
   filter = { ...filter }
@@ -49,6 +51,7 @@ function store ({ getState }) {
     sort,
     remoteStorage,
     selectedListId,
+    version,
     filter
   }))
 }
