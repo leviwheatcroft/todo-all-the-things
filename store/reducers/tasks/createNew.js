@@ -12,7 +12,7 @@ export function tasksCreateNew (action, context) {
   )
     return
 
-  const { payload: { listId, tasks: newTasks } } = action
+  const { payload: { listId, raws } } = action
   const {
     getState,
     update
@@ -21,9 +21,10 @@ export function tasksCreateNew (action, context) {
   // ensure list exists in state
   if (!getState().lists[listId])
     update(['lists', listId], { id: listId, tasks: {} })
-  const tasks = { ...getState().lists[listId].tasks }
-  const firstLineNumber = nextLineNumber(tasks)
-  newTasks.forEach(({ raw }, idx) => {
+
+  const firstLineNumber = nextLineNumber(getState().lists[listId].tasks)
+
+  raws.forEach((raw, idx) => {
     const id = uuid()
     const lineNumber = firstLineNumber + idx
     const parsed = parseTask(raw)
@@ -36,9 +37,10 @@ export function tasksCreateNew (action, context) {
       filterMatched,
       ...parsed
     }
-    tasks[id] = task
+    update(['lists', listId, 'tasks', id], task)
   })
-  update(['lists', listId, 'tasks'], tasks)
+
+  // re-sort
   update(
     ['lists', listId, 'tasks'],
     sortTasks(getState().lists[listId].tasks, getState().sort)
