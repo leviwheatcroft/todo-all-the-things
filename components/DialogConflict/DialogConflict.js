@@ -19,7 +19,7 @@ export class DialogConflict extends LitElement {
   constructor () {
     super()
     this.lists = getState().lists
-    subscribe(/tasksConflict/, this.tasksConflict.bind(this))
+    subscribe(/^tasksConflict$/, this.tasksConflict.bind(this))
   }
 
   static get styles () {
@@ -39,23 +39,25 @@ export class DialogConflict extends LitElement {
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
+    const {
+      lists,
+      resolveConflict
+    } = this
     const html = _html
     const tasks = []
     const {
       locals,
-      localOriginals,
       remotes
-    } = Object.values(this.lists)
+    } = Object.values(lists)
       .reduce((_tasks, { tasks }) => {
         return _tasks.concat(Object.values(tasks))
       }, [])
       .filter((task) => task.conflicted)
       .reduce((_tasks, task) => {
-        _tasks[`${task.conflicted.type}s`].push(task)
+        _tasks[`${task.conflicted}s`].push(task)
         return _tasks
-      }, { locals: [], localOriginals: [], remotes: [] })
+      }, { locals: [], remotes: [] })
 
-    console.log(locals, localOriginals, remotes)
     return eval('html`' + template + '`')
   }
   /* eslint-enable */
@@ -63,6 +65,13 @@ export class DialogConflict extends LitElement {
   tasksConflict () {
     this.lists = getState().lists
     publish('dialogsToggle', { dialog: 'conflict' })
+  }
+
+  resolveConflict () {
+    const resolution = this.shadowRoot.querySelector('input:checked').value
+    publish('dialogsToggle')
+    if (resolution !== 'manual')
+      publish('tasksConflictResolve', { resolution })
   }
 }
 
