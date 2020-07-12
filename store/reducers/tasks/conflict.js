@@ -6,8 +6,8 @@ export function tasksConflict (action, context) {
 
   const {
     payload: {
-      localUpdated,
-      remoteAdded
+      conflictedLocals,
+      conflictedRemotes
     }
   } = action
 
@@ -19,19 +19,22 @@ export function tasksConflict (action, context) {
     update(['lists', task.listId, 'tasks', task.id], task)
   }
 
-  const conflicted = {
-    localUpdatedId: localUpdated.id,
-    remoteAddedId: remoteAdded.id
-  }
-
-  updateTask({
-    ...localUpdated,
-    ...parseTask(`${localUpdated.raw} !conflicted-local`),
-    conflicted: { ...conflicted, type: 'localUpdated' }
+  // for the local task, include a tag in the raw task, then parseTask
+  // will set conflicted: 'local'
+  conflictedLocals.forEach((local) => {
+    updateTask({
+      ...local,
+      ...parseTask(`${local.raw} !conflicted-local`)
+    })
   })
-  updateTask({
-    ...remoteAdded,
-    ...parseTask(`${remoteAdded.raw} !conflicted-remote`),
-    conflicted: { ...conflicted, type: 'remoteAdded' }
+  // for the remote task, you can't include a tag in the raw task, because
+  // it would be synced back to the remote, and show up in other clients as
+  // conflicted even though it wouldn't be conflicted in those clients.
+  // so, we just set the conflict in the local state
+  conflictedRemotes.forEach((remote) => {
+    updateTask({
+      ...remote,
+      conflicted: 'remote'
+    })
   })
 }

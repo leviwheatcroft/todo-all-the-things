@@ -10,6 +10,7 @@ import { tasksImport } from './import'
 import { tasksSetPending } from './setPending'
 import { tasksUnsetPending } from './unsetPending'
 import { tasksConflict } from './conflict'
+import { tasksConflictResolve } from './conflictResolve'
 
 const reducers = [
   tasksCreateNew,
@@ -23,7 +24,8 @@ const reducers = [
   tasksImport,
   tasksSetPending,
   tasksUnsetPending,
-  tasksConflict
+  tasksConflict,
+  tasksConflictResolve
 ]
 
 export function tasks (action, context) {

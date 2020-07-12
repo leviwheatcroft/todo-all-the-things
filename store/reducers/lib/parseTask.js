@@ -5,6 +5,7 @@ export function parseTask (raw) {
   complete(task)
   createdDate(task)
   completedDate(task)
+  conflicted(task)
   priority(task)
   project(task)
   context(task)
@@ -37,6 +38,15 @@ function createdDate (task) {
     return
   task.createdDate = result[0]
   task.parsed = task.parsed.replace(re, '').trimStart()
+}
+
+function conflicted (task) {
+  const re = /!conflicted-(local|remote)/
+  const result = re.exec(task.parsed)
+  if (!result)
+    return
+  task.conflicted = result[1]
+  task.parsed = task.parsed.replace(re, '')
 }
 
 function completedDate (task) {

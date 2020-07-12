@@ -67,6 +67,10 @@ export const actionTypes = [
   // sets conflicted object on all tasks involved in a conflict
   // called by RemoteStorage controller
 
+  'tasksConflictResolve',
+  // resolves conflict
+  // called by DialigConflict
+
   'optionsLoadLocalStorage',
   // loads options to state from local storage
   // issued by options controller
