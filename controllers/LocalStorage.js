@@ -36,9 +36,9 @@ export class LocalStorage {
     publish('tasksLoadLocalStorage', { tasks })
   }
 
-  setChanged ({ action: { type } }) {
-    if (type === 'tasksLoadLocalStorage')
-      return
+  setChanged () {
+    // if (type === 'tasksLoadLocalStorage')
+    //   return
     const { added, updated, removed } = tasksDiff(states)
     const tasks = [...added, ...updated]
     tasks.forEach((task) => {
@@ -48,11 +48,6 @@ export class LocalStorage {
         raw: task.raw,
         purged: task.purged,
         lineNumber: task.lineNumber
-        // conflicted: task.conflicted
-        // don't store conflicted state...
-        // for local tasks it's included in task.raw, and will be parsed out
-        // when loaded from localStorage later
-        // for remote tasks,
       }
       localStorage.setItem(
         prefix(task.id),

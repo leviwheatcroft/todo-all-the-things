@@ -4,11 +4,7 @@ import { dialogs } from './dialogs'
 import { options } from './options'
 import { lists } from './lists'
 import { remoteStorage } from './remoteStorage'
-<<<<<<< HEAD
 import { upgrade } from './upgrade'
-=======
-// import { upgrade } from './upgrade'
->>>>>>> sync
 
 import { filterSet } from './filterSet'
 
@@ -18,11 +14,7 @@ const reducers = [
   options,
   lists,
   remoteStorage,
-<<<<<<< HEAD
   upgrade,
-=======
-  // upgrade,
->>>>>>> sync
 
   filterSet
 ]

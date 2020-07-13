@@ -1,7 +1,4 @@
-import { version } from '../package.json'
-
 export const initialState = {
-  version,
   dialogs: {
     show: 'help'
   },

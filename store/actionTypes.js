@@ -100,4 +100,8 @@ export const actionTypes = [
   'requestSync',
   // no effect on state
   // issued by RemoteStorageState NavBar Button
+
+  'upgrade',
+  // applies state upgrades
+  // issued by upgrade controller
 ]

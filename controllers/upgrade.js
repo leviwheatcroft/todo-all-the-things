@@ -15,7 +15,10 @@ export function initialiseUpgrade () {
 function upgrade ({ getState }) {
   unsubscribe()
   const current = getState().version
-  const next = available.indexOf((upg) => versionCompare(current, upg) < 0)
+  const next = available.findIndex((upg) => {
+    return versionCompare(current, upg) < 0
+  })
+  // console.log(available.findIndex(() => true))
   if (next === -1)
     return
   available.slice(next).forEach((version) => publish('upgrade', { version }))
@@ -43,6 +46,6 @@ function versionCompare (a, b) {
       !Number.isNaN(nb)
     )
       return 1
-    return 0
   }
+  return 0
 }
