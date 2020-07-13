@@ -140,9 +140,6 @@ async function store (listId, list) {
   const dbx = getClient()
   const bits = Object.values(tasks)
     .filter(({ purged }) => !purged)
-    // remote conflicts need to be stored otherwise they would be deleted from
-    // other clients, however local conflicts should be held back.
-    .filter(({ conflicted }) => !conflicted !== 'local')
     .sort((a, b) => a.lineNumber - b.lineNumber)
     .map(({ raw }) => `${raw}\n`)
   const contents = new File(bits, `${listId}.txt`)

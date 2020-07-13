@@ -24,7 +24,7 @@ export class LocalStorage {
         /tasksRemove/,
         /tasksRemovePurged/,
         /tasksImport/,
-        /tasksConflicted/
+        /tasksConflict/
       ],
       this.setChanged.bind(this)
     )
@@ -47,8 +47,12 @@ export class LocalStorage {
         listId: task.listId,
         raw: task.raw,
         purged: task.purged,
-        lineNumber: task.lineNumber,
-        conflicted: task.conflicted
+        lineNumber: task.lineNumber
+        // conflicted: task.conflicted
+        // don't store conflicted state...
+        // for local tasks it's included in task.raw, and will be parsed out
+        // when loaded from localStorage later
+        // for remote tasks,
       }
       localStorage.setItem(
         prefix(task.id),

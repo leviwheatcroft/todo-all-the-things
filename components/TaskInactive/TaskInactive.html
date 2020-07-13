@@ -24,19 +24,18 @@ ${task.pending ?
   </span>
   ` : nothing
 }
-${task.conflicted ?
+<!-- ${task.conflicted ?
   html`
     <div
       @click="${filterApply}"
       class="tag tag-alert"
       data-conflict="${task.conflicted}"
     >
-      <!-- whitespace issues -->
       <tdw-icon icon="alertTriangle"></tdw-icon
       ><span class="tag-text">conflicted-${task.conflicted}</span>
     </div>
   ` : nothing
-}
+} -->
 <!-- ${task.createdDate ?
   html`
     <div

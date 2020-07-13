@@ -7,71 +7,72 @@ import {
 import template from './DialogConflict.html'
 import styles from './DialogConflict.less'
 import lightBox from '../LightBox/LightBoxConsumers.less'
-import { base, button } from '../../less'
+import { base, button, flex } from '../../less'
 
 import {
   publish,
-  subscribe,
-  getState
+  subscribe
 } from '../../store'
 
 export class DialogConflict extends LitElement {
   constructor () {
     super()
-    this.lists = getState().lists
+    this.conflictedLocals = []
+    this.conflictedRemotes = []
     subscribe(/^tasksConflict$/, this.tasksConflict.bind(this))
+  }
+
+  static get properties () {
+    return {
+      conflictedLocals: { attribute: false },
+      conflictedRemotes: { attribute: false }
+    }
   }
 
   static get styles () {
     return [
       base,
       button,
+      flex,
       unsafeCSS(lightBox),
       unsafeCSS(styles)
     ]
   }
 
-  static get properties () {
-    return {
-      lists: { attribute: false }
-    }
-  }
-
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const {
-      lists,
-      resolveConflict
+      // lists,
+      resolveConflict,
+      conflictedLocals,
+      conflictedRemotes
     } = this
     const html = _html
-    const tasks = []
-    const {
-      locals,
-      remotes
-    } = Object.values(lists)
-      .reduce((_tasks, { tasks }) => {
-        return _tasks.concat(Object.values(tasks))
-      }, [])
-      .filter((task) => task.conflicted)
-      .reduce((_tasks, task) => {
-        _tasks[`${task.conflicted}s`].push(task)
-        return _tasks
-      }, { locals: [], remotes: [] })
 
     return eval('html`' + template + '`')
   }
   /* eslint-enable */
 
-  tasksConflict () {
-    this.lists = getState().lists
+  tasksConflict ({ action }) {
+    this.conflictedLocals = action.payload.conflictedLocals
+    this.conflictedRemotes = action.payload.conflictedRemotes
     publish('dialogsToggle', { dialog: 'conflict' })
   }
 
   resolveConflict () {
     const resolution = this.shadowRoot.querySelector('input:checked').value
+    const {
+      conflictedLocals,
+      conflictedRemotes
+    } = this
     publish('dialogsToggle')
-    if (resolution !== 'manual')
-      publish('tasksConflictResolve', { resolution })
+    if (resolution === 'manual')
+      return
+    publish('tasksConflictResolve', {
+      resolution,
+      conflictedLocals,
+      conflictedRemotes
+    })
   }
 }
 

@@ -2,7 +2,7 @@
 import { publish } from './store'
 import { initialiseControllers } from './controllers'
 // require('milligram/dist/milligram.css')
-require('./less/index.less')
+// require('./less/index.less')
 require('./components')
 // const {
 //   Storage
