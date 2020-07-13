@@ -142,6 +142,8 @@ export class RemoteStorage {
       return
     const { remoteStorage: { refreshInterval } } = getState()
     const { tasks } = tasksDiff(states)
+    if (!tasks.length)
+      return
 
     // TODO: remove this check
     const { listId } = tasks[0]
