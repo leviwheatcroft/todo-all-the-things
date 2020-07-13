@@ -2,7 +2,7 @@ export function tasksDiff (states, previous) {
   const current = states[0]
   if (!previous)
     [, previous] = states
-    console.log('tasksDiff', current.lists, previous.lists)
+  console.log('tasksDiff', current.lists, previous.lists)
   const { lists: currentLists } = current
   const added = []
   const updated = []
@@ -22,6 +22,8 @@ export function tasksDiff (states, previous) {
       if (!previousTask)
         added.push(currentTask)
       else if (
+        // TODO: why compare raw & purged here ? why not just check if the
+        // object has changed ?
         currentTask.raw !== previousTask.raw ||
         currentTask.purged !== previousTask.purged
       )
