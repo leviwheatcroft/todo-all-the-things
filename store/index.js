@@ -38,7 +38,10 @@ export function subscribe (tests, handler) {
     }
     subscriptions.get(test).push(handler)
     return function unsubscribe () {
-      subscriptions[test] = subscriptions[test].filter((h) => h !== handler)
+      subscriptions.set(
+        test,
+        subscriptions.get(test).filter((h) => h !== handler)
+      )
     }
   })
   return function unsubscribe () {
