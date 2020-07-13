@@ -95,6 +95,7 @@ export class RemoteStorage {
       return
 
     // find conflicts
+    // https://github.com/leviwheatcroft/todo-all-the-things/wiki/periodic-sync-strategy
     const tasks = Object.values(getState().lists[listId].tasks)
     const conflictedLocals = removed
       .filter((removedRaw) => {

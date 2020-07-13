@@ -9,7 +9,7 @@ import { tasksRemovePurged } from './removePurged'
 import { tasksImport } from './import'
 import { tasksSetPending } from './setPending'
 import { tasksUnsetPending } from './unsetPending'
-import { tasksConflict } from './conflict'
+// import { tasksConflict } from './conflict'
 import { tasksConflictResolve } from './conflictResolve'
 
 const reducers = [
@@ -24,7 +24,7 @@ const reducers = [
   tasksImport,
   tasksSetPending,
   tasksUnsetPending,
-  tasksConflict,
+  // tasksConflict,
   tasksConflictResolve
 ]
 

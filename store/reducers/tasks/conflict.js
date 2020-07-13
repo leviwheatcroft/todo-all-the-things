@@ -24,7 +24,7 @@ export function tasksConflict (action, context) {
   conflictedLocals.forEach((local) => {
     updateTask({
       ...local,
-      ...parseTask(`${local.raw} !conflicted-local`)
+      ...parseTask(`${local.raw} !conflicted`)
     })
   })
   // for the remote task, you can't include a tag in the raw task, because

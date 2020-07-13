@@ -6,27 +6,30 @@
     <p>
       Oh noes! You just edited a task which was also changed in your remote storage, so there's two different versions of these tasks.
     </p>
+    <p>
+      Local Versions:
+    </p>
     <div class="locals">
-      ${locals.map((local) => {
+      ${conflictedLocals.map((local) => {
         return html`
           <div>${local.raw}</div>
         `
       })}
     </div>
+    <p>
+      Remote Versions:
+    </p>
     <div class="remotes">
-      ${remotes.map((remote) => {
+      ${conflictedRemotes.map((remote) => {
         return html`
           <div>${remote.raw}</div>
         `
       })}
     </div>
     <p>
-      Right now, the list on this device has both versions, but the remote storage doesn't have your local version, and it won't be saved there until the !conflicted tag is removed.
+      Right now, both versions have been saved. However, you can choose which version to keep if you like:
     </p>
-    <p>
-      You can:
-    </p>
-    <div class="flex-column-center">
+    <div class="flex-row justify-content-center">
       <div>
         <div>
           <input
@@ -58,12 +61,12 @@
             value="manual"
           >
           <label for="manual">
-            Do nothing, and remove the !conflicted flag yourself.
+            Do nothing, and finesse the situation yourself.
           </label>
         </div>
       </div>
     </div>
-    <div class="flex-column-right">
+    <div class="flex-row justify-content-end">
       <button @click="${resolveConflict}" class="btn">
         <tdw-icon icon="save"></tdw-icon>
         <span class="btn-text">Make It So!</span>
