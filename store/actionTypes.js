@@ -105,9 +105,15 @@ export const actionTypes = [
   // applies state upgrades
   // issued by upgrade controller
 
-  'destroyLocalStorage'
+  'destroyLocalStorage',
   // no reducer
   // issued by DialogTools
   // listened by LocalStorageController
   // completely removes all local storage entries & reloads page
+
+  'remoteStorageTouch',
+  // remoteStorage uses this action to notify localStorage to store lastTouch
+  // the lastTouch value is not required for any reason, but storing it
+  // ensures that every remoteStorage action updates localStorage, allowing
+  // other open tabs to be notified that remoteStorage has been queried.
 ]

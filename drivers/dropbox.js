@@ -7,6 +7,7 @@ let prefix
 let listsEnsure
 let remoteStoragePending
 let remoteStorageUnpending
+let setRemoteStorageTouch
 
 function initialise (ctx) {
   tasksPatch = ctx.tasksPatch
@@ -16,6 +17,7 @@ function initialise (ctx) {
   listsEnsure = ctx.listsEnsure
   remoteStoragePending = ctx.remoteStoragePending
   remoteStorageUnpending = ctx.remoteStorageUnpending
+  setRemoteStorageTouch = ctx.setRemoteStorageTouch
 }
 
 let inFlightOps = 0
@@ -110,6 +112,7 @@ async function _importTasks (listId) {
       localStorage.setItem(prefix(`previous-${listId}`), current)
     })
   }))
+  setRemoteStorageTouch()
 }
 
 async function retrieve (listId) {

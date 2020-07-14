@@ -19,17 +19,19 @@ export function initialiseOptions () {
       /listsSelect/,
       /upgrade/
     ],
-    store.bind(this)
+    store
   )
-  subscribe(/domLoaded/, retrieve.bind(this))
+  subscribe(/domLoaded/, retrieveOptions)
 }
 
-function retrieve () {
+export function retrieveOptions ({ loadRemoteTasks = true }) {
   const options = JSON.parse(localStorage.getItem(prefix('options')))
   if (!options)
     return
   options.filter.regExp = new RegExp(options.filter.regExp)
-  publish('optionsLoadLocalStorage', { options })
+  // loadRemoteTasks is not used by the reducer, but remoteStorage listens
+  // to this event and will not respond when loadRemoteTasks is false
+  publish('optionsLoadLocalStorage', { options, loadRemoteTasks })
 }
 
 function store ({ getState }) {

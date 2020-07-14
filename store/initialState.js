@@ -9,6 +9,7 @@ export const initialState = {
     completedLast: true
   },
   remoteStorage: {
+    lastTouch: 0,
     driver: false,
     state: 'noDriver',
     refreshInterval: 10 * 60 * 1000,

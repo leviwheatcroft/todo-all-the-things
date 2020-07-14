@@ -5,6 +5,12 @@ import {
   states,
   tasksDiff
 } from '../store'
+import {
+  retrieveOptions
+} from './options'
+import {
+  setRemoteStorageReload
+} from './remoteStorage'
 
 const _prefix = 'tdw'
 
@@ -28,11 +34,36 @@ export class LocalStorage {
       ],
       this.setChanged.bind(this)
     )
-    subscribe(/domLoaded/, this.domLoaded.bind(this))
+    subscribe(/domLoaded/, this.loadTasks.bind(this))
     subscribe(/destroyLocalStorage/, this.destroyLocalStorage.bind(this))
+    subscribe(/remoteStorageTouch/, this.remoteStorageTouch.bind(this))
+
+    // note that this only listens to storage events called from other tabs,
+    // not the local tab
+    window.addEventListener('storage', this.storageEvent.bind(this))
   }
 
-  domLoaded () {
+  // presently, this value is not required from localStorage for any reason,
+  // however every remoteStorageTouch must write something to localStorage
+  // even if there are no task updates, to notify other tabs that a reload has
+  // occurred via the storage event.
+  remoteStorageTouch ({ getState }) {
+    const { lastTouch } = getState().remoteStorage
+    localStorage.setItem(prefix('remoteStorageLastTouch'), lastTouch)
+  }
+
+  storageEvent () {
+    if (this.debouncedStorageEvent)
+      clearTimeout(this.debouncedStorageEvent)
+    this.debouncedStorageEvent = setTimeout(() => {
+      this.loadTasks()
+      retrieveOptions({ loadRemoteTasks: false })
+      setRemoteStorageReload(1 * 60 * 1000)
+      this.debouncedStorageEvent = false
+    }, 1000)
+  }
+
+  loadTasks () {
     const tasks = this.getAll()
     publish('tasksLoadLocalStorage', { tasks })
   }

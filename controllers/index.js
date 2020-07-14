@@ -1,11 +1,11 @@
 import { LocalStorage } from './LocalStorage'
-import { RemoteStorage } from './RemoteStorage'
+import { initialiseRemoteStorage } from './remoteStorage'
 import { initialiseOptions } from './options'
 import { initialiseUpgrade } from './upgrade'
 
 export function initialiseControllers () {
   new LocalStorage()
-  new RemoteStorage()
+  initialiseRemoteStorage()
   initialiseOptions() // this is a more appropriate pattern a than using classes
   initialiseUpgrade()
 }
