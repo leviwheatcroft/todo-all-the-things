@@ -104,4 +104,10 @@ export const actionTypes = [
   'upgrade',
   // applies state upgrades
   // issued by upgrade controller
+
+  'destroyLocalStorage'
+  // no reducer
+  // issued by DialogTools
+  // listened by LocalStorageController
+  // completely removes all local storage entries & reloads page
 ]

@@ -29,11 +29,17 @@ export class LocalStorage {
       this.setChanged.bind(this)
     )
     subscribe(/domLoaded/, this.domLoaded.bind(this))
+    subscribe(/destroyLocalStorage/, this.destroyLocalStorage.bind(this))
   }
 
   domLoaded () {
     const tasks = this.getAll()
     publish('tasksLoadLocalStorage', { tasks })
+  }
+
+  destroyLocalStorage () {
+    localStorage.clear()
+    window.location.reload(false)
   }
 
   setChanged () {

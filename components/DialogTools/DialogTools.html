@@ -9,6 +9,12 @@
       </span>
       <tdw-icon icon="trash2"></tdw-icon>
     </div>
+    <div @click="${destroyLocalStorage}">
+      <span class="description">
+        Clear all local data (destructive!)
+      </span>
+      <tdw-icon icon="alertTriangle"></tdw-icon>
+    </div>
     <div @click="${dialogImportTasks}">
       <span class="description">
         Import list

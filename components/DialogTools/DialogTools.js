@@ -29,6 +29,7 @@ export class DialogTools extends LitElement {
     const {
       purge,
       dialogImportTasks,
+      destroyLocalStorage,
       exportTasks,
       dialogHelp
     } = this
@@ -47,6 +48,11 @@ export class DialogTools extends LitElement {
   purge () {
     publish('tasksPurge')
     publish('dialogsToggle')
+  }
+
+  destroyLocalStorage () {
+    publish('dialogsToggle')
+    publish('destroyLocalStorage')
   }
 
   dialogImportTasks () {
