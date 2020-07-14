@@ -15,3 +15,5 @@
  - `git add . && git commit -m "bump & build"`
  - `git tag -a "vx.y.z" -m "vx.y.z"`
  - `git push --tags origin master`
+ - `git checkout dev`
+ - `git merge master`
