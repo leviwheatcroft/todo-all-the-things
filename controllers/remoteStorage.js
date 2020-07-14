@@ -205,7 +205,8 @@ function tasksLoadRemoteStorage (context) {
 }
 
 function listsAdd ({ action, getState }) {
-  const { lists } = getState()
+  if (!driver)
+    return
   const { payload: { listId } } = action
-  driver.store(lists[listId])
+  driver.store(listId, getState().lists[listId])
 }
