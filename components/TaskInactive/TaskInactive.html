@@ -74,7 +74,7 @@ ${task.projects && task.projects.length ?
         >
           <!-- whitespace issues -->
           <tdw-icon icon="plus"></tdw-icon
-          ><span class="tag-text">${project}</span>
+          ><span class="tag-text">${project.replace(/-/, ' ')}</span>
         </div>
       `
     })}
@@ -83,6 +83,7 @@ ${task.projects && task.projects.length ?
 ${task.contexts && task.contexts.length ?
   html`
     ${task.contexts.map((context) => {
+      console.log(context.replace(/-/, ' '))
       return html`
         <div
           @click="${filterApply}"
@@ -91,7 +92,7 @@ ${task.contexts && task.contexts.length ?
         >
           <!-- whitespace issues -->
           <tdw-icon icon="atSign"></tdw-icon
-          ><span class="tag-text">${context}</span>
+          ><span class="tag-text">${context.replace(/-/, ' ')}</span>
         </div>
       `
     })}
