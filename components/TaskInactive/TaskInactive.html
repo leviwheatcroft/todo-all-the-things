@@ -83,7 +83,6 @@ ${task.projects && task.projects.length ?
 ${task.contexts && task.contexts.length ?
   html`
     ${task.contexts.map((context) => {
-      console.log(context.replace(/-/, ' '))
       return html`
         <div
           @click="${filterApply}"
