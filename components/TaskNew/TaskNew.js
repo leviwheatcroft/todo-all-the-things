@@ -28,10 +28,9 @@ export class TaskNew extends LitElement {
 
   save () {
     const $input = this.shadowRoot.querySelector('input')
-    const raw = $input.value
-    const tasks = [{ raw }]
+    const raws = [$input.value]
     const { listId } = this
-    publish('tasksCreateNew', { tasks, listId })
+    publish('tasksCreateNew', { raws, listId })
     $input.value = ''
   }
 
