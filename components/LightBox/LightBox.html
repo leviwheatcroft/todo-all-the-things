@@ -2,7 +2,7 @@
   <div class="light-box">
     <div class="top-bar">
       <slot name="title"></slot>
-      ${nonDismissable ? nothing : `
+      ${nonDismissable ? nothing : html`
         <button @click=${close} class="btn btn-close">
           <span class="btn-icon">
             <tdw-icon icon="x"></tdw-icon>
