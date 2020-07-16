@@ -188,12 +188,14 @@ export function setRemoteStorageReload (offset = 0) {
 function tasksLoadRemoteStorage (context) {
   const { action, getState } = context
   if (
+    action &&
     action.type === 'optionsLoadLocalStorage' &&
     !action.payload.loadRemoteTasks
   )
     return
   if (
     !driver &&
+    getState &&
     !getState().remoteStorage.driver
   )
     return
