@@ -1,6 +1,6 @@
 export const initialState = {
   dialogs: {
-    show: 'help'
+    show: false
   },
   sort: {
     by: 'file',
@@ -14,6 +14,9 @@ export const initialState = {
     state: 'noDriver',
     refreshInterval: 10 * 60 * 1000,
     accessToken: false
+  },
+  settings: {
+    includeTasksInErrorReport: false
   },
   filter: {
     text: '',

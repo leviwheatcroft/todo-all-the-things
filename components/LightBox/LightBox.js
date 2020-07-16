@@ -3,6 +3,9 @@ import {
   html as _html,
   unsafeCSS
 } from 'lit-element'
+import {
+  nothing as _nothing
+} from 'lit-html'
 import template from './LightBox.html'
 import styles from './LightBox.less'
 import { base, button } from '../../less'
@@ -32,11 +35,14 @@ export class LightBox extends LitElement {
   static get properties () {
     return {
       show: { attribute: false },
-      dialog: { attribute: true }
+      dialog: { attribute: true },
+      nonDismissable: { attribute: true, type: Boolean }
     }
   }
 
   maskClose (event) {
+    if (this.nonDismissable)
+      return
     if (event.target !== event.currentTarget) // event has bubbled from desc
       return
     this.close()
@@ -52,11 +58,13 @@ export class LightBox extends LitElement {
       show,
       dialog,
       maskClose,
-      close
+      close,
+      nonDismissable
     } = this
     if (show !== dialog)
       return ''
     const html = _html
+    const nothing = _nothing
 
     return eval('html`' + template + '`')
   }

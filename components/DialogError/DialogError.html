@@ -1,0 +1,19 @@
+<tdw-light-box dialog="error" nonDismissable="true">
+  <div slot="title">
+    <h2>
+      Oof. An Error Has Occurred!
+    </h2>
+  </div>
+  <div slot="body" class="body information">
+    <div>
+      <p>
+        Sometimes things just don't work out how you'd expect.
+      </p>
+      <p>
+        Some sort of technical error has occurred. It would be really helpful if you could report this to the developers by reporting this issue <a href="https://github.com/leviwheatcroft/todo-all-the-things/issues" target="_blank">on github</a>. You should download and attach <a href="#" @click="${report}">this report</a>.
+      </p>
+      <p>
+        To get back to your tasks, you should <a href="#" @click="${reload}">reload this page</a>. If you run into the same problem again, you should <a href="#" @click="${showTools}">clear your local storage</a>.
+      </p>
+    </div>
+</tdw-light-box>

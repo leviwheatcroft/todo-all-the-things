@@ -116,4 +116,9 @@ export const actionTypes = [
   // the lastTouch value is not required for any reason, but storing it
   // ensures that every remoteStorage action updates localStorage, allowing
   // other open tabs to be notified that remoteStorage has been queried.
+
+  'firstRun',
+  // no reducer
+  // issued by options controller when options are loaded but none
+  // exist
 ]

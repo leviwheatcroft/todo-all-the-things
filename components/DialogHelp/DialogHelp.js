@@ -8,6 +8,7 @@ import template from './DialogHelp.html'
 import styles from './DialogHelp.less'
 import lightBox from '../LightBox/LightBoxConsumers.less'
 import { base, button } from '../../less'
+import { publish, subscribe } from '../../store'
 
 // import {
 //   publish,
@@ -15,6 +16,11 @@ import { base, button } from '../../less'
 // } from '../../store'
 
 export class DialogHelp extends LitElement {
+  constructor () {
+    super()
+    subscribe(/firstRun/, this.show.bind(this))
+  }
+
   static get styles () {
     return [
       base,
@@ -32,6 +38,9 @@ export class DialogHelp extends LitElement {
   }
   /* eslint-enable */
 
+  show () {
+    publish('dialogsToggle', { dialog: 'help' })
+  }
   // static get properties () {
   //   return {
   //     show: { attribute: false }

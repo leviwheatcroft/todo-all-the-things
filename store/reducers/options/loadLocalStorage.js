@@ -5,17 +5,17 @@ export function optionsLoadLocalStorage (action, context) {
   const { payload: { options } } = action
   const { update } = context
   const {
-    dialogs,
     sort,
     remoteStorage,
     filter,
     selectedListId,
-    version
+    version,
+    settings
   } = options
-  update(['dialogs'], dialogs)
   update(['sort'], sort)
   update(['remoteStorage'], remoteStorage)
   update(['filter'], filter)
   update(['selectedListId'], selectedListId)
   update(['version'], version)
+  update(['settings', settings])
 }

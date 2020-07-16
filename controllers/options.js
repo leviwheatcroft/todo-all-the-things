@@ -15,6 +15,7 @@ export function initialiseOptions () {
     [
       /dialogsToggle/,
       /optionsDriverSave/,
+      /optionsToggle/,
       /filterSet/,
       /listsSelect/,
       /upgrade/
@@ -26,8 +27,10 @@ export function initialiseOptions () {
 
 export function retrieveOptions ({ loadRemoteTasks = true }) {
   const options = JSON.parse(localStorage.getItem(prefix('options')))
-  if (!options)
+  if (!options) {
+    publish('firstRun')
     return
+  }
   options.filter.regExp = new RegExp(options.filter.regExp)
   // loadRemoteTasks is not used by the reducer, but remoteStorage listens
   // to this event and will not respond when loadRemoteTasks is false
@@ -36,12 +39,13 @@ export function retrieveOptions ({ loadRemoteTasks = true }) {
 
 function store ({ getState }) {
   const {
-    dialogs,
     sort,
     remoteStorage,
     selectedListId,
-    version
+    version,
+    settings
   } = getState()
+
   let { filter } = getState()
   filter = { ...filter }
   let { regExp } = filter
@@ -49,11 +53,11 @@ function store ({ getState }) {
   regExp = regExp.slice(1, regExp.length - 1)
   filter.regExp = regExp
   localStorage.setItem(prefix('options'), JSON.stringify({
-    dialogs,
     sort,
     remoteStorage,
     selectedListId,
     version,
-    filter
+    filter,
+    settings
   }))
 }
