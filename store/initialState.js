@@ -16,7 +16,8 @@ export const initialState = {
     accessToken: false
   },
   settings: {
-    includeTasksInErrorReport: false
+    includeTasksInErrorReport: false,
+    prependCreatedDate: true
   },
   filter: {
     text: '',

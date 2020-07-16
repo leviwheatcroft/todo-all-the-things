@@ -9,16 +9,29 @@ import template from './TaskNew.html'
 import styles from './TaskNew.less'
 import { base } from '../../less'
 import {
-  publish
+  publish,
+  subscribe,
+  getSetting
 } from '../../store'
 
 export class TaskNew extends LitElement {
+  constructor () {
+    super()
+    subscribe(/optionsToggle/, this.options.bind(this))
+    this.options()
+  }
+
   static get styles () { return [base, unsafeCSS(styles)] }
 
   static get properties () {
     return {
-      listId: { attribute: false }
+      listId: { attribute: false },
+      prependCreatedDate: { attribute: false }
     }
+  }
+
+  options () {
+    this.prependCreatedDate = getSetting('prependCreatedDate')
   }
 
   keyUp (event) {
@@ -28,7 +41,10 @@ export class TaskNew extends LitElement {
 
   save () {
     const $input = this.shadowRoot.querySelector('input')
-    const raws = [$input.value]
+    let raw = $input.value
+    if (this.prependCreatedDate)
+      raw = [(new Date()).toISOString().slice(0, 10), raw].join(' ')
+    const raws = [raw]
     const { listId } = this
     publish('tasksCreateNew', { raws, listId })
     $input.value = ''

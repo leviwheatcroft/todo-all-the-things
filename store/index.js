@@ -17,6 +17,10 @@ export function getState (path) {
   return get(states[0], path)
 }
 
+export function getSetting (key) {
+  return getState().settings[key]
+}
+
 const subscriptions = new Map()
 
 export function subscribe (tests, handler) {
@@ -78,7 +82,8 @@ export function publish (type, payload = {}, origin = false) {
       action,
       state, // todo: remove this
       states,
-      getState
+      getState,
+      getSetting
     }
     subscriptions.forEach((handlers, re) => {
       if (re.test(action.type))
