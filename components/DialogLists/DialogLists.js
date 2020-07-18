@@ -61,8 +61,13 @@ export class DialogLists extends LitElement {
   }
 
   listsAdd () {
-    const listId = this.shadowRoot.querySelector('.lists-add').value
+    const $listsAdd = this.shadowRoot.querySelector('.lists-add')
+    const listId = $listsAdd.value
+    $listsAdd.value = ''
+    if (!listId)
+      return
     publish('listsAdd', { listId })
+    publish('listsSelect', { listId })
     publish('dialogsToggle')
   }
 
