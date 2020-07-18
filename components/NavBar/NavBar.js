@@ -29,11 +29,16 @@ export class NavBar extends LitElement {
     publish('dialogsToggle', { dialog: 'overflow' })
   }
 
+  showLists () {
+    publish('dialogsToggle', { dialog: 'lists' })
+  }
+
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const {
       showOverflow,
-      selectedListId
+      selectedListId,
+      showLists
     } = this
     const html = _html
     const nothing = _nothing
