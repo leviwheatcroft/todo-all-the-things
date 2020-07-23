@@ -1,11 +1,13 @@
 import { remoteStoragePending } from './pending'
 import { remoteStorageUnpending } from './unpending'
 import { remoteStorageTouch } from './touch'
+import { remoteStorageError } from './error'
 
 const reducers = [
   remoteStoragePending,
   remoteStorageUnpending,
-  remoteStorageTouch
+  remoteStorageTouch,
+  remoteStorageError
 ]
 
 export function remoteStorage (action, context) {
