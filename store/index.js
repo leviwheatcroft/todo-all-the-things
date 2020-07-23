@@ -1,5 +1,5 @@
 /* eslint-disable import/no-named-as-default-member */
-import { initialState } from './initialState'
+import { initialState } from './state'
 import { reduce } from './reducers'
 import { get } from './reducers/lib/dotProp'
 import { actionTypes } from './actionTypes'
