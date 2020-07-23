@@ -1,0 +1,19 @@
+<tdw-light-box dialog="remoteStorageError">
+  <span slot="title" class="title">
+    Remote Storage Error
+  </span>
+  <div slot="body" class="body information">
+    <p>
+      Your remote storage has reported an error:
+    </p>
+    <pre>
+      ${remoteStorageError}
+    </pre>
+    <p>
+      Right now some of your local tasks may not be saved in your remote storage.
+    </p>
+    <p>
+      If you think this might be a network issue, you could <a href="#" @click="${remoteStorageUpdate}">try updating again</a>. Otherwise, you could take a look at your <a href="#" @click="${remoteStorageOptions}">remote storage options</a>.
+    </p>
+  </div>
+</tdw-light-box>
