@@ -6,33 +6,16 @@ import {
 import { nothing as _nothing } from 'lit-html'
 import { repeat as _repeat } from 'lit-html/directives/repeat'
 import template from './List.html'
-import {
-  subscribe
-} from '../../store'
 import { button } from '../../less'
 
 import styles from './List.less'
 
 export class List extends LitElement {
-  constructor () {
-    super()
-    this.unsubscribe = subscribe(/.*/, ({ state }) => {
-      const { id } = this.list
-      if (this.list === state.lists[id])
-        return
-      this.list = state.lists[id]
-    })
-  }
-
-  disconnectedCallback () {
-    this.unsubscribe()
-  }
-
   static get styles () { return [button, unsafeCSS(styles)] }
 
   static get properties () {
     return {
-      list: { attribute: false }
+      list: { attribute: true }
     }
   }
 
