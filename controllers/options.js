@@ -3,6 +3,10 @@ import {
   subscribe,
   publish
 } from '../store'
+import {
+  hydrate,
+  dehydrate
+} from '../store/state'
 
 const _prefix = 'tdw'
 
@@ -26,38 +30,19 @@ export function initialiseOptions () {
 }
 
 export function retrieveOptions ({ loadRemoteTasks = true }) {
-  const options = JSON.parse(localStorage.getItem(prefix('options')))
-  if (!options) {
+  const dehydrated = JSON.parse(localStorage.getItem(prefix('options')))
+  if (!dehydrated) {
     publish('firstRun')
     return
   }
-  options.filter.regExp = new RegExp(options.filter.regExp)
+  const options = hydrate(dehydrated)
   // loadRemoteTasks is not used by the reducer, but remoteStorage listens
   // to this event and will not respond when loadRemoteTasks is false
   publish('optionsLoadLocalStorage', { options, loadRemoteTasks })
 }
 
 function store ({ getState }) {
-  const {
-    sort,
-    remoteStorage,
-    selectedListId,
-    version,
-    settings
-  } = getState()
-
-  let { filter } = getState()
-  filter = { ...filter }
-  let { regExp } = filter
-  regExp = regExp.toString()
-  regExp = regExp.slice(1, regExp.length - 1)
-  filter.regExp = regExp
-  localStorage.setItem(prefix('options'), JSON.stringify({
-    sort,
-    remoteStorage,
-    selectedListId,
-    version,
-    filter,
-    settings
-  }))
+  const hydrated = getState()
+  const dehydrated = dehydrate(hydrated)
+  localStorage.setItem(prefix('options'), JSON.stringify(dehydrated))
 }
