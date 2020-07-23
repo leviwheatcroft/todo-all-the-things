@@ -1,6 +1,20 @@
+@import "../../less/colors";
+
 :host {
   display: inline-block;
   .feather {
+    &.alert {
+      color: @color-alert;
+    }
+    &.muted {
+      color: @color-undark-20;
+    }
+    &.success {
+      color: @color-success;
+    }
+    &.dark {
+      color: @color-dark;
+    }
     stroke: currentColor;
     stroke-width: 2;
     stroke-linecap: round;

@@ -16,15 +16,21 @@ export class Icon extends LitElement {
       spin: {
         attribute: true,
         type: Boolean
-      }
+      },
+      appearance: { attribute: true }
     }
   }
 
   /* eslint-disable no-eval, prefer-template, no-unused-vars */
   render () {
     console.assert(svg[this.icon], `required icon: ${this.icon}`)
+    const classes = [
+      'feather',
+      this.spin ? 'spin' : false,
+      this.appearance || 'dark'
+    ].filter((i) => i).join(' ')
     const icon = svg[this.icon]
-      .replace(/<svg/, `<svg class="feather${this.spin ? ' spin' : ''}"`)
+      .replace(/<svg/, `<svg class="${classes}"`)
       .replace(/height="24"/, '')
       .replace(/width="24"/, '')
       .replace(/<\/svg>/, '')
