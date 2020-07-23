@@ -8,6 +8,15 @@ ${remoteStorageState === 'connected' ?
     <tdw-icon @click="${requestSync}" icon="cloud"></tdw-icon>
   ` : nothing
 }
+${remoteStorageState === 'error' ?
+  html`
+    <tdw-icon
+      class="error"
+      @click="${requestSync}"
+      icon="cloudLightning"
+    ></tdw-icon>
+  ` : nothing
+}
 ${remoteStorageState === 'pending' ?
   html`
     <tdw-icon class="shake" icon="cloudLightning"></tdw-icon>
