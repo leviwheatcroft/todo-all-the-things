@@ -100,6 +100,7 @@ export const actionTypes = [
   'requestSync',
   // no effect on state
   // issued by RemoteStorageState NavBar Button
+  // issued by DialogRemoteStorageError
 
   'upgrade',
   // applies state upgrades
@@ -121,4 +122,8 @@ export const actionTypes = [
   // no reducer
   // issued by options controller when options are loaded but none
   // exist
+
+  'remoteStorageError',
+  // updated remoteStorage.error in state
+  // issued by remoteStorage controller
 ]

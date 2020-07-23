@@ -55,7 +55,8 @@ function driverSelect ({ getState }) {
     listsEnsure,
     remoteStoragePending,
     remoteStorageUnpending,
-    setRemoteStorageTouch
+    setRemoteStorageTouch,
+    remoteStorageError
   })
 }
 
@@ -71,8 +72,12 @@ function remoteStorageUnpending () {
   publish('remoteStorageUnpending')
 }
 
-function listsEnsure (listId) {
-  publish('listsEnsure', { listId })
+function listsEnsure (listIds) {
+  publish('listsEnsure', { listIds })
+}
+
+function remoteStorageError (error) {
+  publish('remoteStorageError', { error })
 }
 
 /**
