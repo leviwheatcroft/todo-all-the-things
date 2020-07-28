@@ -15,15 +15,18 @@ let driver
 export function initialiseRemoteStorage () {
   // the order in which listeners are subscribed is the list in which they
   // will be executed
-  // both this.driverSelect and this.tasksLoadRemoteStorage are handlers
-  // for the 'optionsDriverSave' action.
-  // because this.driverSelect is subscribed first, it will be called first
+  // both this.driverSave and this.tasksLoadRemoteStorage are handlers
+  // for the 'remoteStorageDriverSave' action.
+  // because this.driverSave is subscribed first, it will be called first
   subscribe([
-    /optionsDriverSave/
+    /^remoteStorageDriverSelect$/
   ], driverSelect)
   subscribe([
+    /remoteStorageDriverSave/
+  ], driverInitialise)
+  subscribe([
     /optionsLoadLocalStorage/,
-    /optionsDriverSave/,
+    /remoteStorageDriverSave/,
     /requestSync/
   ], tasksLoadRemoteStorage)
   subscribe([
@@ -38,11 +41,20 @@ export function initialiseRemoteStorage () {
     /listsAdd/
   ], listsAdd)
 
-  driverSelect({ getState })
+  driverInitialise()
 }
 
-function driverSelect ({ getState }) {
-  const selected = getState().remoteStorage.driver
+function driverSelect (ctx) {
+  const { driver } = ctx ? ctx.action.payload : getState().remoteStorage.options
+  const optionsRequired = driver ? drivers[driver].optionsRequired : []
+  publish(
+    'remoteStorageOptionsRequired',
+    { optionsRequired }
+  )
+}
+
+function driverInitialise () {
+  const selected = getState().remoteStorage.options.driver
   driver = selected ? drivers[selected] : false
   if (!driver)
     return
@@ -185,7 +197,7 @@ export function setRemoteStorageReload (offset = 0) {
     clearTimeout(reload)
   reload = setTimeout(
     tasksLoadRemoteStorage,
-    refreshInterval + offset,
+    (refreshInterval * 60 * 1000) + offset,
     { getState }
   )
 }
@@ -206,6 +218,7 @@ function tasksLoadRemoteStorage (context) {
     return
   if (!driver)
     driverSelect(context)
+
   driver.importTasks()
 
   setRemoteStorageReload()

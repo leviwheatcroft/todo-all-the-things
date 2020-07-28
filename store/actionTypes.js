@@ -75,10 +75,6 @@ export const actionTypes = [
   // loads options to state from local storage
   // issued by options controller
 
-  'optionsDriverSave',
-  // stores state.remoteStorage params
-  // issued by DialogRemoteStorageOptions
-
   'listsAdd',
   // adds new list to store
   // published by DialogLists
@@ -126,4 +122,19 @@ export const actionTypes = [
   'remoteStorageError',
   // updated remoteStorage.error in state
   // issued by remoteStorage controller
+
+  'remoteStorageDriverSelect',
+  // switch driver in DialogRemoteStorageOptions
+  // this doesn't mean saving the remote storage options, just switching
+  // the select box
+  // issued by DialogRemoteStorageOptions
+
+  'remoteStorageOptionsRequired',
+  // sets optionsRequired in state
+  // issued by remoteStorage controller in response to remoteStorageDriverSelect
+
+  'remoteStorageDriverSave',
+  // stores state.remoteStorage params
+  // issued by DialogRemoteStorageOptions
+
 ]

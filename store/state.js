@@ -10,11 +10,12 @@ export const initialState = {
   },
   remoteStorage: {
     lastTouch: 0,
-    driver: false,
     state: 'noDriver',
-    refreshInterval: 10 * 60 * 1000,
-    accessToken: false,
-    error: false
+    error: false,
+    optionsRequired: [],
+    options: {
+      driver: false
+    }
   },
   settings: {
     includeTasksInErrorReport: false,
@@ -38,12 +39,8 @@ export const initialState = {
 const dehydrators = {
   dialogs: () => undefined,
   sort: ({ sort }) => sort,
-  remoteStorage: ({ remoteStorage }) => {
-    const persisted = ['driver', 'refreshInterval', 'accessToken']
-    return Object.fromEntries(
-      Object.entries(remoteStorage)
-        .filter(([key]) => persisted.includes(key))
-    )
+  remoteStorage: ({ remoteStorage: { options } }) => {
+    return { options }
   },
   settings: ({ settings }) => settings,
   filter: ({ filter: { text, regExp } }) => {

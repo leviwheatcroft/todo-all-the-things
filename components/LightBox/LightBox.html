@@ -3,11 +3,7 @@
     <div class="top-bar">
       <slot name="title"></slot>
       ${nonDismissable ? nothing : html`
-        <button @click=${close} class="btn btn-close">
-          <span class="btn-icon">
-            <tdw-icon icon="x"></tdw-icon>
-          </span>
-        </button>
+          <tdw-icon @click=${close} icon="x"></tdw-icon>
       `}
     </div>
     <slot name="body"></slot>
