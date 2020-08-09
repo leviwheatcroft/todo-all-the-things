@@ -8,5 +8,5 @@ export function listsAdd (action, { update }) {
     tasks: {}
   }
   update(['lists', listId], list)
-  update(['selectedList'], listId)
+  update(['selectedListId'], listId)
 }
