@@ -1,11 +1,9 @@
 import { listsSelect } from './select'
 import { listsAdd } from './add'
-import { listsEnsure } from './ensure'
 
 const reducers = [
   listsSelect,
-  listsAdd,
-  listsEnsure
+  listsAdd
 ]
 
 export function lists (action, context) {
