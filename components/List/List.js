@@ -7,15 +7,22 @@ import { nothing as _nothing } from 'lit-html'
 import { repeat as _repeat } from 'lit-html/directives/repeat'
 import template from './List.html'
 import { button } from '../../less'
+import { subscribe, getState } from '../../store'
 
 import styles from './List.less'
 
 export class List extends LitElement {
+  constructor () {
+    super()
+    subscribe(this.setList.bind(this))
+    this.setList()
+  }
+
   static get styles () { return [button, unsafeCSS(styles)] }
 
   static get properties () {
     return {
-      list: { attribute: true }
+      list: { attribute: false }
     }
   }
 
@@ -31,6 +38,11 @@ export class List extends LitElement {
     return eval('html`' + template + '`')
   }
   /* eslint-enable */
+
+  setList () {
+    const { lists, selectedListId } = getState()
+    this.list = lists[selectedListId]
+  }
 }
 
 customElements.define('tdw-list', List)

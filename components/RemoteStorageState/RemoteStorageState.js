@@ -14,8 +14,11 @@ import { publish, subscribe, getState } from '../../store'
 export class RemoteStorageState extends LitElement {
   constructor () {
     super()
-    subscribe(/remoteStorage/, this.stateChange.bind(this))
-    this.remoteStorageState = getState().remoteStorage.state
+    subscribe([
+      /remoteStorage/,
+      /optionsLoadLocalStorage/
+    ], this.setState.bind(this))
+    this.setState()
   }
 
   static get styles () { return [base, button, unsafeCSS(styles)] }
@@ -38,7 +41,7 @@ export class RemoteStorageState extends LitElement {
   }
   /* eslint-enable */
 
-  stateChange ({ getState }) {
+  setState () {
     this.remoteStorageState = getState().remoteStorage.state
   }
 

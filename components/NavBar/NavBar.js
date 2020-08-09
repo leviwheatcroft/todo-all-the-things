@@ -7,30 +7,21 @@ import { nothing as _nothing } from 'lit-html'
 import template from './NavBar.html'
 import { base, button } from '../../less'
 import styles from './NavBar.less'
-import { publish } from '../../store'
+import { publish, subscribe, getState } from '../../store'
 
 export class NavBar extends LitElement {
   constructor () {
     super()
-    this.state = 'collapsed'
+    subscribe(this.setSelectedListId.bind(this))
+    this.setSelectedListId()
   }
 
   static get styles () { return [base, button, unsafeCSS(styles)] }
 
   static get properties () {
     return {
-      selectedListId: {
-        attribute: true
-      }
+      selectedListId: { attribute: false }
     }
-  }
-
-  showOverflow () {
-    publish('dialogsToggle', { dialog: 'overflow' })
-  }
-
-  showLists () {
-    publish('dialogsToggle', { dialog: 'lists' })
   }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
@@ -46,6 +37,18 @@ export class NavBar extends LitElement {
     return eval('html`' + template + '`')
   }
   /* eslint-enable */
+
+  showOverflow () {
+    publish('dialogsToggle', { dialog: 'overflow' })
+  }
+
+  showLists () {
+    publish('dialogsToggle', { dialog: 'lists' })
+  }
+
+  setSelectedListId () {
+    this.selectedListId = getState().selectedListId
+  }
 }
 
 customElements.define('tdw-nav-bar', NavBar)
