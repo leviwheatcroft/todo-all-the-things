@@ -7,7 +7,9 @@ const reducers = [
   remoteStoragePending,
   remoteStorageUnpending,
   remoteStorageTouch,
-  remoteStorageError
+  remoteStorageError,
+  remoteStorageDriverSave,
+  remoteStorageOptionsRequired
 ]
 
 export function remoteStorage (action, context) {
