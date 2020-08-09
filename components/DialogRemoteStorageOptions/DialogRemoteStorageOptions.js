@@ -17,12 +17,11 @@ import {
 export class DialogRemoteStorageOptions extends LitElement {
   constructor () {
     super()
-    const {
-      driver,
-      refreshInterval,
-      accessToken
-    } = states[0].remoteStorage
-    Object.assign(this, { driver, refreshInterval, accessToken })
+    subscribe([
+      // /^optionsLoadLocalStorage$/,
+      /^remoteStorageOptionsRequired$/
+    ], this.setOptions.bind(this))
+    this.setOptions()
   }
 
   static get styles () {
@@ -62,12 +61,15 @@ export class DialogRemoteStorageOptions extends LitElement {
   save () {
     const $root = this.shadowRoot
     const driver = $root.querySelector('select.driver').value
-    let refreshInterval = $root.querySelector('input.refresh-interval').value
-    refreshInterval = Math.min(refreshInterval, 10)
-    refreshInterval = Math.max(refreshInterval, 1)
-    refreshInterval = refreshInterval * 60 * 1000
-    const accessToken = $root.querySelector('input.access-token').value
-    publish('optionsDriverSave', { driver, refreshInterval, accessToken })
+    const options = Object.fromEntries([
+      ['driver', driver],
+      ...[...$root.querySelectorAll('.optionsRequired')]
+        .map((input) => {
+          return [input.dataset.key, input.value]
+        })
+        .filter(([, value]) => value)
+    ])
+    publish('remoteStorageDriverSave', { options })
     publish('dialogsToggle')
   }
 }
