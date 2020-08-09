@@ -11,7 +11,7 @@ import { base } from '../../less'
 import {
   publish,
   subscribe,
-  getSetting
+  getState
 } from '../../store'
 
 export class TaskNew extends LitElement {
@@ -31,7 +31,7 @@ export class TaskNew extends LitElement {
   }
 
   options () {
-    this.prependCreatedDate = getSetting('prependCreatedDate')
+    this.prependCreatedDate = getState().settings.prependCreatedDate
   }
 
   keyUp (event) {
