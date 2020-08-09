@@ -13,12 +13,8 @@ states.isUpdated = function isUpdated (path) {
   return get(states[0], path) !== get(states[1], path)
 }
 
-export function getState (path) {
-  return get(states[0], path)
-}
-
-export function getSetting (key) {
-  return getState().settings[key]
+export function getState (version = 0) {
+  return get(states[version])
 }
 
 const subscriptions = new Map()
@@ -82,8 +78,7 @@ export function publish (type, payload = {}, origin = false) {
       action,
       state, // todo: remove this
       states,
-      getState,
-      getSetting
+      getState
     }
     subscriptions.forEach((handlers, re) => {
       if (re.test(action.type))
