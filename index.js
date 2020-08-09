@@ -18,4 +18,4 @@ require('./components')
 
 initialiseControllers()
 
-publish('domLoaded')
+window.addEventListener('load', () => publish('domLoaded'))
