@@ -7,6 +7,22 @@
  - `docker build . -f docker/Dockerfile -t tatt`
  - `docker run --rm -p 3000:3000 -d tatt`
 
+## webdav development server
+
+https://hub.docker.com/r/bytemark/webdav
+
+```
+cd /home/levi/git/docker-webdav/2.4
+docker build . -f Dockerfile -t tatt-webdav
+docker run \
+  --restart always \
+  -v /home/levi/git/todo-all-the-things/data:/var/lib/dav \
+  -e AUTH_TYPE=Digest -e USERNAME=tatt -e PASSWORD=tatt \
+  --publish 3003:80 \
+  --name tatt-webdav \
+  -d tatt-webdav
+```
+
 ## version
 
  - merge to master

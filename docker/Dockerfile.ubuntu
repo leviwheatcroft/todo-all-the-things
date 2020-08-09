@@ -1,0 +1,8 @@
+FROM ubuntu:groovy
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y lighttpd lighttpd-mod-webdav nano sqlite strace
+COPY build /srv/todo-all-the-things
+COPY docker/lighttpd.conf /etc/lighttpd/
+RUN mkdir /srv/todo-all-the-things/data
+RUN chown -R www-data:www-data /srv/todo-all-the-things
+ENTRYPOINT strace -o /dump/strace lighttpd -D -f /etc/lighttpd/lighttpd.conf
+#ENTRYPOINT ["tail", "-f", "/dev/null"]
