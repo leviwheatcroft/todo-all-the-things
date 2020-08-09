@@ -9,7 +9,7 @@ import {
   retrieveOptions
 } from './options'
 import {
-  setRemoteStorageReload
+  setNextSync
 } from './remoteStorage'
 
 const _prefix = 'tdw'
@@ -58,7 +58,7 @@ export class LocalStorage {
     this.debouncedStorageEvent = setTimeout(() => {
       this.loadTasks()
       retrieveOptions({ loadRemoteTasks: false })
-      setRemoteStorageReload(1 * 60 * 1000)
+      setNextSync(1 * 60 * 1000)
       this.debouncedStorageEvent = false
     }, 1000)
   }
