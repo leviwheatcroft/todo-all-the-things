@@ -2,6 +2,8 @@ import { remoteStoragePending } from './pending'
 import { remoteStorageUnpending } from './unpending'
 import { remoteStorageTouch } from './touch'
 import { remoteStorageError } from './error'
+import { remoteStorageDriverSave } from './driverSave'
+import { remoteStorageOptionsRequired } from './optionsRequired'
 
 const reducers = [
   remoteStoragePending,

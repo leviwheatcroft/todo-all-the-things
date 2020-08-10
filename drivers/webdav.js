@@ -1,4 +1,4 @@
-import { Dropbox } from 'dropbox'
+import { createClient } from 'webdav/web'
 
 let tasksPatch
 let tasksRemovePurged
@@ -73,13 +73,11 @@ function diff (previous, current) {
 
 async function fetchLists () {
   const done = inFlight()
-  const dbx = getClient()
+  const webdav = getClient()
   // allow error to be thrown
-  const result = await dbx.filesListFolder({
-    path: ''
-  })
-  const listIds = result.entries.map((entry) => {
-    return entry.name.replace(/\.\w*?$/, '')
+  const result = await webdav.getDirectoryContents('/')
+  const listIds = result.map(({ baseName }) => {
+    return baseName.replace(/\.\w*?$/, '')
   })
   done()
   return listIds
@@ -119,24 +117,17 @@ async function _importTasks (listId) {
 
 async function retrieve (listId) {
   const done = inFlight()
-  const dbx = getClient()
-  let result
+  const webdav = getClient()
+  let content
   try {
-    result = await dbx.filesDownload({
-      path: `/${listId}.txt`
-    })
+    content = await webdav.getFileContents(
+      `/${listId}.txt`,
+      { format: 'text' }
+    )
   } catch (error) {
-    if (
-      error.status === 409 &&
-      /path\/not_found/.test(error)
-    ) {
-      result = await create(listId)
-    } else {
-      done()
-      throw error
-    }
+    errorHandler(error)
+    content = ''
   }
-  const content = await result.fileBlob.text()
   done()
   return content
 }
@@ -146,66 +137,62 @@ async function store (listId, list) {
   const {
     tasks
   } = list
-  const dbx = getClient()
-  const bits = Object.values(tasks)
+  const webdav = getClient()
+  const content = Object.values(tasks)
     .filter(({ purged }) => !purged)
     .sort((a, b) => a.lineNumber - b.lineNumber)
     .map(({ raw }) => `${raw}\n`)
-  const contents = new File(bits, `${listId}.txt`)
-  await dbx.filesUpload({
-    contents,
-    path: `/${listId}.txt`,
-    mode: 'overwrite'
-  })
-  localStorage.setItem(prefix(`previous-${listId}`), await contents.text())
+    .join('')
+  webdav.putFileContents(
+    `/${listId}.txt`,
+    content,
+    { overwrite: true }
+  )
+  localStorage.setItem(prefix(`previous-${listId}`), content)
   tasksRemovePurged(listId)
   done()
 }
 
 async function create (listId) {
   const done = inFlight()
-  const dbx = getClient()
+  const webdav = getClient()
   let result
   try {
-    result = await dbx.filesUpload({
-      contents: '',
-      path: `/${listId}.txt`,
-      mode: 'add',
-      autorename: true
-    })
-  } catch ({ error: raw }) {
-    const error = JSON.parse(raw)
-    console.error('err', error)
+    result = await webdav.putFileContents(
+      `/${listId}.txt`,
+      '',
+      { overwrite: false }
+    )
+  } catch (error) {
+    errorHandler(error)
   }
   done()
   return result
 }
 
 function getClient () {
-  const { accessToken } = getOptions()
-  // let { accessToken } = getOptions()
-  // if (Math.random() < 0.2) {
-  //   console.log('simulate bad token')
-  //   accessToken = ''
-  // }
-  return new Dropbox({ accessToken, fetch })
+  const { webdavUrl } = getOptions()
+  return createClient(webdavUrl)
 }
 
 function errorHandler (error) {
-  // bad auth code
-  if (
-    error.status === 400 &&
-    /Invalid authorization value in HTTP header/.test(error.error)
-  )
-    return remoteStorageError('Bad Access Token')
-  console.error('Unknown Dropbox Error', error)
-  remoteStorageError('Unknown Dropbox Error')
+  console.error('webdav error', error)
 }
 
 const optionsRequired = [
   {
-    key: 'accessToken',
-    display: 'Access Token',
+    key: 'url',
+    display: 'URL',
+    type: 'text'
+  },
+  {
+    key: 'user',
+    display: 'User',
+    type: 'text'
+  },
+  {
+    key: 'password',
+    display: 'Password',
     type: 'password'
   },
   {
@@ -216,7 +203,7 @@ const optionsRequired = [
   }
 ]
 
-export const dropbox = {
+export const webdav = {
   initialise,
   importTasks,
   store,

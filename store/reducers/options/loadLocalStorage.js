@@ -13,7 +13,7 @@ export function optionsLoadLocalStorage (action, context) {
     settings
   } = options
   update(['sort'], sort)
-  update(['remoteStorage'], remoteStorage)
+  update(['remoteStorage', 'options'], remoteStorage.options)
   update(['filter'], filter)
   update(['selectedListId'], selectedListId)
   update(['version'], version)

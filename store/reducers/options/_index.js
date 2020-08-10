@@ -1,9 +1,7 @@
 import { optionsLoadLocalStorage } from './loadLocalStorage'
-import { optionsDriverSave } from './driverSave'
 
 const reducers = [
-  optionsLoadLocalStorage,
-  optionsDriverSave
+  optionsLoadLocalStorage
 ]
 
 export function options (action, context) {
