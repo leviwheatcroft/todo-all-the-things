@@ -10,12 +10,16 @@ export function tasksLoadLocalStorage (action, context) {
     getState
   } = context
 
-  const lists = Object.fromEntries(
-    tasks
-      .map(({ listId }) => listId)
-      .filter((listId, idx, listIds) => listIds.indexOf(listId) === idx)
-      .map((listId) => [listId, { id: listId, tasks: [] }])
-  )
+  const lists = { ...getState().lists }
+  tasks
+    .map(({ listId }) => listId)
+    .filter((listId, idx, listIds) => listIds.indexOf(listId) === idx)
+    .forEach((listId) => {
+      if (lists[listId])
+        return
+      lists[listId] = { id: listId, tasks: [] }
+    })
+
   const filter = getState().filter.regExp
   tasks.forEach((task) => {
     lists[task.listId].tasks[task.id] = {
