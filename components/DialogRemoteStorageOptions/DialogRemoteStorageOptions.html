@@ -2,44 +2,48 @@
   <span slot="title" class="title">
     Remote Storage Options
   </span>
-  <div slot="body" class="body menu">
-    <div class="row info">
+  <div slot="body" class="body form">
+
+    <div class="row detail">
       <p>
-        Configuring a remote storage driver allows you to sync your tasks between devices. Presently only dropbox is supported. You'll need to get your own access token.
+        Configuring a remote storage driver allows you to sync your tasks between devices.
       </p>
       <p>
         When you select a driver, any remote lists will be merged with those present in your browser.
       <p>
     </div>
+
     <div class="row">
       <span class="description">
         Driver
       </span>
-      <select class="driver">
-        <option value="none" ?selected="${driver === false}">
+      <select @change="${driverSelect}" class="driver">
+        <option value="none" ?selected="${options.driver === false}">
           No Remote Storage
         </option>
-        <option value="dropbox" ?selected="${driver === 'dropbox'}">
+        <option value="dropbox" ?selected="${options.driver === 'dropbox'}">
           Dropbox
+        </option>
+        <option value="webdav" ?selected="${options.driver === 'webdav'}">
+          WebDAV
         </option>
       </select>
     </div>
-    <div class="row">
-      <span class="description">
-        Refresh interval (minutes)
-      </span>
-      <input class="refresh-interval" value="${refreshInterval}" />
-    </div>
-    <div class="row">
-      <span class="description">
-        Access Token
-      </span>
-      <input
-        class="access-token"
-        value="${accessToken ? accessToken : ''}"
-        type="password"
-      />
-    </div>
+
+    ${optionsRequired.map(({ key, display, type, defaultValue}) => {
+      return html`
+        <div class="row">
+          <span class="description">${display}</span>
+          <input
+            class="optionsRequired"
+            data-key="${key}"
+            type="${type}"
+            value="${options[key] || defaultValue || ''}"
+          ></input>
+        </div>
+      `
+    })}
+
     <div class="row">
       <span class="spacer"></span>
       <button class="btn" @click="${save}">
@@ -50,5 +54,6 @@
           Save
         </span>
     </div>
+
   </div>
 </tdw-light-box>
