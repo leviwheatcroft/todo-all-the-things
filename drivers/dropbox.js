@@ -1,25 +1,25 @@
 import { Dropbox } from 'dropbox'
 
-let tasksPatch
-let tasksRemovePurged
+let getListsFromState
 let getOptions
 let prefix
-let listsEnsure
+let remoteStorageError
 let remoteStoragePending
 let remoteStorageUnpending
 let setRemoteStorageTouch
-let remoteStorageError
+let tasksPatch
+let tasksRemovePurged
 
 function initialise (ctx) {
-  tasksPatch = ctx.tasksPatch
-  tasksRemovePurged = ctx.tasksRemovePurged
+  getListsFromState = ctx.getListsFromState
   getOptions = ctx.getOptions
   prefix = ctx.prefix
-  listsEnsure = ctx.listsEnsure
+  remoteStorageError = ctx.remoteStorageError
   remoteStoragePending = ctx.remoteStoragePending
   remoteStorageUnpending = ctx.remoteStorageUnpending
   setRemoteStorageTouch = ctx.setRemoteStorageTouch
-  remoteStorageError = ctx.remoteStorageError
+  tasksPatch = ctx.tasksPatch
+  tasksRemovePurged = ctx.tasksRemovePurged
 }
 
 let inFlightOps = 0
@@ -71,7 +71,55 @@ function diff (previous, current) {
   }
 }
 
-async function fetchLists () {
+async function sync () {
+  try {
+    await mergeListsFromRemote()
+    await uploadListsToRemote()
+    setRemoteStorageTouch()
+  } catch (error) {
+    errorHandler(error)
+  }
+}
+
+async function mergeListsFromRemote () {
+  const done = inFlight()
+  const listIds = await fetchListIdsFromRemote()
+  await Promise.all(listIds.map(async (listId) => {
+    const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+    const current = await fetchListFromRemote(listId)
+    tasksPatch({ ...diff(previous[listId] || '', current), listId })
+    localStorage.setItem(prefix(`previous-${listId}`), current)
+  }))
+  done()
+}
+
+async function uploadListsToRemote () {
+  const done = inFlight()
+  const dbx = getClient()
+  const lists = getListsFromState()
+  await Promise.all(lists.map(async ({ id: listId, tasks }) => {
+    const bits = Object.values(tasks)
+      .filter(({ purged }) => !purged)
+      .sort((a, b) => a.lineNumber - b.lineNumber)
+      .map(({ raw }) => `${raw}\n`)
+    const contentsAsFile = new File(bits, `${listId}.txt`)
+    const contentsAsString = bits.join('')
+    const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+    // TODO: does this ever happen? lineNumbers ?
+    if (previous === contentsAsString)
+      return
+    await dbx.filesUpload({
+      contents: contentsAsFile,
+      path: `/${listId}.txt`,
+      mode: 'overwrite'
+    })
+    localStorage.setItem(prefix(`previous-${listId}`), contentsAsString)
+    tasksRemovePurged(listId)
+  }))
+  done()
+}
+
+async function fetchListIdsFromRemote () {
   const done = inFlight()
   const dbx = getClient()
   // allow error to be thrown
@@ -85,39 +133,7 @@ async function fetchLists () {
   return listIds
 }
 
-// this structure allows multiple callers to await the same import request
-const importTasksInFlight = {}
-async function importTasks (listId) {
-  if (importTasksInFlight[listId])
-    return importTasksInFlight[listId]
-  const done = inFlight()
-  importTasksInFlight[listId] = _importTasks(listId)
-    .then(() => {
-      delete importTasksInFlight[listId]
-      done()
-    })
-  return importTasksInFlight[listId]
-}
-
-async function _importTasks (listId) {
-  try {
-    const listIds = listId ? [].concat(listId) : await fetchLists()
-    listsEnsure(listIds)
-    await Promise.all(listIds.map((listId) => {
-      const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
-      return retrieve(listId)
-        .then((current) => {
-          tasksPatch({ ...diff(previous, current), listId })
-          localStorage.setItem(prefix(`previous-${listId}`), current)
-        })
-    }))
-    setRemoteStorageTouch()
-  } catch (error) {
-    errorHandler(error)
-  }
-}
-
-async function retrieve (listId) {
+async function fetchListFromRemote (listId) {
   const done = inFlight()
   const dbx = getClient()
   let result
@@ -130,7 +146,7 @@ async function retrieve (listId) {
       error.status === 409 &&
       /path\/not_found/.test(error)
     ) {
-      result = await create(listId)
+      result = await createListOnRemote(listId)
     } else {
       done()
       throw error
@@ -141,28 +157,84 @@ async function retrieve (listId) {
   return content
 }
 
-async function store (listId, list) {
-  const done = inFlight()
-  const {
-    tasks
-  } = list
-  const dbx = getClient()
-  const bits = Object.values(tasks)
-    .filter(({ purged }) => !purged)
-    .sort((a, b) => a.lineNumber - b.lineNumber)
-    .map(({ raw }) => `${raw}\n`)
-  const contents = new File(bits, `${listId}.txt`)
-  await dbx.filesUpload({
-    contents,
-    path: `/${listId}.txt`,
-    mode: 'overwrite'
-  })
-  localStorage.setItem(prefix(`previous-${listId}`), await contents.text())
-  tasksRemovePurged(listId)
-  done()
-}
+// // this structure allows multiple callers to await the same import request
+// const importTasksInFlight = {}
+// async function importTasks (listId) {
+//   if (importTasksInFlight[listId])
+//     return importTasksInFlight[listId]
+//   const done = inFlight()
+//   importTasksInFlight[listId] = _importTasks(listId)
+//     .then(() => {
+//       delete importTasksInFlight[listId]
+//       done()
+//     })
+//   return importTasksInFlight[listId]
+// }
+//
+// async function _importTasks (listId) {
+//   try {
+//     const listIds = listId ? [].concat(listId) : await fetchLists()
+//     listsEnsure(listIds)
+//     await Promise.all(listIds.map((listId) => {
+//       const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+//       return retrieve(listId)
+//         .then((current) => {
+//           tasksPatch({ ...diff(previous, current), listId })
+//           localStorage.setItem(prefix(`previous-${listId}`), current)
+//         })
+//     }))
+//     setRemoteStorageTouch()
+//   } catch (error) {
+//     errorHandler(error)
+//   }
+// }
+//
+// async function retrieve (listId) {
+//   const done = inFlight()
+//   const dbx = getClient()
+//   let result
+//   try {
+//     result = await dbx.filesDownload({
+//       path: `/${listId}.txt`
+//     })
+//   } catch (error) {
+//     if (
+//       error.status === 409 &&
+//       /path\/not_found/.test(error)
+//     ) {
+//       result = await create(listId)
+//     } else {
+//       done()
+//       throw error
+//     }
+//   }
+//   const content = await result.fileBlob.text()
+//   done()
+//   return content
+// }
+//
+// async function store (listId, list) {
+//   const done = inFlight()
+//   const {
+//     tasks
+//   } = list
+//   const dbx = getClient()
+//   const bits = Object.values(tasks)
+//     .filter(({ purged }) => !purged)
+//     .sort((a, b) => a.lineNumber - b.lineNumber)
+//     .map(({ raw }) => `${raw}\n`)
+//   const contents = new File(bits, `${listId}.txt`)
+//   await dbx.filesUpload({
+//     contents,
+//     path: `/${listId}.txt`,
+//     mode: 'overwrite'
+//   })
+//   localStorage.setItem(prefix(`previous-${listId}`), await contents.text())
+//   tasksRemovePurged(listId)
+//   done()
+// }
 
-async function create (listId) {
+async function createListOnRemote (listId) {
   const done = inFlight()
   const dbx = getClient()
   let result
@@ -218,7 +290,6 @@ const optionsRequired = [
 
 export const dropbox = {
   initialise,
-  importTasks,
-  store,
+  sync,
   optionsRequired
 }

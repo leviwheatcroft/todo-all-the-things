@@ -63,14 +63,14 @@ export class DialogRemoteStorageOptions extends LitElement {
   save () {
     const $root = this.shadowRoot
     const driver = $root.querySelector('select.driver').value
-    const options = Object.fromEntries(
+    const options = Object.fromEntries([
       ['driver', driver],
-      $root.querySelectorAll('.optionsRequired')
+      ...[...$root.querySelectorAll('.optionsRequired')]
         .map((input) => {
           return [input.dataset.key, input.value]
         })
         .filter(([, value]) => value)
-    )
+    ])
     publish('remoteStorageDriverSave', { options })
     publish('dialogsToggle')
   }

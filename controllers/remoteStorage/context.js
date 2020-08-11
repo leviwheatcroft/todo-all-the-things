@@ -9,7 +9,7 @@ import {
 export { prefix } from '../../lib/prefix'
 
 export function getListsFromState () {
-  return getState().lists
+  return Object.values(getState().lists)
 }
 
 export function getOptions () {
