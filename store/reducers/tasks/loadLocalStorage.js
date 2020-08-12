@@ -29,27 +29,7 @@ export function tasksLoadLocalStorage (action, context) {
     }
   })
 
-  // const { lists } = getState()
-  // tasks.forEach((task) => {
-  //   const parsed = parseTask(task.raw)
-  //   const filterMatched = getState().filter.regExp.test(task.raw)
-  //   task = {
-  //     ...task,
-  //     filterMatched,
-  //     ...parsed
-  //   }
-  //   const {
-  //     id,
-  //     listId
-  //   } = task
-  //   if (lists[listId])
-  //     lists[listId] = { ...lists[listId] }
-  //   else
-  //     lists[listId] = { id: listId, tasks: {} }
-  //   lists[listId].tasks[id] = task
-  // })
   Object.entries(lists).forEach(([id, list]) => {
-    lists[id].tasks = sortTasks(list.tasks, getState().sort)
+    update(['lists', id, 'tasks'], sortTasks(list.tasks, getState().sort))
   })
-  update(['lists'], lists)
 }
