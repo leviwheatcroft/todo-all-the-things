@@ -87,7 +87,7 @@ async function mergeListsFromRemote () {
   await Promise.all(listIds.map(async (listId) => {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
     const current = await fetchListFromRemote(listId)
-    tasksPatch({ ...diff(previous[listId] || '', current), listId })
+    tasksPatch({ ...diff(previous, current), listId })
     localStorage.setItem(prefix(`previous-${listId}`), current)
   }))
   done()
@@ -104,7 +104,8 @@ async function uploadListsToRemote () {
       .map(({ raw }) => `${raw}\n`)
     const contentsAsFile = new File(bits, `${listId}.txt`)
     const contentsAsString = bits.join('')
-    const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+    const prefixed = prefix(`previous-${listId}`)
+    const previous = localStorage.getItem(prefixed) || false
     // TODO: does this ever happen? lineNumbers ?
     if (previous === contentsAsString)
       return
@@ -113,7 +114,7 @@ async function uploadListsToRemote () {
       path: `/${listId}.txt`,
       mode: 'overwrite'
     })
-    localStorage.setItem(prefix(`previous-${listId}`), contentsAsString)
+    localStorage.setItem(prefixed, contentsAsString)
     tasksRemovePurged(listId)
   }))
   done()
