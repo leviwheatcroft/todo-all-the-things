@@ -53,7 +53,7 @@ export function initialiseRemoteStorage () {
 
 function driverSelect (ctx) {
   let { driver } = getState().remoteStorage.options
-  driver = ctx.action.payload.driver || driver
+  driver = ctx.action.payload.driver || driver || 'none'
   let optionsRequired
   if (driver === 'none')
     optionsRequired = []
@@ -85,7 +85,6 @@ function driverInitialise () {
 let pending = false
 let queued = false
 function sync () {
-  console.log('sync', driver)
   if (!driver)
     return
   if (pending) {

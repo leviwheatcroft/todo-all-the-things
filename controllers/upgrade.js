@@ -4,7 +4,8 @@ import {
 } from '../store'
 
 const available = [
-  'v1.0.7'
+  'v1.0.7',
+  'v1.1.0'
 ]
 
 let unsubscribe
