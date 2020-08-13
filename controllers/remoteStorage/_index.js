@@ -93,12 +93,12 @@ function sync () {
   }
   pending = true
   driver.sync().then(() => {
+    pending = false
     if (queued) {
       queued = false
-      driver.sync()
+      sync()
     } else {
       setNextSync()
-      pending = false
     }
   })
 }
