@@ -10,15 +10,15 @@ export function tasksLoadLocalStorage (action, context) {
     getState
   } = context
 
-  const lists = { ...getState().lists }
-  tasks
-    .map(({ listId }) => listId)
-    .filter((listId, idx, listIds) => listIds.indexOf(listId) === idx)
-    .forEach((listId) => {
-      if (lists[listId])
-        return
-      lists[listId] = { id: listId, tasks: [] }
-    })
+  // this only happens once, there won't be anything in state
+  // so just create a new lists structure
+
+  const lists = Object.fromEntries(
+    tasks
+      .map(({ listId }) => listId)
+      .filter((listId, idx, listIds) => listIds.indexOf(listId) === idx)
+      .map((listId) => [listId, { id: listId, tasks: {} }])
+  )
 
   const filter = getState().filter.regExp
   tasks.forEach((task) => {
@@ -29,7 +29,10 @@ export function tasksLoadLocalStorage (action, context) {
     }
   })
 
-  Object.entries(lists).forEach(([id, list]) => {
-    update(['lists', id, 'tasks'], sortTasks(list.tasks, getState().sort))
+  const { sort } = getState()
+  Object.values(lists).forEach((list) => {
+    list.tasks = sortTasks(list.tasks, sort)
   })
+
+  update(['lists'], lists)
 }
