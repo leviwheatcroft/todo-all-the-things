@@ -1,7 +1,9 @@
 <div @click=${maskClose} class="light-box-mask">
   <div class="light-box">
     <div class="top-bar">
-      <slot name="title"></slot>
+      <h2 class="title">
+        <slot name="title"></slot>
+      </h2>
       ${nonDismissable ? nothing : html`
           <tdw-icon @click=${close} icon="x"></tdw-icon>
       `}
