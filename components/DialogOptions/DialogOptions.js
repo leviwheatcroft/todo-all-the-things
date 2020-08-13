@@ -10,10 +10,21 @@ import lightBox from '../LightBox/LightBoxConsumers.less'
 import { base, button } from '../../less'
 
 import {
-  publish
+  subscribe,
+  publish,
+  getState
 } from '../../store'
 
 export class DialogOptions extends LitElement {
+  constructor () {
+    super()
+    subscribe(
+      'optionsToggleShowCreatedDate',
+      this.setShowCreatedDate.bind(this)
+    )
+    this.setShowCreatedDate()
+  }
+
   static get styles () {
     return [
       base,
@@ -26,7 +37,9 @@ export class DialogOptions extends LitElement {
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const {
-      dialogRemoteStorageOptions
+      dialogRemoteStorageOptions,
+      toggleShowCreatedDate,
+      showCreatedDate
     } = this
     const html = _html
 
@@ -36,12 +49,21 @@ export class DialogOptions extends LitElement {
 
   static get properties () {
     return {
-      show: { attribute: false }
+      show: { attribute: false },
+      showCreatedDate: { attribute: false }
     }
   }
 
   dialogRemoteStorageOptions () {
     publish('dialogsToggle', { dialog: 'remoteStorageOptions' })
+  }
+
+  setShowCreatedDate () {
+    this.showCreatedDate = getState().settings.showCreatedDate
+  }
+
+  toggleShowCreatedDate () {
+    publish('optionsToggleShowCreatedDate')
   }
 }
 

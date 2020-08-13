@@ -1,7 +1,9 @@
 import { optionsLoadLocalStorage } from './loadLocalStorage'
+import { optionsToggleShowCreatedDate } from './toggleShowCreatedDate'
 
 const reducers = [
-  optionsLoadLocalStorage
+  optionsLoadLocalStorage,
+  optionsToggleShowCreatedDate
 ]
 
 export function options (action, context) {

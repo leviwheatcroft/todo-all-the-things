@@ -23,6 +23,8 @@ import loader from './loader.svg'
 import coffee from './coffee.svg'
 import star from './star.svg'
 import alertTriangle from './alert-triangle.svg'
+import toggleRight from './toggle-right.svg'
+import toggleLeft from './toggle-left.svg'
 
 export default {
   atSign,
@@ -49,5 +51,7 @@ export default {
   star,
   alertTriangle,
   cloudOff,
-  cloud
+  cloud,
+  toggleRight,
+  toggleLeft
 }

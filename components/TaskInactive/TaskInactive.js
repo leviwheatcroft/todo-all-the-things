@@ -10,17 +10,27 @@ import styles from './TaskInactive.less'
 import { base } from '../../less'
 
 import {
-  publish
+  getState,
+  publish,
+  subscribe
 } from '../../store'
 
 export class TaskInactive extends LitElement {
+  constructor () {
+    super()
+    subscribe(
+      'optionsToggleShowCreatedDate',
+      this.setShowCreatedDate.bind(this)
+    )
+    this.setShowCreatedDate()
+  }
+
   static get styles () { return [base, unsafeCSS(styles)] }
 
   static get properties () {
     return {
-      task: {
-        attribute: true
-      }
+      task: { attribute: true },
+      showCreatedDate: { attribute: false }
     }
   }
 
@@ -30,7 +40,8 @@ export class TaskInactive extends LitElement {
       task,
       activate,
       toggleComplete,
-      filterApply
+      filterApply,
+      showCreatedDate
     } = this
     const html = _html
     const nothing = _nothing
@@ -78,6 +89,10 @@ export class TaskInactive extends LitElement {
   toggleComplete () {
     const { task } = this
     publish('tasksToggleComplete', { task })
+  }
+
+  setShowCreatedDate () {
+    this.showCreatedDate = getState().settings.showCreatedDate
   }
 }
 

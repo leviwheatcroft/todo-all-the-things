@@ -36,14 +36,14 @@ ${task.pending ?
     </div>
   ` : nothing
 } -->
-${task.createdDate ?
+${task.createdDate && showCreatedDate ?
   html`
     <div
       @click="${filterApply}"
       class="tag tag-created-date"
       data-created-date="${task.createdDate}"
     >
-        <tdw-icon icon="calendar"></tdw-icon>
+        <tdw-icon icon="filePlus"></tdw-icon>
       <span class="tag-text">
         ${task.createdDate}
       </span>

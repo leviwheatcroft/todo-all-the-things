@@ -9,5 +9,13 @@
       </span>
       <tdw-icon icon="cloudLightning"></tdw-icon>
     </div>
+    <div @click="${toggleShowCreatedDate}">
+      <span class="description">
+        Show Created Date
+      </span>
+      ${showCreatedDate ?
+        html`<tdw-icon icon="toggleRight"></tdw-icon>` :
+        html`<tdw-icon icon="toggleLeft"></tdw-icon>`
+      }
   </div>
 </tdw-light-box>

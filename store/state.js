@@ -19,7 +19,8 @@ export const initialState = {
   },
   settings: {
     includeTasksInErrorReport: false,
-    prependCreatedDate: true
+    prependCreatedDate: true,
+    showCreatedDate: true
   },
   filter: {
     text: '',

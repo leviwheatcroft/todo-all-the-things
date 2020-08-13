@@ -75,6 +75,10 @@ export const actionTypes = [
   // loads options to state from local storage
   // issued by options controller
 
+  'optionsToggleShowCreatedDate',
+  // toggles showCreatedDate
+  // called from options dialog
+
   'listsAdd',
   // adds new list to store
   // published by DialogLists
