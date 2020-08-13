@@ -24,17 +24,17 @@ function initialise (ctx) {
   tasksRemovePurged = ctx.tasksRemovePurged
 }
 
-let inFlightOps = 0
-function inFlight () {
-  if (inFlightOps === 0)
-    remoteStoragePending()
-  inFlightOps += 1
-  return function done () {
-    inFlightOps -= 1
-    if (inFlightOps === 0)
-      remoteStorageUnpending()
-  }
-}
+// let inFlightOps = 0
+// function inFlight () {
+//   if (inFlightOps === 0)
+//     remoteStoragePending()
+//   inFlightOps += 1
+//   return function done () {
+//     inFlightOps -= 1
+//     if (inFlightOps === 0)
+//       remoteStorageUnpending()
+//   }
+// }
 
 /**
  * diff - compares previous and current text files
@@ -74,6 +74,7 @@ function diff (previous, current) {
 }
 
 async function sync () {
+  remoteStoragePending()
   try {
     await mergeListsFromRemote()
     await uploadListsToRemote()
@@ -81,10 +82,10 @@ async function sync () {
   } catch (error) {
     errorHandler(error)
   }
+  remoteStorageUnpending()
 }
 
 async function mergeListsFromRemote () {
-  const done = inFlight()
   const listIds = await fetchListIdsFromRemote()
   await Promise.all(listIds.map(async (listId) => {
     listsEnsureInState(listId)
@@ -93,11 +94,9 @@ async function mergeListsFromRemote () {
     tasksPatch({ ...diff(previous, current), listId })
     localStorage.setItem(prefix(`previous-${listId}`), current)
   }))
-  done()
 }
 
 async function uploadListsToRemote () {
-  const done = inFlight()
   const dbx = getClient()
   const lists = getListsFromState()
   await Promise.all(lists.map(async ({ id: listId, tasks }) => {
@@ -120,11 +119,9 @@ async function uploadListsToRemote () {
     localStorage.setItem(prefixed, contentsAsString)
     tasksRemovePurged(listId)
   }))
-  done()
 }
 
 async function fetchListIdsFromRemote () {
-  const done = inFlight()
   const dbx = getClient()
   // allow error to be thrown
   const result = await dbx.filesListFolder({
@@ -133,12 +130,10 @@ async function fetchListIdsFromRemote () {
   const listIds = result.entries.map((entry) => {
     return entry.name.replace(/\.\w*?$/, '')
   })
-  done()
   return listIds
 }
 
 async function fetchListFromRemote (listId) {
-  const done = inFlight()
   const dbx = getClient()
   let result
   try {
@@ -149,15 +144,12 @@ async function fetchListFromRemote (listId) {
     if (
       error.status === 409 &&
       /path\/not_found/.test(error)
-    ) {
+    )
       result = await createListOnRemote(listId)
-    } else {
-      done()
+    else
       throw error
-    }
   }
   const content = await result.fileBlob.text()
-  done()
   return content
 }
 
@@ -239,7 +231,6 @@ async function fetchListFromRemote (listId) {
 // }
 
 async function createListOnRemote (listId) {
-  const done = inFlight()
   const dbx = getClient()
   let result
   try {
@@ -253,7 +244,6 @@ async function createListOnRemote (listId) {
     const error = JSON.parse(raw)
     console.error('err', error)
   }
-  done()
   return result
 }
 
