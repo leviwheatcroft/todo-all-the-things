@@ -1,5 +1,6 @@
 import { Dropbox } from 'dropbox'
 
+let listsEnsureInState
 let getListsFromState
 let getOptions
 let prefix
@@ -11,6 +12,7 @@ let tasksPatch
 let tasksRemovePurged
 
 function initialise (ctx) {
+  listsEnsureInState = ctx.listsEnsureInState
   getListsFromState = ctx.getListsFromState
   getOptions = ctx.getOptions
   prefix = ctx.prefix
@@ -85,6 +87,7 @@ async function mergeListsFromRemote () {
   const done = inFlight()
   const listIds = await fetchListIdsFromRemote()
   await Promise.all(listIds.map(async (listId) => {
+    listsEnsureInState(listId)
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
     const current = await fetchListFromRemote(listId)
     tasksPatch({ ...diff(previous, current), listId })

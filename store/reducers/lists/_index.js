@@ -1,7 +1,9 @@
 import { listsSelect } from './select'
 import { listsAdd } from './add'
+import { listsEnsureInState } from './ensureInState'
 
 const reducers = [
+  listsEnsureInState,
   listsSelect,
   listsAdd
 ]

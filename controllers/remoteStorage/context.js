@@ -8,6 +8,10 @@ import {
 
 export { prefix } from '../../lib/prefix'
 
+export function listsEnsureInState (listId) {
+  publish('listsEnsureInState', { listId })
+}
+
 export function getListsFromState () {
   return Object.values(getState().lists)
 }

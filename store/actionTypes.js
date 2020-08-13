@@ -83,7 +83,7 @@ export const actionTypes = [
   // sets selectedList in the store
   // published by DialogLists
 
-  'listsEnsure',
+  'listsEnsureInState',
   // ensures list exists in store
   // lists from remote storage with no tasks still need to be created in store
   // published by driver via RemoteStorage
