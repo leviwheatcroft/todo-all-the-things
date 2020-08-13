@@ -14,7 +14,7 @@ export const initialState = {
     error: false,
     optionsRequired: [],
     options: {
-      driver: false
+      driver: 'none'
     }
   },
   settings: {
@@ -34,7 +34,8 @@ export const initialState = {
     }
   },
   projects: [],
-  contexts: []
+  contexts: [],
+  version: 'v1.1.0'
 }
 
 const dehydrators = {

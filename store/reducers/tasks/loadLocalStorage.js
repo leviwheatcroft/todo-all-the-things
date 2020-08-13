@@ -5,6 +5,10 @@ export function tasksLoadLocalStorage (action, context) {
   if (action.type !== 'tasksLoadLocalStorage')
     return
   const { payload: { tasks } } = action
+
+  if (!tasks.length)
+    return
+
   const {
     update,
     getState
