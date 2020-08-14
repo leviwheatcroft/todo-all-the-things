@@ -37,8 +37,10 @@ export function retrieveOptions ({ loadRemoteTasks = true }) {
     return
   }
   const upgraded = upgrade(dehydrated)
-  if (upgraded.version !== dehydrated.version)
-    store(upgraded)
+  if (upgraded.version !== dehydrated.version) {
+    const dehydrated = dehydrate(upgraded)
+    localStorage.setItem(prefix('options'), JSON.stringify(dehydrated))
+  }
 
   const options = hydrate(upgraded)
   // loadRemoteTasks is not used by the reducer, but remoteStorage listens
@@ -46,7 +48,8 @@ export function retrieveOptions ({ loadRemoteTasks = true }) {
   publish('optionsLoadLocalStorage', { options, loadRemoteTasks })
 }
 
-function store (hydrated = getState()) {
+function store () {
+  const hydrated = getState()
   const dehydrated = dehydrate(hydrated)
   localStorage.setItem(prefix('options'), JSON.stringify(dehydrated))
 }
