@@ -1,3 +1,5 @@
+import { upgrades } from './upgrades'
+
 export const initialState = {
   dialogs: {
     show: false
@@ -74,4 +76,44 @@ export function hydrate (state) {
         return [key, hydrators[key] ? hydrators[key](state) : value]
       })
   )
+}
+
+export function upgrade (dehydrated) {
+  const current = dehydrated.version
+  const upgradeVersions = Object.keys(upgrades)
+  const next = upgradeVersions.findIndex((version) => {
+    return versionCompare(current, version) < 0
+  })
+  // console.log(available.findIndex(() => true))
+  if (next === -1)
+    return dehydrated
+  return Object.values(upgrades).slice(next).reduce((dehydrated, upgrade) => {
+    return upgrade(dehydrated)
+  }, dehydrated)
+}
+
+function versionCompare (a, b) {
+  if (a === undefined)
+    return -1
+  a = a.replace('v', '').split('.')
+  b = b.replace('v', '').split('.')
+  for (let i = 0; i < 3; i += 1) {
+    const na = Number(a[i])
+    const nb = Number(b[i])
+    if (na > nb)
+      return 1
+    if (nb > na)
+      return -1
+    if (
+      !Number.isNaN(na) &&
+      Number.isNaN(nb)
+    )
+      return 1
+    if (
+      Number.isNaN(na) &&
+      !Number.isNaN(nb)
+    )
+      return 1
+  }
+  return 0
 }

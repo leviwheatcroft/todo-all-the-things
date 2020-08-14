@@ -1,9 +1,11 @@
 /* eslint-disable max-classes-per-file */
 import {
+  getState,
   subscribe,
   publish
 } from '../store'
 import {
+  upgrade,
   hydrate,
   dehydrate
 } from '../store/state'
@@ -21,8 +23,7 @@ export function initialiseOptions () {
       /optionsDriverSave/,
       /optionsToggle/,
       /filterSet/,
-      /listsSelect/,
-      /upgrade/
+      /listsSelect/
     ],
     store
   )
@@ -35,14 +36,17 @@ export function retrieveOptions ({ loadRemoteTasks = true }) {
     publish('firstRun')
     return
   }
-  const options = hydrate(dehydrated)
+  const upgraded = upgrade(dehydrated)
+  if (upgraded.version !== dehydrated.version)
+    store(upgraded)
+
+  const options = hydrate(upgraded)
   // loadRemoteTasks is not used by the reducer, but remoteStorage listens
   // to this event and will not respond when loadRemoteTasks is false
   publish('optionsLoadLocalStorage', { options, loadRemoteTasks })
 }
 
-function store ({ getState }) {
-  const hydrated = getState()
+function store (hydrated = getState()) {
   const dehydrated = dehydrate(hydrated)
   localStorage.setItem(prefix('options'), JSON.stringify(dehydrated))
 }

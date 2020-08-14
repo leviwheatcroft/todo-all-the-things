@@ -102,10 +102,6 @@ export const actionTypes = [
   // issued by RemoteStorageState NavBar Button
   // issued by DialogRemoteStorageError
 
-  'upgrade',
-  // applies state upgrades
-  // issued by upgrade controller
-
   'destroyLocalStorage',
   // no reducer
   // issued by DialogTools
