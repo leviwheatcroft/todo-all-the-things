@@ -249,11 +249,6 @@ async function createListOnRemote (listId) {
 
 function getClient () {
   const { accessToken } = getOptions()
-  // let { accessToken } = getOptions()
-  // if (Math.random() < 0.2) {
-  //   console.log('simulate bad token')
-  //   accessToken = ''
-  // }
   return new Dropbox({ accessToken, fetch })
 }
 

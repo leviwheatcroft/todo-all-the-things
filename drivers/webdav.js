@@ -1,25 +1,29 @@
 import { createClient } from 'webdav/web'
 
-let tasksPatch
-let tasksRemovePurged
+import axios from 'axios'
+
+axios.defaults.headers.put['Content-Type'] = 'text/plain'
+
+let getListsFromState
 let getOptions
 let prefix
-let listsEnsure
+let remoteStorageError
 let remoteStoragePending
 let remoteStorageUnpending
 let setRemoteStorageTouch
-let remoteStorageError
+let tasksPatch
+let tasksRemovePurged
 
 function initialise (ctx) {
-  tasksPatch = ctx.tasksPatch
-  tasksRemovePurged = ctx.tasksRemovePurged
+  getListsFromState = ctx.getListsFromState
   getOptions = ctx.getOptions
   prefix = ctx.prefix
-  listsEnsure = ctx.listsEnsure
+  remoteStorageError = ctx.remoteStorageError
   remoteStoragePending = ctx.remoteStoragePending
   remoteStorageUnpending = ctx.remoteStorageUnpending
   setRemoteStorageTouch = ctx.setRemoteStorageTouch
-  remoteStorageError = ctx.remoteStorageError
+  tasksPatch = ctx.tasksPatch
+  tasksRemovePurged = ctx.tasksRemovePurged
 }
 
 let inFlightOps = 0
@@ -71,51 +75,77 @@ function diff (previous, current) {
   }
 }
 
-async function fetchLists () {
+async function sync () {
+  try {
+    await mergeFromRemote()
+    await writeToRemote()
+  } catch (error) {
+    errorHandler(error)
+  }
+  // store touch in localStorage, so other browser tabs will update
+  // TODO: should probably setRemoteStorageTouch even where an error occurs
+  setRemoteStorageTouch()
+}
+
+async function mergeFromRemote () {
+  const listIds = await fetchListsFromRemote()
+
+  await Promise.all(listIds.map(async (listId) => {
+    const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+    const current = await fetchListFromRemote(listId)
+    console.log('diff', previous, current, listId)
+    tasksPatch({ ...diff(previous, current), listId })
+    localStorage.setItem(prefix(`previous-${listId}`), current)
+  }))
+}
+
+async function writeToRemote () {
+  console.log('glfs', getListsFromState())
+  const lists = Object.values(getListsFromState())
+  const webdav = getClient()
+  await Promise.all(lists.map(async (list) => {
+    const {
+      id: listId,
+      tasks
+    } = list
+    const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+    const current = Object.values(tasks)
+      .filter(({ purged }) => !purged)
+      .sort((a, b) => a.lineNumber - b.lineNumber)
+      .map(({ raw }) => raw)
+      .join('\n')
+    console.log('wc', current, tasks)
+    if (current !== previous) {
+      webdav.putFileContents(
+        `/${listId}.txt`,
+        current,
+        {
+          overwrite: true,
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          onUploadProgress: (progress) => console.log('progress', progress)
+        }
+      )
+      localStorage.setItem(prefix(`previous-${listId}`), current)
+    }
+    tasksRemovePurged(listId)
+  }))
+}
+
+async function fetchListsFromRemote () {
   const done = inFlight()
   const webdav = getClient()
   // allow error to be thrown
   const result = await webdav.getDirectoryContents('/')
-  const listIds = result.map(({ baseName }) => {
-    return baseName.replace(/\.\w*?$/, '')
+  const listIds = result.map(({ basename }) => {
+    return basename.replace(/\.\w*?$/, '')
   })
   done()
   return listIds
 }
 
-// this structure allows multiple callers to await the same import request
-const importTasksInFlight = {}
-async function importTasks (listId) {
-  if (importTasksInFlight[listId])
-    return importTasksInFlight[listId]
-  const done = inFlight()
-  importTasksInFlight[listId] = _importTasks(listId)
-    .then(() => {
-      delete importTasksInFlight[listId]
-      done()
-    })
-  return importTasksInFlight[listId]
-}
-
-async function _importTasks (listId) {
-  try {
-    const listIds = listId ? [].concat(listId) : await fetchLists()
-    listsEnsure(listIds)
-    await Promise.all(listIds.map((listId) => {
-      const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
-      return retrieve(listId)
-        .then((current) => {
-          tasksPatch({ ...diff(previous, current), listId })
-          localStorage.setItem(prefix(`previous-${listId}`), current)
-        })
-    }))
-    setRemoteStorageTouch()
-  } catch (error) {
-    errorHandler(error)
-  }
-}
-
-async function retrieve (listId) {
+async function fetchListFromRemote (listId) {
   const done = inFlight()
   const webdav = getClient()
   let content
@@ -124,6 +154,7 @@ async function retrieve (listId) {
       `/${listId}.txt`,
       { format: 'text' }
     )
+    console.log('fetchListFromRemote', content)
   } catch (error) {
     errorHandler(error)
     content = ''
@@ -132,47 +163,65 @@ async function retrieve (listId) {
   return content
 }
 
-async function store (listId, list) {
-  const done = inFlight()
-  const {
-    tasks
-  } = list
-  const webdav = getClient()
-  const content = Object.values(tasks)
-    .filter(({ purged }) => !purged)
-    .sort((a, b) => a.lineNumber - b.lineNumber)
-    .map(({ raw }) => `${raw}\n`)
-    .join('')
-  webdav.putFileContents(
-    `/${listId}.txt`,
-    content,
-    { overwrite: true }
-  )
-  localStorage.setItem(prefix(`previous-${listId}`), content)
-  tasksRemovePurged(listId)
-  done()
-}
+// async function _importTasks (listId) {
+//   try {
+//     const listIds = listId ? [].concat(listId) : await fetchLists()
+//     listsEnsure(listIds)
+//     await Promise.all(listIds.map((listId) => {
+//       const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+//       return retrieve(listId)
+//         .then((current) => {
+//           tasksPatch({ ...diff(previous, current), listId })
+//           localStorage.setItem(prefix(`previous-${listId}`), current)
+//         })
+//     }))
+//     setRemoteStorageTouch()
+//   } catch (error) {
+//     errorHandler(error)
+//   }
+// }
 
-async function create (listId) {
-  const done = inFlight()
-  const webdav = getClient()
-  let result
-  try {
-    result = await webdav.putFileContents(
-      `/${listId}.txt`,
-      '',
-      { overwrite: false }
-    )
-  } catch (error) {
-    errorHandler(error)
-  }
-  done()
-  return result
-}
+// async function store (listId, list) {
+//   const done = inFlight()
+//   const {
+//     tasks
+//   } = list
+//   const webdav = getClient()
+//   const content = Object.values(tasks)
+//     .filter(({ purged }) => !purged)
+//     .sort((a, b) => a.lineNumber - b.lineNumber)
+//     .map(({ raw }) => `${raw}\n`)
+//     .join('')
+//   webdav.putFileContents(
+//     `/${listId}.txt`,
+//     content,
+//     { overwrite: true }
+//   )
+//   localStorage.setItem(prefix(`previous-${listId}`), content)
+//   tasksRemovePurged(listId)
+//   done()
+// }
+//
+// async function create (listId) {
+//   const done = inFlight()
+//   const webdav = getClient()
+//   let result
+//   try {
+//     result = await webdav.putFileContents(
+//       `/${listId}.txt`,
+//       '',
+//       { overwrite: false }
+//     )
+//   } catch (error) {
+//     errorHandler(error)
+//   }
+//   done()
+//   return result
+// }
 
 function getClient () {
-  const { webdavUrl } = getOptions()
-  return createClient(webdavUrl)
+  const { url } = getOptions()
+  return createClient(url)
 }
 
 function errorHandler (error) {
@@ -205,7 +254,6 @@ const optionsRequired = [
 
 export const webdav = {
   initialise,
-  importTasks,
-  store,
+  sync,
   optionsRequired
 }
