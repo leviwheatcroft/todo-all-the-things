@@ -1,5 +1,6 @@
 FROM alpine:3.12
-RUN apk add --no-cache nano vsftpd
+RUN apk add --no-cache nano git autoconf automake pkgconf
+#RUN apk add --no-cache nano vsftpd
 #RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y #lighttpd lighttpd-mod-webdav nano sqlite strace
 #COPY build /srv/todo-all-the-things
 #COPY docker/lighttpd.conf /etc/lighttpd/
