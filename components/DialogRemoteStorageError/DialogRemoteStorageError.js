@@ -3,6 +3,9 @@ import {
   html as _html,
   unsafeCSS
 } from 'lit-element'
+import {
+  nothing as _nothing
+} from 'lit-html'
 // import { render } from './DialogRemoteStorageError.template'
 import template from './DialogRemoteStorageError.html'
 import styles from './DialogRemoteStorageError.less'
@@ -11,15 +14,13 @@ import { base, button } from '../../less'
 
 import {
   publish,
-  subscribe,
-  getState
+  subscribe
 } from '../../store'
 
 export class DialogRemoteStorageError extends LitElement {
   constructor () {
     super()
-    subscribe(/remoteStorageError/, this.updateRemoteStorageError.bind(this))
-    this.updateRemoteStorageError()
+    subscribe(/remoteStorageError/, this.remoteStorageError.bind(this))
   }
 
   static get styles () {
@@ -34,11 +35,13 @@ export class DialogRemoteStorageError extends LitElement {
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const {
-      remoteStorageError,
+      error,
+      errorDetail,
       remoteStorageOptions,
       remoteStorageUpdate
     } = this
     const html = _html
+    const nothing = _nothing
 
     return eval('html`' + template + '`')
   }
@@ -46,17 +49,19 @@ export class DialogRemoteStorageError extends LitElement {
 
   static get properties () {
     return {
-      remoteStorageError: { attribute: false }
+      error: { attribute: false },
+      errorDetail: { attribute: false }
     }
   }
 
-  updateRemoteStorageError () {
-    this.remoteStorageError = getState().remoteStorage.error
-    if (
-      this.remoteStorageError &&
-      getState().dialogs.show !== 'remoteStorageError'
-    )
-      publish('dialogsToggle', { dialog: 'remoteStorageError' })
+  remoteStorageError ({ action: { payload } }) {
+    const {
+      error,
+      errorDetail
+    } = payload
+    this.error = error
+    this.errorDetail = errorDetail
+    publish('dialogsToggle', { dialog: 'remoteStorageError' })
   }
 
   remoteStorageOptions (event) {

@@ -13,7 +13,6 @@ export const initialState = {
   remoteStorage: {
     lastTouch: 0,
     state: 'noDriver',
-    error: false,
     optionsRequired: [],
     options: {
       driver: 'none'

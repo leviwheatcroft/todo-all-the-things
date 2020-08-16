@@ -120,8 +120,9 @@ export const actionTypes = [
   // exist
 
   'remoteStorageError',
-  // updated remoteStorage.error in state
+  // reducer sets error state
   // issued by remoteStorage controller
+  // DialogRemoteStorageError subscribes to this
 
   'remoteStorageDriverSelect',
   // switch driver in DialogRemoteStorageOptions

@@ -20,8 +20,8 @@ export function getOptions () {
   return getState().remoteStorage.options
 }
 
-export function remoteStorageError (error) {
-  publish('remoteStorageError', { error })
+export function remoteStorageError (error, errorDetail) {
+  publish('remoteStorageError', { error, errorDetail })
 }
 
 export function remoteStoragePending () {

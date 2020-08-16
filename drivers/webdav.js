@@ -143,9 +143,34 @@ function getClient () {
 
 function errorHandler (error) {
   Object.entries(error).forEach(([key, value]) => {
-    console.log('err:', key, value)
+    console.error('error:', key, value)
   })
-  console.error('webdav error', error)
+  if (!error.response) {
+    remoteStorageError(error.message || 'Unknown Error')
+    return
+  }
+  if (error.response.status === 403) {
+    remoteStorageError(
+      '403: Forbidden',
+      `
+      You don't have permission to access that server or directory. This might
+      be a user / password issue, or you may have specified the wrong directory.
+      `
+    )
+    return
+  }
+  if (error.response) {
+    remoteStorageError(
+      `${error.response.status} ${error.response.statusText}`,
+      `
+      This error was reported by the WebDAV server, and is most likely a server
+      or configuration issue.
+      `
+    )
+  }
+  remoteStorageError(
+    'Unknown Error'
+  )
 }
 
 const optionsRequired = [

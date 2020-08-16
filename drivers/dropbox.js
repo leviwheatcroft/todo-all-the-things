@@ -253,14 +253,25 @@ function getClient () {
 }
 
 function errorHandler (error) {
+  Object.entries(error).forEach(([key, value]) => {
+    console.error('error:', key, value)
+  })
   // bad auth code
   if (
     error.status === 400 &&
     /Invalid authorization value in HTTP header/.test(error.error)
+  ) {
+    remoteStorageError(
+      '400:Bad Access Token',
+      `
+      There's an issue with your API Access Token.
+      `
+    )
+    return
+  }
+  remoteStorageError(
+    'Unknown Error'
   )
-    return remoteStorageError('Bad Access Token')
-  console.error('Unknown Dropbox Error', error)
-  remoteStorageError('Unknown Dropbox Error')
 }
 
 const optionsRequired = [
