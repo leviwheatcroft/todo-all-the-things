@@ -1,7 +1,7 @@
 import { dropbox } from './dropbox'
-// import { webdav } from './webdav'
+import { webdav } from './webdav'
 
 export default {
-  dropbox
-  // webdav
+  dropbox,
+  webdav
 }

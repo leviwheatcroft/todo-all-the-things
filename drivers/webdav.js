@@ -1,9 +1,5 @@
 import { createClient } from 'webdav/web'
 
-import axios from 'axios'
-
-axios.defaults.headers.put['Content-Type'] = 'text/plain'
-
 let getListsFromState
 let getOptions
 let prefix
@@ -24,18 +20,6 @@ function initialise (ctx) {
   setRemoteStorageTouch = ctx.setRemoteStorageTouch
   tasksPatch = ctx.tasksPatch
   tasksRemovePurged = ctx.tasksRemovePurged
-}
-
-let inFlightOps = 0
-function inFlight () {
-  if (inFlightOps === 0)
-    remoteStoragePending()
-  inFlightOps += 1
-  return function done () {
-    inFlightOps -= 1
-    if (inFlightOps === 0)
-      remoteStorageUnpending()
-  }
 }
 
 /**
@@ -76,6 +60,7 @@ function diff (previous, current) {
 }
 
 async function sync () {
+  remoteStoragePending()
   try {
     await mergeFromRemote()
     await writeToRemote()
@@ -83,8 +68,8 @@ async function sync () {
     errorHandler(error)
   }
   // store touch in localStorage, so other browser tabs will update
-  // TODO: should probably setRemoteStorageTouch even where an error occurs
   setRemoteStorageTouch()
+  remoteStorageUnpending()
 }
 
 async function mergeFromRemote () {
@@ -93,14 +78,12 @@ async function mergeFromRemote () {
   await Promise.all(listIds.map(async (listId) => {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
     const current = await fetchListFromRemote(listId)
-    console.log('diff', previous, current, listId)
     tasksPatch({ ...diff(previous, current), listId })
     localStorage.setItem(prefix(`previous-${listId}`), current)
   }))
 }
 
 async function writeToRemote () {
-  console.log('glfs', getListsFromState())
   const lists = Object.values(getListsFromState())
   const webdav = getClient()
   await Promise.all(lists.map(async (list) => {
@@ -114,17 +97,12 @@ async function writeToRemote () {
       .sort((a, b) => a.lineNumber - b.lineNumber)
       .map(({ raw }) => raw)
       .join('\n')
-    console.log('wc', current, tasks)
     if (current !== previous) {
       webdav.putFileContents(
         `/${listId}.txt`,
         current,
         {
-          overwrite: true,
-          headers: {
-            'Content-Type': 'text/plain'
-          },
-          onUploadProgress: (progress) => console.log('progress', progress)
+          overwrite: true
         }
       )
       localStorage.setItem(prefix(`previous-${listId}`), current)
@@ -134,19 +112,16 @@ async function writeToRemote () {
 }
 
 async function fetchListsFromRemote () {
-  const done = inFlight()
   const webdav = getClient()
   // allow error to be thrown
   const result = await webdav.getDirectoryContents('/')
   const listIds = result.map(({ basename }) => {
     return basename.replace(/\.\w*?$/, '')
   })
-  done()
   return listIds
 }
 
 async function fetchListFromRemote (listId) {
-  const done = inFlight()
   const webdav = getClient()
   let content
   try {
@@ -154,70 +129,12 @@ async function fetchListFromRemote (listId) {
       `/${listId}.txt`,
       { format: 'text' }
     )
-    console.log('fetchListFromRemote', content)
   } catch (error) {
     errorHandler(error)
     content = ''
   }
-  done()
   return content
 }
-
-// async function _importTasks (listId) {
-//   try {
-//     const listIds = listId ? [].concat(listId) : await fetchLists()
-//     listsEnsure(listIds)
-//     await Promise.all(listIds.map((listId) => {
-//       const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
-//       return retrieve(listId)
-//         .then((current) => {
-//           tasksPatch({ ...diff(previous, current), listId })
-//           localStorage.setItem(prefix(`previous-${listId}`), current)
-//         })
-//     }))
-//     setRemoteStorageTouch()
-//   } catch (error) {
-//     errorHandler(error)
-//   }
-// }
-
-// async function store (listId, list) {
-//   const done = inFlight()
-//   const {
-//     tasks
-//   } = list
-//   const webdav = getClient()
-//   const content = Object.values(tasks)
-//     .filter(({ purged }) => !purged)
-//     .sort((a, b) => a.lineNumber - b.lineNumber)
-//     .map(({ raw }) => `${raw}\n`)
-//     .join('')
-//   webdav.putFileContents(
-//     `/${listId}.txt`,
-//     content,
-//     { overwrite: true }
-//   )
-//   localStorage.setItem(prefix(`previous-${listId}`), content)
-//   tasksRemovePurged(listId)
-//   done()
-// }
-//
-// async function create (listId) {
-//   const done = inFlight()
-//   const webdav = getClient()
-//   let result
-//   try {
-//     result = await webdav.putFileContents(
-//       `/${listId}.txt`,
-//       '',
-//       { overwrite: false }
-//     )
-//   } catch (error) {
-//     errorHandler(error)
-//   }
-//   done()
-//   return result
-// }
 
 function getClient () {
   const { url } = getOptions()
@@ -225,6 +142,9 @@ function getClient () {
 }
 
 function errorHandler (error) {
+  Object.entries(error).forEach(([key, value]) => {
+    console.log('err:', key, value)
+  })
   console.error('webdav error', error)
 }
 
