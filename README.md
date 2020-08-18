@@ -5,7 +5,7 @@
  - `yarn` or `npm`: install all the things
  - `yarn run build` or `npm run build`: build the client
  - `docker build . -f docker/Dockerfile -t tatt`
- - `docker run --rm -p 3000:3000 -d tatt`
+ - `docker run --name tatt --rm -p 3000:3000 -d tatt`
 
 ## webdav development server
 

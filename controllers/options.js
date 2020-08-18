@@ -33,6 +33,18 @@ export function initialiseOptions () {
 export function retrieveOptions ({ loadRemoteTasks = true }) {
   const dehydrated = JSON.parse(localStorage.getItem(prefix('options')))
   if (!dehydrated) {
+    if (
+      process.env.TATT_DRIVER === 'webdav' &&
+      process.env.TATT_WEBDAV_USER &&
+      process.env.TATT_WEBDAV_PASSWORD
+    ) {
+      publish('remoteStorageDriverSave', {
+        driver: 'webdav',
+        user: process.env.TATT_WEBDAV_USER,
+        password: process.env.TATT_WEBDAV_PASSWORD,
+        refreshInterval: 10
+      })
+    }
     publish('firstRun')
     return
   }

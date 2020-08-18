@@ -137,24 +137,59 @@ async function fetchListFromRemote (listId) {
 }
 
 function getClient () {
-  const { url } = getOptions()
-  return createClient(url)
+  const { url, user, password } = getOptions()
+  return createClient(url, {
+    username: user || undefined,
+    password: password || undefined
+  })
 }
 
 function errorHandler (error) {
+  console.log('error', error)
   Object.entries(error).forEach(([key, value]) => {
     console.error('error:', key, value)
   })
+  if (
+    error.isAxiosError &&
+    !error.response &&
+    error.message === 'Network Error'
+  ) {
+    // this is what a CORS failure will look like.
+    // our webDAV lib wants to issue a PROPFIND request, which will list
+    // directory contents. Browser will first issue an OPTIONS request, to
+    // check CORS headers will permit the PROPFIND request. If the headers
+    remoteStorageError(
+      error.message ? `${error.message} (CORS Error?)` : 'CORS Error',
+      `
+      This error is vague, but is commonly caused when a server does not
+      support CORS requests.
+      `
+    )
+
+    return
+  }
   if (!error.response) {
-    remoteStorageError(error.message || 'Unknown Error')
+    remoteStorageError(
+      'Unknown Error'
+    )
     return
   }
   if (error.response.status === 403) {
     remoteStorageError(
       '403: Forbidden',
       `
-      You don't have permission to access that server or directory. This might
-      be a user / password issue, or you may have specified the wrong directory.
+      The server you've tried to connect to will not provide access to that
+      directory.
+      `
+    )
+    return
+  }
+  if (error.response.status === 401) {
+    remoteStorageError(
+      '401: Unauthorized',
+      `
+      The server you've tried to connect to says that your user / password
+      does not have proper authorization to access that directory.
       `
     )
     return
@@ -167,10 +202,9 @@ function errorHandler (error) {
       or configuration issue.
       `
     )
+    return
   }
-  remoteStorageError(
-    'Unknown Error'
-  )
+
 }
 
 const optionsRequired = [
