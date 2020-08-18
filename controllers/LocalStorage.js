@@ -24,6 +24,7 @@ export class LocalStorage {
       [
         /^tasksCreateNew$/,
         /^tasksCreateNew\.fromRemote$/,
+        /^listsRemoveFromState$/,
         /tasksToggleComplete/,
         /tasksEdit/,
         /tasksPurge/,

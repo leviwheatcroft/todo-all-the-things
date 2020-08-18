@@ -92,6 +92,10 @@ export function tasksPatch (patch) {
   publish('tasksRemove', { raws: removed, listId })
 }
 
+export function listsRemoveFromState (listIds) {
+  publish('listsRemoveFromState', { listIds })
+}
+
 export function tasksRemovePurged (listId) {
   publish('tasksRemovePurged', { listId })
 }

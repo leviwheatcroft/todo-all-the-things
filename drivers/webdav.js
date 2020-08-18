@@ -9,6 +9,7 @@ let remoteStorageUnpending
 let setRemoteStorageTouch
 let tasksPatch
 let tasksRemovePurged
+let listsRemoveFromState
 
 function initialise (ctx) {
   getListsFromState = ctx.getListsFromState
@@ -20,6 +21,7 @@ function initialise (ctx) {
   setRemoteStorageTouch = ctx.setRemoteStorageTouch
   tasksPatch = ctx.tasksPatch
   tasksRemovePurged = ctx.tasksRemovePurged
+  listsRemoveFromState = ctx.listsRemoveFromState
 }
 
 /**
@@ -73,14 +75,20 @@ async function sync () {
 }
 
 async function mergeFromRemote () {
-  const listIds = await fetchListsFromRemote()
+  const remoteListIds = await fetchListsFromRemote()
 
-  await Promise.all(listIds.map(async (listId) => {
+  await Promise.all(remoteListIds.map(async (listId) => {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
     const current = await fetchListFromRemote(listId)
     tasksPatch({ ...diff(previous, current), listId })
     localStorage.setItem(prefix(`previous-${listId}`), current)
   }))
+
+  const deletedListIds = getListsFromState()
+    .map(({ id }) => id)
+    .filter((id) => localStorage.getItem(prefix(`previous-${id}`)))
+    .filter((id) => remoteListIds.includes(id))
+  listsRemoveFromState(deletedListIds)
 }
 
 async function writeToRemote () {
@@ -145,7 +153,6 @@ function getClient () {
 }
 
 function errorHandler (error) {
-  console.log('error', error)
   Object.entries(error).forEach(([key, value]) => {
     console.error('error:', key, value)
   })
@@ -202,9 +209,9 @@ function errorHandler (error) {
       or configuration issue.
       `
     )
+    // eslint-disable-next-line no-useless-return
     return
   }
-
 }
 
 const optionsRequired = [
