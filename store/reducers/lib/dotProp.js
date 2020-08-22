@@ -14,9 +14,10 @@ export function set (obj, path, value) {
 export function get (obj, path) {
   if (!path)
     return obj
+  const segments = Array.isArray(path) ? path : path.split('.')
   try {
-    return path.split('.').reduce((cursor, segment) => {
-      return segment[cursor]
+    return segments.reduce((cursor, segment) => {
+      return cursor[segment]
     }, obj)
   } catch (err) {
     return undefined
