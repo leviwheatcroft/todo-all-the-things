@@ -92,6 +92,21 @@ export const actionTypes = [
   // lists from remote storage with no tasks still need to be created in store
   // published by driver via RemoteStorage
 
+  'listsRemoveFromState',
+  // removes list from state
+  // issued by remoteStorage controller (deleted remotely)
+  // contains an 'origin' property in payload, which allows either remoteStorage
+  // or localStorage to update in response
+
+  'listsSetDeleted',
+  // sets list[listId].deleted
+  // issued by dialogTools (delete list)
+
+  'listsRemoveDeleted',
+  // issued by remoteStorage controller, after lists with deleted flag have
+  // been removed from remote
+  // removes lists with deleted flag from state
+
   'remoteStoragePending',
   'remoteStorageUnpending',
   // sets remoteStorage.state as 'pending' or 'connected'

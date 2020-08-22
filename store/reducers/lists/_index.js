@@ -1,11 +1,17 @@
 import { listsSelect } from './select'
 import { listsAdd } from './add'
 import { listsEnsureInState } from './ensureInState'
+import { listsRemoveFromState } from './removeFromState'
+import { listsSetDeleted } from './setDeleted'
+import { listsRemoveDeleted } from './removeDeleted'
 
 const reducers = [
   listsEnsureInState,
+  listsRemoveFromState,
   listsSelect,
-  listsAdd
+  listsAdd,
+  listsSetDeleted,
+  listsRemoveDeleted
 ]
 
 export function lists (action, context) {
