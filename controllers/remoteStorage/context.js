@@ -12,6 +12,10 @@ export function listsEnsureInState (listId) {
   publish('listsEnsureInState', { listId })
 }
 
+export function listsRemoveDeleted () {
+  publish('listsRemoveDeleted')
+}
+
 export function getListsFromState () {
   return Object.values(getState().lists)
 }
@@ -33,7 +37,7 @@ export function remoteStorageUnpending () {
 }
 
 export function setRemoteStorageTouch () {
-  publish('remoteStorageTouch', (new Date()).toISOString())
+  publish('remoteStorageTouch', { time: (new Date()).toISOString() })
 }
 
 /**
@@ -52,6 +56,8 @@ export function tasksPatch (patch) {
     // updated, // won't be provided by dropbox
     listId
   } = patch
+
+  publish('listsEnsureInState', { listId })
 
   // add new remote tasks - this is always done even if theres a conflict
   if (added)
@@ -84,7 +90,7 @@ export function tasksPatch (patch) {
     })
 
   if (conflictedLocals.length) {
-    const { added: conflictedRemotes } = tasksDiff(states)
+    const { added: conflictedRemotes } = tasksDiff(getState(), getState(1))
     publish('tasksConflict', { conflictedLocals, conflictedRemotes })
   }
 
@@ -93,9 +99,10 @@ export function tasksPatch (patch) {
 }
 
 export function listsRemoveFromState (listIds) {
-  publish('listsRemoveFromState', { listIds })
+  const origin = 'controllerRemoteStorage'
+  publish('listsRemoveFromState', { listIds, origin })
 }
 
-export function tasksRemovePurged (listId) {
-  publish('tasksRemovePurged', { listId })
+export function tasksRemovePurged () {
+  publish('tasksRemovePurged')
 }

@@ -36,6 +36,7 @@ export function initialiseRemoteStorage () {
     /^remoteStorageDriverSave$/
   ], driverInitialise)
   subscribe([
+    /listsSetDeleted/,
     /optionsLoadLocalStorage/,
     /remoteStorageDriverSave/,
     /requestSync/,

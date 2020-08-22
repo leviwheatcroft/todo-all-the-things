@@ -2,7 +2,9 @@
 import {
   subscribe,
   publish,
-  states,
+  // states,
+  getState,
+  hasChanged,
   tasksDiff
 } from '../store'
 import {
@@ -22,14 +24,15 @@ export class LocalStorage {
   constructor () {
     subscribe(
       [
+        /listsRemoveDeleted/,
         /^tasksCreateNew$/,
         /^tasksCreateNew\.fromRemote$/,
         /^listsRemoveFromState$/,
         /tasksToggleComplete/,
         /tasksEdit/,
         /tasksPurge/,
-        /tasksRemove/,
-        /tasksRemovePurged/,
+        /^tasksRemove$/,
+        /^tasksRemovePurged$/,
         /tasksImport/,
         /tasksConflict/
       ],
@@ -75,9 +78,9 @@ export class LocalStorage {
   }
 
   setChanged () {
-    // if (type === 'tasksLoadLocalStorage')
-    //   return
-    const { added, updated, removed } = tasksDiff(states)
+    if (!hasChanged('lists'))
+      return
+    const { added, updated, removed } = tasksDiff(getState(), getState(1))
     const tasks = [...added, ...updated]
     tasks.forEach((task) => {
       const storedTask = {
