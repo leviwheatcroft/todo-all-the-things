@@ -25,6 +25,7 @@ import star from './star.svg'
 import alertTriangle from './alert-triangle.svg'
 import toggleRight from './toggle-right.svg'
 import toggleLeft from './toggle-left.svg'
+import check from './check.svg'
 
 export default {
   atSign,
@@ -53,5 +54,6 @@ export default {
   cloudOff,
   cloud,
   toggleRight,
-  toggleLeft
+  toggleLeft,
+  check
 }

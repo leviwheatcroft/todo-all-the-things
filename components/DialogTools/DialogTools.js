@@ -3,22 +3,32 @@ import {
   html as _html,
   unsafeCSS
 } from 'lit-element'
+import {
+  nothing as _nothing
+} from 'lit-html'
 // import { render } from './DialogTools.template'
 import template from './DialogTools.html'
 import styles from './DialogTools.less'
 import lightBox from '../LightBox/LightBoxConsumers.less'
-import { base, button } from '../../less'
+import { base, button, flex } from '../../less'
 
 import {
   publish,
-  states
+  states,
+  getState
 } from '../../store'
 
 export class DialogTools extends LitElement {
+  constructor () {
+    super()
+    this.deleteListShowConfirmation = false
+  }
+
   static get styles () {
     return [
       base,
       button,
+      flex,
       unsafeCSS(lightBox),
       unsafeCSS(styles)
     ]
@@ -31,9 +41,14 @@ export class DialogTools extends LitElement {
       dialogImportTasks,
       destroyLocalStorage,
       exportTasks,
-      dialogHelp
+      dialogHelp,
+      deleteList,
+      deleteListShowConfirmation,
+      deleteListConfirm,
+      deleteListCancel
     } = this
     const html = _html
+    const nothing = _nothing
 
     return eval('html`' + template + '`')
   }
@@ -41,13 +56,27 @@ export class DialogTools extends LitElement {
 
   static get properties () {
     return {
-      show: { attribute: false }
+      show: { attribute: false },
+      deleteListShowConfirmation: { attribute: false }
     }
   }
 
   purge () {
     publish('tasksPurge')
     publish('dialogsToggle')
+  }
+
+  deleteList () {
+    this.deleteListShowConfirmation = true
+  }
+
+  deleteListCancel () {
+    this.deleteListShowConfirmation = false
+  }
+
+  deleteListConfirm () {
+    publish('dialogsToggle')
+    publish('listsSetDeleted', { listId: getState().selectedListId })
   }
 
   destroyLocalStorage () {

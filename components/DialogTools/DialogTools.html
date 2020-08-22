@@ -9,6 +9,30 @@
       </span>
       <tdw-icon icon="trash2"></tdw-icon>
     </div>
+    <div @click="${deleteList}">
+      <span class="description">
+        Delete list (descructive!)
+      </span>
+      <tdw-icon icon="trash2"></tdw-icon>
+    </div>
+    ${deleteListShowConfirmation ?
+      html`
+        <div class="justify-content-center">
+          <span class="description mr-20">
+            Really delete list?
+          </span>
+          <tdw-icon
+            class="mr-20"
+            @click="${deleteListConfirm}"
+            icon="check"
+          ></tdw-icon>
+          <tdw-icon
+            @click="${deleteListCancel}"
+            icon="x"
+          ></tdw-icon>
+        </div>
+      ` : nothing
+    }
     <div @click="${destroyLocalStorage}">
       <span class="description">
         Clear all local data (destructive!)
