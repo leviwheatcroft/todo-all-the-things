@@ -19,7 +19,6 @@ export const initialState = {
     }
   },
   settings: {
-    includeTasksInErrorReport: false,
     prependCreatedDate: true,
     showCreatedDate: true
   },
@@ -47,7 +46,7 @@ const dehydrators = {
   },
   settings: ({ settings }) => settings,
   filter: ({ filter: { text, regExp } }) => {
-    return { text, regExp: new RegExp(regExp) }
+    return { text, regExp: regExp.source }
   },
   selectedListId: ({ selectedListId }) => selectedListId,
   version: ({ version }) => version,
@@ -57,7 +56,7 @@ const dehydrators = {
 }
 const hydrators = {
   filter: ({ filter: { text, regExp } }) => {
-    return { text, regExp: new RegExp(regExp) }
+    return { text, regExp: new RegExp(regExp, 'i') }
   }
 }
 
