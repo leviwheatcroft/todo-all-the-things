@@ -14,7 +14,13 @@ states.isUpdated = function isUpdated (path) {
 }
 
 export function getState (version = 0) {
-  return get(states[version])
+  return states[version]
+}
+
+export function hasChanged (path) {
+  if (!states[1])
+    return true
+  return get(states[0], path) !== get(states[1], path)
 }
 
 const subscriptions = new Map()
