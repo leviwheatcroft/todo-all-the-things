@@ -55,8 +55,17 @@ export function retrieveOptions ({ loadRemoteTasks = true }) {
   }
 
   const options = hydrate(upgraded)
+
+  // localStorage controller populates state.lists by reading tasks
+  // from localStorage. it will not create state.lists[listId] where
+  // a list contains no tasks.
+  // therefore it's possible for selectedListId to refer to a list
+  // which does not exist in state.
+  publish('listsEnsureInState', { listId: options.selectedListId })
+
   // loadRemoteTasks is not used by the reducer, but remoteStorage listens
   // to this event and will not respond when loadRemoteTasks is false
+  // TODO: is this still necessary ? seems kludgy
   publish('optionsLoadLocalStorage', { options, loadRemoteTasks })
 }
 
