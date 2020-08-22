@@ -1,3 +1,17 @@
+/**
+ * driver complex operations
+ *
+ * ## lists deleted locally
+ * - set list[listId].deleted in state
+ * - driver: mergeFromRemote as normal
+ * - driver: writeToRemote must remove deleted lists
+ * - driver: call listsRemoveDeleted
+ *
+ * ## lists deleted remotely
+ * - driver: mergeFromRemote detects deleted list
+ * - driver: call listsRemoveFromState
+ */
+
 import { createClient } from 'webdav/web'
 
 let getListsFromState
@@ -10,6 +24,7 @@ let setRemoteStorageTouch
 let tasksPatch
 let tasksRemovePurged
 let listsRemoveFromState
+let listsRemoveDeleted
 
 function initialise (ctx) {
   getListsFromState = ctx.getListsFromState
@@ -22,6 +37,7 @@ function initialise (ctx) {
   tasksPatch = ctx.tasksPatch
   tasksRemovePurged = ctx.tasksRemovePurged
   listsRemoveFromState = ctx.listsRemoveFromState
+  listsRemoveDeleted = ctx.listsRemoveDeleted
 }
 
 /**
@@ -84,11 +100,14 @@ async function mergeFromRemote () {
     localStorage.setItem(prefix(`previous-${listId}`), current)
   }))
 
+  // this handles lists deleted remotely. when a list is deleted locally
+  // deletedListIds.length will be 0
   const deletedListIds = getListsFromState()
     .map(({ id }) => id)
     .filter((id) => localStorage.getItem(prefix(`previous-${id}`)))
-    .filter((id) => remoteListIds.includes(id))
-  listsRemoveFromState(deletedListIds)
+    .filter((id) => !remoteListIds.includes(id))
+  if (deletedListIds.length)
+    listsRemoveFromState(deletedListIds)
 }
 
 async function writeToRemote () {
@@ -97,16 +116,22 @@ async function writeToRemote () {
   await Promise.all(lists.map(async (list) => {
     const {
       id: listId,
+      deleted,
       tasks
     } = list
-    const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
+    if (deleted) {
+      await webdav.deleteFile(`/${listId}.txt`)
+      localStorage.removeItem(prefix(`previous-${listId}`))
+      return
+    }
+    const previous = localStorage.getItem(prefix(`previous-${listId}`))
     const current = Object.values(tasks)
       .filter(({ purged }) => !purged)
       .sort((a, b) => a.lineNumber - b.lineNumber)
       .map(({ raw }) => raw)
       .join('\n')
     if (current !== previous) {
-      webdav.putFileContents(
+      await webdav.putFileContents(
         `/${listId}.txt`,
         current,
         {
@@ -115,8 +140,9 @@ async function writeToRemote () {
       )
       localStorage.setItem(prefix(`previous-${listId}`), current)
     }
-    tasksRemovePurged(listId)
   }))
+  tasksRemovePurged()
+  listsRemoveDeleted()
 }
 
 async function fetchListsFromRemote () {
