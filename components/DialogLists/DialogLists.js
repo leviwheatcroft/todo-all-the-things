@@ -19,17 +19,9 @@ export class DialogLists extends LitElement {
   constructor () {
     super()
     this.listIds = Object.keys(getState().lists)
-    subscribe(
-      [
-        /tasksLoadLocalStorage/,
-        /tasksCreateNew.fromRemote/,
-        /listsAdd/,
-        /listsEnsure/
-      ],
-      ({ state: { lists } }) => {
-        this.listIds = Object.keys(lists)
-      }
-    )
+    subscribe(({ state: { lists } }) => {
+      this.listIds = Object.keys(lists)
+    })
   }
 
   static get styles () {
