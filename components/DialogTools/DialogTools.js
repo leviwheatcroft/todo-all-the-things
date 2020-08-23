@@ -37,15 +37,21 @@ export class DialogTools extends LitElement {
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const {
-      purge,
-      dialogImportTasks,
-      destroyLocalStorage,
-      exportTasks,
-      dialogHelp,
       deleteList,
-      deleteListShowConfirmation,
+      deleteListCancel,
       deleteListConfirm,
-      deleteListCancel
+      deleteListShowConfirmation,
+      destroyLocalStorage,
+      destroyLocalStorageCancel,
+      destroyLocalStorageConfirm,
+      destroyLocalStorageShowConfirmation,
+      dialogHelp,
+      dialogImportTasks,
+      exportTasks,
+      purgeCompletedTasks,
+      purgeCompletedTasksCancel,
+      purgeCompletedTasksConfirm,
+      purgeCompletedTasksShowConfirmation
     } = this
     const html = _html
     const nothing = _nothing
@@ -57,13 +63,24 @@ export class DialogTools extends LitElement {
   static get properties () {
     return {
       show: { attribute: false },
-      deleteListShowConfirmation: { attribute: false }
+      deleteListShowConfirmation: { attribute: false },
+      destroyLocalStorageShowConfirmation: { attribute: false },
+      purgeCompletedTasksShowConfirmation: { attribute: false }
     }
   }
 
-  purge () {
+  purgeCompletedTasks () {
+    this.purgeCompletedTasksShowConfirmation = true
+  }
+
+  purgeCompletedTasksCancel () {
+    this.purgeCompletedTasksShowConfirmation = false
+  }
+
+  purgeCompletedTasksConfirm () {
     publish('tasksPurge')
     publish('dialogsToggle')
+    this.purgeCompletedTasksShowConfirmation = false
   }
 
   deleteList () {
@@ -77,11 +94,21 @@ export class DialogTools extends LitElement {
   deleteListConfirm () {
     publish('dialogsToggle')
     publish('listsSetDeleted', { listId: getState().selectedListId })
+    this.deleteListShowConfirmation = false
   }
 
   destroyLocalStorage () {
+    this.destroyLocalStorageShowConfirmation = true
+  }
+
+  destroyLocalStorageCancel () {
+    this.destroyLocalStorageShowConfirmation = false
+  }
+
+  destroyLocalStorageConfirm () {
     publish('dialogsToggle')
     publish('destroyLocalStorage')
+    this.destroyLocalStorageShowConfirmation = false
   }
 
   dialogImportTasks () {

@@ -3,18 +3,31 @@
     Tools
   </span>
   <div slot="body" class="body menu">
-    <div @click="${purge}">
-      <span class="description">
-        Purge completed tasks
-      </span>
-      <tdw-icon icon="trash2"></tdw-icon>
-    </div>
-    <div @click="${deleteList}">
-      <span class="description">
-        Delete list (descructive!)
-      </span>
-      <tdw-icon icon="trash2"></tdw-icon>
-    </div>
+    ${purgeCompletedTasksShowConfirmation ?
+      html`
+      <div class="justify-content-center">
+        <span class="description mr-20">
+          Really purge completed tasks?
+        </span>
+        <tdw-icon
+          class="mr-20"
+          @click="${purgeCompletedTasksConfirm}"
+          icon="check"
+        ></tdw-icon>
+        <tdw-icon
+          @click="${purgeCompletedTasksCancel}"
+          icon="x"
+        ></tdw-icon>
+      </div>
+      ` : html`
+        <div @click="${purgeCompletedTasks}">
+          <span class="description">
+            Purge completed tasks
+          </span>
+          <tdw-icon icon="trash2"></tdw-icon>
+        </div>
+      `
+    }
     ${deleteListShowConfirmation ?
       html`
         <div class="justify-content-center">
@@ -31,14 +44,41 @@
             icon="x"
           ></tdw-icon>
         </div>
-      ` : nothing
+      ` : html`
+        <div @click="${deleteList}">
+          <span class="description">
+            Delete list (descructive!)
+          </span>
+          <tdw-icon icon="trash2"></tdw-icon>
+        </div>
+      `
     }
-    <div @click="${destroyLocalStorage}">
-      <span class="description">
-        Clear all local data (destructive!)
-      </span>
-      <tdw-icon icon="alertTriangle"></tdw-icon>
-    </div>
+    ${destroyLocalStorageShowConfirmation ?
+      html`
+        <div class="justify-content-center">
+          <span class="description mr-20">
+            Really clear all local data?
+          </span>
+          <tdw-icon
+            class="mr-20"
+            @click="${destroyLocalStorageConfirm}"
+            icon="check"
+          ></tdw-icon>
+          <tdw-icon
+            @click="${destroyLocalStorageCancel}"
+            icon="x"
+          ></tdw-icon>
+        </div>
+      ` : html`
+        <div @click="${destroyLocalStorage}">
+          <span class="description">
+            Clear all local data (destructive!)
+          </span>
+          <tdw-icon icon="alertTriangle"></tdw-icon>
+        </div>
+      `
+    }
+
     <div @click="${dialogImportTasks}">
       <span class="description">
         Import list
