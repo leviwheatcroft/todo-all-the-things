@@ -1,21 +1,10 @@
-/**
- * driver complex operations
- *
- * ## lists deleted locally
- * - set list[listId].deleted in state
- * - driver: mergeFromRemote as normal
- * - driver: writeToRemote must remove deleted lists
- * - driver: call listsRemoveDeleted
- *
- * ## lists deleted remotely
- * - driver: mergeFromRemote detects deleted list
- * - driver: call listsRemoveFromState
- */
-
 import { createClient } from 'webdav/web'
+import { diff } from './lib/diff'
 
 let getListsFromState
 let getOptions
+let listsRemoveDeleted
+let listsRemoveFromState
 let prefix
 let remoteStorageError
 let remoteStoragePending
@@ -23,12 +12,12 @@ let remoteStorageUnpending
 let setRemoteStorageTouch
 let tasksPatch
 let tasksRemovePurged
-let listsRemoveFromState
-let listsRemoveDeleted
 
 function initialise (ctx) {
   getListsFromState = ctx.getListsFromState
   getOptions = ctx.getOptions
+  listsRemoveDeleted = ctx.listsRemoveDeleted
+  listsRemoveFromState = ctx.listsRemoveFromState
   prefix = ctx.prefix
   remoteStorageError = ctx.remoteStorageError
   remoteStoragePending = ctx.remoteStoragePending
@@ -36,52 +25,13 @@ function initialise (ctx) {
   setRemoteStorageTouch = ctx.setRemoteStorageTouch
   tasksPatch = ctx.tasksPatch
   tasksRemovePurged = ctx.tasksRemovePurged
-  listsRemoveFromState = ctx.listsRemoveFromState
-  listsRemoveDeleted = ctx.listsRemoveDeleted
-}
-
-/**
- * diff - compares previous and current text files
- *
- * because textfiles are being compared, it's only possible to reliably
- * determine additions and removals, not updates. If you rely on line numbers
- * you could detect updates, however lineNumbers will change when completed
- * tasks are purged.
- *
- * by contrast tasksDiff, which diffs state, can detect which tasks have been
- * added, removed, or updated. However, after a dropbox import, tasksDiff
- * will report an updated task as an addition & removal, because the remote
- * storage  driver creates a new task and removes the old task rather than
- * updating a task in place.
- */
-function diff (previous, current) {
-  const newLine = /\r?\n/
-  previous = previous.split(newLine)
-  current = current.split(newLine)
-  // console.log(current, previous)
-  const added = []
-  current.forEach((raw) => {
-    if (raw.length === 0)
-      return
-    const idx = previous.indexOf(raw)
-    if (idx === -1)
-      return added.push(raw)
-    delete previous[idx] // unchanged
-  })
-  const removed = previous
-    .filter((i) => i)
-
-  return {
-    added: added.length ? added : undefined,
-    removed: removed.length ? removed : undefined
-  }
 }
 
 async function sync () {
   remoteStoragePending()
   try {
-    await mergeFromRemote()
-    await writeToRemote()
+    await mergeListsFromRemote()
+    await uploadListsToRemote()
   } catch (error) {
     errorHandler(error)
   }
@@ -90,8 +40,8 @@ async function sync () {
   remoteStorageUnpending()
 }
 
-async function mergeFromRemote () {
-  const remoteListIds = await fetchListsFromRemote()
+async function mergeListsFromRemote () {
+  const remoteListIds = await fetchListIdsFromRemote()
 
   await Promise.all(remoteListIds.map(async (listId) => {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
@@ -110,9 +60,9 @@ async function mergeFromRemote () {
     listsRemoveFromState(deletedListIds)
 }
 
-async function writeToRemote () {
-  const lists = Object.values(getListsFromState())
+async function uploadListsToRemote () {
   const webdav = getClient()
+  const lists = Object.values(getListsFromState())
   await Promise.all(lists.map(async (list) => {
     const {
       id: listId,
@@ -130,6 +80,7 @@ async function writeToRemote () {
       .sort((a, b) => a.lineNumber - b.lineNumber)
       .map(({ raw }) => raw)
       .join('\n')
+
     if (current !== previous) {
       await webdav.putFileContents(
         `/${listId}.txt`,
@@ -145,7 +96,7 @@ async function writeToRemote () {
   listsRemoveDeleted()
 }
 
-async function fetchListsFromRemote () {
+async function fetchListIdsFromRemote () {
   const webdav = getClient()
   // allow error to be thrown
   const result = await webdav.getDirectoryContents('/')

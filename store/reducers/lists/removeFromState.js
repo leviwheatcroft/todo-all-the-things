@@ -1,3 +1,5 @@
+// listsRemoveFromState is issued by remostStorage controller when a list
+// is deleted in the remote
 export function listsRemoveFromState (action, { update, getState }) {
   if (action.type !== 'listsRemoveFromState')
     return

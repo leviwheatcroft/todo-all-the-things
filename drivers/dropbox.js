@@ -1,8 +1,10 @@
 import { Dropbox } from 'dropbox'
+import { diff } from './lib/diff'
 
-let listsEnsureInState
 let getListsFromState
 let getOptions
+let listsRemoveDeleted
+let listsRemoveFromState
 let prefix
 let remoteStorageError
 let remoteStoragePending
@@ -10,12 +12,12 @@ let remoteStorageUnpending
 let setRemoteStorageTouch
 let tasksPatch
 let tasksRemovePurged
-let listsRemoveFromState
 
 function initialise (ctx) {
-  listsEnsureInState = ctx.listsEnsureInState
   getListsFromState = ctx.getListsFromState
   getOptions = ctx.getOptions
+  listsRemoveDeleted = ctx.listsRemoveDeleted
+  listsRemoveFromState = ctx.listsRemoveFromState
   prefix = ctx.prefix
   remoteStorageError = ctx.remoteStorageError
   remoteStoragePending = ctx.remoteStoragePending
@@ -23,56 +25,6 @@ function initialise (ctx) {
   setRemoteStorageTouch = ctx.setRemoteStorageTouch
   tasksPatch = ctx.tasksPatch
   tasksRemovePurged = ctx.tasksRemovePurged
-  listsRemoveFromState = ctx.listsRemoveFromState
-}
-
-// let inFlightOps = 0
-// function inFlight () {
-//   if (inFlightOps === 0)
-//     remoteStoragePending()
-//   inFlightOps += 1
-//   return function done () {
-//     inFlightOps -= 1
-//     if (inFlightOps === 0)
-//       remoteStorageUnpending()
-//   }
-// }
-
-/**
- * diff - compares previous and current text files
- *
- * because textfiles are being compared, it's only possible to reliably
- * determine additions and removals, not updates. If you rely on line numbers
- * you could detect updates, however lineNumbers will change when completed
- * tasks are purged.
- *
- * by contrast tasksDiff, which diffs state, can detect which tasks have been
- * added, removed, or updated. However, after a dropbox import, tasksDiff
- * will report an updated task as an addition & removal, because the remote
- * storage  driver creates a new task and removes the old task rather than
- * updating a task in place.
- */
-function diff (previous, current) {
-  const newLine = /\r?\n/
-  previous = previous.split(newLine)
-  current = current.split(newLine)
-  // console.log(current, previous)
-  const added = []
-  current.forEach((raw) => {
-    if (raw.length === 0)
-      return
-    const idx = previous.indexOf(raw)
-    if (idx === -1)
-      return added.push(raw)
-    delete previous[idx] // unchanged
-  })
-  const removed = previous
-    .filter((i) => i)
-
-  return {
-    added: added.length ? added : undefined,
-    removed: removed.length ? removed : undefined
-  }
 }
 
 async function sync () {
@@ -80,34 +32,48 @@ async function sync () {
   try {
     await mergeListsFromRemote()
     await uploadListsToRemote()
-    setRemoteStorageTouch()
   } catch (error) {
     errorHandler(error)
   }
+  // store touch in localStorage, so other browser tabs will update
+  setRemoteStorageTouch()
   remoteStorageUnpending()
 }
 
 async function mergeListsFromRemote () {
   const remoteListIds = await fetchListIdsFromRemote()
+
   await Promise.all(remoteListIds.map(async (listId) => {
-    listsEnsureInState(listId)
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
     const current = await fetchListFromRemote(listId)
     tasksPatch({ ...diff(previous, current), listId })
     localStorage.setItem(prefix(`previous-${listId}`), current)
   }))
 
+  // this handles lists deleted remotely. when a list is deleted locally
+  // deletedListIds.length will be 0
   const deletedListIds = getListsFromState()
     .map(({ id }) => id)
     .filter((id) => localStorage.getItem(prefix(`previous-${id}`)))
-    .filter((id) => remoteListIds.includes(id))
-  listsRemoveFromState(deletedListIds)
+    .filter((id) => !remoteListIds.includes(id))
+  if (deletedListIds.length)
+    listsRemoveFromState(deletedListIds)
 }
 
 async function uploadListsToRemote () {
   const dbx = getClient()
-  const lists = getListsFromState()
-  await Promise.all(lists.map(async ({ id: listId, tasks }) => {
+  const lists = Object.values(getListsFromState())
+  await Promise.all(lists.map(async (list) => {
+    const {
+      id: listId,
+      deleted,
+      tasks
+    } = list
+    if (deleted) {
+      await dbx.filesDelete({ path: `/${listId}.txt` })
+      localStorage.removeItem(prefix(`previous-${listId}`))
+      return
+    }
     const bits = Object.values(tasks)
       .filter(({ purged }) => !purged)
       .sort((a, b) => a.lineNumber - b.lineNumber)
@@ -125,7 +91,8 @@ async function uploadListsToRemote () {
       mode: 'overwrite'
     })
     localStorage.setItem(prefixed, contentsAsString)
-    tasksRemovePurged(listId)
+    tasksRemovePurged()
+    listsRemoveDeleted()
   }))
 }
 
@@ -144,116 +111,42 @@ async function fetchListIdsFromRemote () {
 async function fetchListFromRemote (listId) {
   const dbx = getClient()
   let result
+  let content
   try {
     result = await dbx.filesDownload({
       path: `/${listId}.txt`
     })
+    content = await result.fileBlob.text()
   } catch (error) {
-    if (
-      error.status === 409 &&
-      /path\/not_found/.test(error)
-    )
-      result = await createListOnRemote(listId)
-    else
-      throw error
+    // if (
+    //   error.status === 409 &&
+    //   /path\/not_found/.test(error)
+    // )
+    //   result = await createListOnRemote(listId)
+    // else
+    //   throw error
+    errorHandler(error)
+    content = ''
   }
-  const content = await result.fileBlob.text()
   return content
 }
 
-// // this structure allows multiple callers to await the same import request
-// const importTasksInFlight = {}
-// async function importTasks (listId) {
-//   if (importTasksInFlight[listId])
-//     return importTasksInFlight[listId]
-//   const done = inFlight()
-//   importTasksInFlight[listId] = _importTasks(listId)
-//     .then(() => {
-//       delete importTasksInFlight[listId]
-//       done()
-//     })
-//   return importTasksInFlight[listId]
-// }
-//
-// async function _importTasks (listId) {
-//   try {
-//     const listIds = listId ? [].concat(listId) : await fetchLists()
-//     listsEnsure(listIds)
-//     await Promise.all(listIds.map((listId) => {
-//       const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
-//       return retrieve(listId)
-//         .then((current) => {
-//           tasksPatch({ ...diff(previous, current), listId })
-//           localStorage.setItem(prefix(`previous-${listId}`), current)
-//         })
-//     }))
-//     setRemoteStorageTouch()
-//   } catch (error) {
-//     errorHandler(error)
-//   }
-// }
-//
-// async function retrieve (listId) {
-//   const done = inFlight()
+// async function createListOnRemote (listId) {
 //   const dbx = getClient()
 //   let result
 //   try {
-//     result = await dbx.filesDownload({
-//       path: `/${listId}.txt`
+//     result = await dbx.filesUpload({
+//       contents: '',
+//       path: `/${listId}.txt`,
+//       mode: 'add',
+//       autorename: true
 //     })
-//   } catch (error) {
-//     if (
-//       error.status === 409 &&
-//       /path\/not_found/.test(error)
-//     ) {
-//       result = await create(listId)
-//     } else {
-//       done()
-//       throw error
-//     }
+//   } catch ({ error: raw }) {
+//     const error = JSON.parse(raw)
+//     console.error('err', error)
 //   }
-//   const content = await result.fileBlob.text()
-//   done()
-//   return content
+//   return result
 // }
-//
-// async function store (listId, list) {
-//   const done = inFlight()
-//   const {
-//     tasks
-//   } = list
-//   const dbx = getClient()
-//   const bits = Object.values(tasks)
-//     .filter(({ purged }) => !purged)
-//     .sort((a, b) => a.lineNumber - b.lineNumber)
-//     .map(({ raw }) => `${raw}\n`)
-//   const contents = new File(bits, `${listId}.txt`)
-//   await dbx.filesUpload({
-//     contents,
-//     path: `/${listId}.txt`,
-//     mode: 'overwrite'
-//   })
-//   localStorage.setItem(prefix(`previous-${listId}`), await contents.text())
-//   tasksRemovePurged(listId)
-//   done()
-// }
-
-async function createListOnRemote (listId) {
-  const dbx = getClient()
-  let result
-  try {
-    result = await dbx.filesUpload({
-      contents: '',
-      path: `/${listId}.txt`,
-      mode: 'add',
-      autorename: true
-    })
-  } catch ({ error: raw }) {
-    const error = JSON.parse(raw)
-    console.error('err', error)
-  }
-  return result
-}
 
 function getClient () {
   const { accessToken } = getOptions()
