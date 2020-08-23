@@ -23,7 +23,9 @@ export function initialiseOptions () {
       /optionsDriverSave/,
       /optionsToggle/,
       /filterSet/,
-      /listsSelect/
+      /listsSelect/,
+      /listsRemoveFromState/,
+      /listsRemoveDeleted/
     ],
     store
   )
