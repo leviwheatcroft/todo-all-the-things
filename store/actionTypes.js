@@ -26,6 +26,11 @@ export const actionTypes = [
   'tasksEdit',
   // issued by TaskActive component
 
+  'tasksUpdateLineNumbers',
+  // issued by remoteStorage controller
+  // when a remote list is merged to local storage the lineNumber of each
+  // task needs to be compared to the remote and updated where necessary
+
   'filterSet',
   // issued by Filter component
 

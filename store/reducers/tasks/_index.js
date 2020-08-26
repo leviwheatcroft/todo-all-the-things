@@ -1,31 +1,31 @@
+import { tasksConflictResolve } from './conflictResolve'
 import { tasksCreateNew } from './createNew'
-import { tasksLoadLocalStorage } from './loadLocalStorage'
-import { tasksToggleComplete } from './toggleComplete'
-import { tasksToggleActive } from './toggleActive'
 import { tasksEdit } from './edit'
+import { tasksImport } from './import'
+import { tasksLoadLocalStorage } from './loadLocalStorage'
 import { tasksPurge } from './purge'
 import { tasksRemove } from './remove'
 import { tasksRemovePurged } from './removePurged'
-import { tasksImport } from './import'
 import { tasksSetPending } from './setPending'
+import { tasksToggleActive } from './toggleActive'
+import { tasksToggleComplete } from './toggleComplete'
 import { tasksUnsetPending } from './unsetPending'
-// import { tasksConflict } from './conflict'
-import { tasksConflictResolve } from './conflictResolve'
+import { tasksUpdateLineNumbers } from './updateLineNumbers'
 
 const reducers = [
+  tasksConflictResolve,
   tasksCreateNew,
-  tasksLoadLocalStorage,
-  tasksToggleComplete,
-  tasksToggleActive,
   tasksEdit,
+  tasksImport,
+  tasksLoadLocalStorage,
   tasksPurge,
   tasksRemove,
   tasksRemovePurged,
-  tasksImport,
   tasksSetPending,
+  tasksToggleActive,
+  tasksToggleComplete,
   tasksUnsetPending,
-  // tasksConflict,
-  tasksConflictResolve
+  tasksUpdateLineNumbers
 ]
 
 export function tasks (action, context) {

@@ -106,3 +106,9 @@ export function listsRemoveFromState (listIds) {
 export function tasksRemovePurged () {
   publish('tasksRemovePurged')
 }
+
+export function updateLineNumbers (content, listId) {
+  const newLine = /\r?\n/
+  const lines = content.split(newLine)
+  publish('tasksUpdateLineNumbers', { lines, listId })
+}

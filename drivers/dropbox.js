@@ -12,6 +12,7 @@ let remoteStorageUnpending
 let setRemoteStorageTouch
 let tasksPatch
 let tasksRemovePurged
+let updateLineNumbers
 
 function initialise (ctx) {
   getListsFromState = ctx.getListsFromState
@@ -25,6 +26,7 @@ function initialise (ctx) {
   setRemoteStorageTouch = ctx.setRemoteStorageTouch
   tasksPatch = ctx.tasksPatch
   tasksRemovePurged = ctx.tasksRemovePurged
+  updateLineNumbers = ctx.updateLineNumbers
 }
 
 async function sync () {
@@ -46,7 +48,10 @@ async function mergeListsFromRemote () {
   await Promise.all(remoteListIds.map(async (listId) => {
     const previous = localStorage.getItem(prefix(`previous-${listId}`)) || ''
     const current = await fetchListFromRemote(listId)
+    if (current === previous)
+      return
     tasksPatch({ ...diff(previous, current), listId })
+    updateLineNumbers(current, listId)
     localStorage.setItem(prefix(`previous-${listId}`), current)
   }))
 
@@ -91,9 +96,9 @@ async function uploadListsToRemote () {
       mode: 'overwrite'
     })
     localStorage.setItem(prefixed, contentsAsString)
-    tasksRemovePurged()
-    listsRemoveDeleted()
   }))
+  tasksRemovePurged()
+  listsRemoveDeleted()
 }
 
 async function fetchListIdsFromRemote () {

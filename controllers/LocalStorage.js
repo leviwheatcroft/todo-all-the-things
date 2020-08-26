@@ -34,7 +34,8 @@ export class LocalStorage {
         /^tasksRemove$/,
         /^tasksRemovePurged$/,
         /tasksImport/,
-        /tasksConflict/
+        /tasksConflict/,
+        /^tasksUpdateLineNumbers$/
       ],
       this.setChanged.bind(this)
     )

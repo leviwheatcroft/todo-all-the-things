@@ -10,8 +10,14 @@ export function tasksRemovePurged (action, { getState, update }) {
     if (!purgedIds.length)
       return
     const filteredTasks = Object.fromEntries(
-      ...Object.entries(tasks)
-        .filter(([id]) => !purgedIds.includes(id))
+      Object.values(tasks)
+        // exclude purged
+        .filter(({ id }) => !purgedIds.includes(id))
+        // reassign line numbers
+        .sort((a, b) => a.lineNumber - b.lineNumber)
+        .map((task, idx) => ({ ...task, lineNumber: idx + 1 }))
+        // as entries
+        .map((task) => [task.id, task])
     )
 
     update(['lists', listId, 'tasks'], filteredTasks)
