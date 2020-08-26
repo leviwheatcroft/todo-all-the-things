@@ -85,7 +85,9 @@ function driverInitialise () {
  */
 let pending = false
 let queued = false
-function sync () {
+function sync (ctx) {
+  if (!ctx.action.payload.loadRemoteTasks)
+    return
   if (!driver)
     return
   if (pending) {

@@ -36,6 +36,7 @@ export function retrieveOptions ({ loadRemoteTasks = true }) {
   const dehydrated = JSON.parse(localStorage.getItem(prefix('options')))
   if (!dehydrated) {
     if (
+      // TODO: this won't work. code runs in the browser silly.
       process.env.TATT_DRIVER === 'webdav' &&
       process.env.TATT_WEBDAV_USER &&
       process.env.TATT_WEBDAV_PASSWORD
