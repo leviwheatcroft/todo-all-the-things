@@ -57,8 +57,7 @@ function remoteStorageTouch ({ getState }) {
 }
 
 let debouncedStorageEvent
-function storageEvent (e) {
-  console.log(e)
+function storageEvent () {
   if (debouncedStorageEvent)
     clearTimeout(debouncedStorageEvent)
   debouncedStorageEvent = setTimeout(() => {
