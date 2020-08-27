@@ -158,4 +158,11 @@ export const actionTypes = [
   // stores state.remoteStorage params
   // issued by DialogRemoteStorageOptions
 
+  'localStorageOptions',
+  // no reducer
+  // issued by localStorage when window.storage event occurs
+
+  'localStorageRemoteStorageLastTouch',
+  // no reducer
+  // issued by localStorage when window.storage event occurs
 ]

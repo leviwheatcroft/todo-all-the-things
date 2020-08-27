@@ -38,7 +38,13 @@ export function initialiseLocalStorage () {
     ],
     setChanged
   )
-  subscribe(/domLoaded/, loadTasks)
+  subscribe(
+    [
+      /domLoaded/,
+      /localStorageRemoteStorageLastTouch/
+    ],
+    loadTasks
+  )
   subscribe(/destroyLocalStorage/, destroyLocalStorage)
   subscribe(/remoteStorageTouch/, remoteStorageTouch)
 
@@ -56,16 +62,25 @@ function remoteStorageTouch ({ getState }) {
   localStorage.setItem(prefix('remoteStorageLastTouch'), lastTouch)
 }
 
-let debouncedStorageEvent
-function storageEvent () {
-  if (debouncedStorageEvent)
-    clearTimeout(debouncedStorageEvent)
-  debouncedStorageEvent = setTimeout(() => {
-    loadTasks()
-    retrieveOptions({ loadRemoteTasks: false })
-    setNextSync(1 * 60 * 1000)
-    debouncedStorageEvent = false
-  }, 1000)
+const debounced = {}
+function debounce (key, fn, delay = 1000) {
+  if (debounced[key])
+    clearTimeout(debounced[key])
+  debounced[key] = setTimeout(() => {
+    debounced[key] = false
+    fn()
+  }, delay)
+}
+
+function storageEvent ({ key }) {
+  if (key === prefix('remoteStorageLastTouch')) {
+    debounce(key, () => {
+      publish('localStorageRemoteStorageLastTouch')
+      setNextSync(1 * 60 * 1000)
+    })
+  }
+  if (key === prefix('options'))
+    debounce(key, () => publish('localStorageOptions'))
 }
 
 function loadTasks () {

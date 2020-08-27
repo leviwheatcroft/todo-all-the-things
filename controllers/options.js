@@ -29,35 +29,47 @@ export function initialiseOptions () {
     ],
     store
   )
-  subscribe(/domLoaded/, retrieveOptions)
+  subscribe(
+    [
+      /domLoaded/,
+      /localStorageOptions/
+    ],
+    retrieveOptions
+  )
 }
 
-export function retrieveOptions ({ loadRemoteTasks = true }) {
-  const dehydrated = JSON.parse(localStorage.getItem(prefix('options')))
-  if (!dehydrated) {
-    if (
-      // TODO: this won't work. code runs in the browser silly.
-      process.env.TATT_DRIVER === 'webdav' &&
-      process.env.TATT_WEBDAV_USER &&
-      process.env.TATT_WEBDAV_PASSWORD
-    ) {
-      publish('remoteStorageDriverSave', {
-        driver: 'webdav',
-        user: process.env.TATT_WEBDAV_USER,
-        password: process.env.TATT_WEBDAV_PASSWORD,
-        refreshInterval: 10
-      })
+function retrieveOptions ({ action: { type } }) {
+  let options = JSON.parse(localStorage.getItem(prefix('options')))
+
+  if (type === 'domLoaded') {
+    if (!options) {
+      if (
+        // TODO: this won't work. code runs in the browser silly.
+        process.env.TATT_DRIVER === 'webdav' &&
+        process.env.TATT_WEBDAV_USER &&
+        process.env.TATT_WEBDAV_PASSWORD
+      ) {
+        publish('remoteStorageDriverSave', {
+          driver: 'webdav',
+          user: process.env.TATT_WEBDAV_USER,
+          password: process.env.TATT_WEBDAV_PASSWORD,
+          refreshInterval: 10
+        })
+      }
+      publish('firstRun')
+      return
     }
-    publish('firstRun')
-    return
-  }
-  const upgraded = upgrade(dehydrated)
-  if (upgraded.version !== dehydrated.version) {
-    const dehydrated = dehydrate(upgraded)
-    localStorage.setItem(prefix('options'), JSON.stringify(dehydrated))
+    const upgraded = upgrade(options)
+    if (upgraded.version !== options.version) {
+      options = upgraded
+      localStorage.setItem(
+        prefix('options'),
+        JSON.stringify(dehydrate(options))
+      )
+    }
   }
 
-  const options = hydrate(upgraded)
+  options = hydrate(options)
 
   // localStorage controller populates state.lists by reading tasks
   // from localStorage. it will not create state.lists[listId] where
@@ -66,10 +78,11 @@ export function retrieveOptions ({ loadRemoteTasks = true }) {
   // which does not exist in state.
   publish('listsEnsureInState', { listId: options.selectedListId })
 
-  // loadRemoteTasks is not used by the reducer, but remoteStorage listens
-  // to this event and will not respond when loadRemoteTasks is false
-  // TODO: is this still necessary ? seems kludgy
-  publish('optionsLoadLocalStorage', { options, loadRemoteTasks })
+  publish('optionsLoadLocalStorage', { options })
+
+  // no need to sync if action.type === 'localStorageOptions'
+  if (type === 'domLoaded')
+    publish('requestSync')
 }
 
 function store () {

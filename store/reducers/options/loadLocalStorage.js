@@ -17,7 +17,7 @@ export function optionsLoadLocalStorage (action, context) {
   update(['filter'], filter)
   update(['selectedListId'], selectedListId)
   update(['version'], version)
-  update(['settings', settings])
+  update(['settings'], settings)
 
   if (remoteStorage.options.driver !== 'none')
     update(['remoteStorage', 'state'], 'connected')
