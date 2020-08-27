@@ -14,24 +14,32 @@ import styles from './List.less'
 export class List extends LitElement {
   constructor () {
     super()
-    subscribe(this.setList.bind(this))
+    subscribe(() => {
+      this.setList()
+      this.setShowCreatedDate()
+    })
     this.setList()
+    this.setShowCreatedDate()
   }
 
   static get styles () { return [button, unsafeCSS(styles)] }
 
   static get properties () {
     return {
-      list: { attribute: false }
+      list: { attribute: false },
+      showCreatedDate: { attribute: false }
     }
   }
 
   /* eslint-disable no-unused-vars, no-eval, prefer-template */
   render () {
     const {
-      id: listId,
-      tasks
-    } = this.list
+      list: {
+        id: listId,
+        tasks
+      },
+      showCreatedDate
+    } = this
     const html = _html
     const repeat = _repeat
     const nothing = _nothing
@@ -42,6 +50,11 @@ export class List extends LitElement {
   setList () {
     const { lists, selectedListId } = getState()
     this.list = lists[selectedListId]
+  }
+
+  setShowCreatedDate () {
+    const { settings: { showCreatedDate } } = getState()
+    this.showCreatedDate = showCreatedDate
   }
 }
 

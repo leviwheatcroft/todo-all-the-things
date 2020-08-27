@@ -9,7 +9,8 @@ ${repeat(Object.values(tasks), (t) => t.id, (t) => {
       <tdw-task-active .task="${t}"></tdw-task-active>
     ` :
     html`
-      <tdw-task-inactive .task="${t}"></tdw-task-inactive>
+      <tdw-task-inactive .task="${t}" .showCreatedDate="${showCreatedDate}">
+      </tdw-task-inactive>
       <div class="divider"></div>
     `
 })}
