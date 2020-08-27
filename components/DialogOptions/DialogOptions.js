@@ -19,7 +19,10 @@ export class DialogOptions extends LitElement {
   constructor () {
     super()
     subscribe(
-      'optionsToggleShowCreatedDate',
+      [
+        /optionsToggleShowCreatedDate/,
+        /optionsLoadLocalStorage/
+      ],
       this.setShowCreatedDate.bind(this)
     )
     this.setShowCreatedDate()
