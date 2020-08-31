@@ -176,8 +176,12 @@ function errorHandler (error) {
     return
   }
   remoteStorageError(
-    'Unknown Error'
+    'Unknown Error',
+    `
+    See Console for more details.
+    `
   )
+  console.error('error details', error)
 }
 
 const optionsRequired = [
